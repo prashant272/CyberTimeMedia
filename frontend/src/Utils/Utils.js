@@ -56,7 +56,20 @@ const formatDateTime = (dateString) => {
     }
 };
 
-export { axios, API, baseURL, compressImage, formatDateTime }
+/**
+ * Calculates estimated reading time based on text content.
+ * @param {string} text - The text to analyze.
+ * @param {number} wpm - Words per minute (default 200).
+ * @returns {string} - Estimated reading time (e.g. "3 min read")
+ */
+const calculateReadingTime = (text, wpm = 200) => {
+    if (!text) return "1 min read";
+    const words = text.trim().split(/\s+/).length;
+    const time = Math.ceil(words / wpm);
+    return `${time} min read`;
+};
+
+export { axios, API, baseURL, compressImage, formatDateTime, calculateReadingTime }
 
 
 

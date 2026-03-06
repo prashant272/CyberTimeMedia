@@ -1,6 +1,5 @@
 'use client';
 import React, { useState } from 'react';
-import styles from './T20WorldCupNewsSection.module.scss';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -150,138 +149,138 @@ const T20WorldCupSection: React.FC = () => {
   const [scheduleTab, setScheduleTab] = useState<'current' | 'upcoming' | 'recent'>('upcoming');
 
   return (
-    <section className={styles.t20Section}>
-      <div className={styles.containerInner}>
-        <div className={styles.titleWrapper}>
-          <div className={styles.titleIcon}></div>
-          <h2 className={styles.mainTitle}>T20 CRICKET WORLD CUP 2026</h2>
+    <section className="bg-linear-to-br from-[#0a0a0a] via-[#1a1a2e] to-[#16213e] py-12 px-8 relative overflow-hidden before:absolute before:inset-0 before:bg-[radial-gradient(circle_at_20%_30%,rgba(255,68,68,0.08)_0%,transparent_50%),radial-gradient(circle_at_80%_70%,rgba(255,153,0,0.06)_0%,transparent_50%),radial-gradient(circle_at_50%_50%,rgba(255,215,0,0.03)_0%,transparent_60%)] before:pointer-events-none before:animate-pulse-slow after:absolute after:inset-0 after:bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,rgba(255,255,255,0.01)_2px,rgba(255,255,255,0.01)_4px)] after:pointer-events-none">
+      <div className="max-w-[1400px] mx-auto relative z-[1]">
+        <div className="flex items-center gap-3.5 mb-8 relative after:content-[''] after:flex-1 after:h-0.5 after:bg-linear-to-r after:from-orange-500/50 after:to-transparent after:ml-5">
+          <div className="w-2.5 h-2.5 bg-linear-to-br from-[#ff4444] to-[#ff9900] rounded-full shadow-[0_0_20px_rgba(255,153,0,0.9),0_0_40px_rgba(255,68,68,0.5)] animate-pulse relative before:content-[''] before:absolute before:-inset-0.75 before:rounded-full before:border-2 before:border-orange-500/30 before:animate-ping"></div>
+          <h2 className="text-3xl font-extrabold text-[#ffffff] m-0 tracking-widest text-shadow-orange bg-linear-to-br from-white to-[#ffd700] bg-clip-text text-transparent uppercase">T20 CRICKET WORLD CUP 2026</h2>
         </div>
 
-        <div className={styles.contentGrid}>
-          <div className={styles.leftColumn}>
-            <div className={styles.featuredCard}>
-              <div className={styles.featuredImageWrapper}>
-                <Image 
-                  src="/images/ravi-shastri-india.jpg" 
+        <div className="grid grid-cols-[1fr_400px] gap-7 lg:grid-cols-1">
+          <div className="flex flex-col gap-6">
+            <div className="group bg-white/4 backdrop-blur-3xl border border-white/10 rounded-2xl overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-500 cubic-bezier(0.4,0,0.2,1) relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-0.75 before:bg-linear-to-r before:from-transparent before:via-orange-500/50 before:to-transparent before:opacity-0 hover:before:opacity-100 hover:-translate-y-1.5 hover:scale-[1.01] hover:shadow-[0_16px_36px_rgba(255,68,68,0.25),0_0_0_1px_rgba(255,153,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)] hover:border-orange-500/40 hover:bg-white/6">
+              <div className="relative w-full aspect-video overflow-hidden bg-linear-to-br from-[#1a1a2e]/95 to-[#16213e]/95">
+                <Image
+                  src="/images/ravi-shastri-india.jpg"
                   alt="Ravi Shastri India T20"
                   fill
-                  className={styles.featuredImage}
+                  className="object-cover transition-all duration-700 cubic-bezier(0.4,0,0.2,1) group-hover:scale-[1.08] group-hover:brightness-110"
                 />
               </div>
-              <div className={styles.featuredContent}>
-                <h3 className={styles.featuredTitle}>
+              <div className="p-6 bg-black/75 backdrop-blur-md transition-colors duration-400 group-hover:bg-black/85">
+                <h3 className="text-[21px] font-bold leading-normal text-[#f8f8f8] m-0 text-shadow-md">
                   'Very explosive': Ravi Shastri makes bold claim around team India ahead of T20 World Cup 2026
                 </h3>
               </div>
             </div>
 
-            <div className={styles.newsGrid}>
+            <div className="grid grid-cols-3 gap-4.5 md:grid-cols-1">
               {newsData.slice(0, 6).map((news, index) => (
-                <Link 
-                  key={news.id} 
+                <Link
+                  key={news.id}
                   href={`/cricket/${news.slug}`}
-                  className={styles.newsCard}
-                  style={{ animationDelay: `${index * 0.1}s` }}
+                  className="group bg-white/4 backdrop-blur-3xl border border-white/10 rounded-xl overflow-hidden shadow-[0_3px_14px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-500 cubic-bezier(0.4,0,0.2,1) animate-in-fade-up opacity-0 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-0.5 before:bg-linear-to-r before:from-transparent before:via-orange-500/50 before:to-transparent before:opacity-0 hover:before:opacity-100 after:content-[''] after:absolute after:inset-0 after:rounded-xl after:p-px after:bg-linear-to-br after:from-orange-500/0 after:to-orange-500/30 hover:after:opacity-100 hover:-translate-y-1.5 hover:scale-[1.02] hover:shadow-[0_14px_28px_rgba(255,68,68,0.22),0_0_0_1px_rgba(255,153,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)] hover:border-orange-500/40 hover:bg-white/6"
+                  style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'forwards' }}
                 >
-                  <div className={styles.newsImageWrapper}>
-                    <Image 
-                      src={news.image} 
+                  <div className="relative w-full aspect-[16/10] overflow-hidden bg-linear-to-br from-[#1a1a2e]/95 to-[#16213e]/95">
+                    <Image
+                      src={news.image}
                       alt={news.title}
                       fill
-                      className={styles.newsImage}
+                      className="object-cover transition-all duration-600 cubic-bezier(0.4,0,0.2,1) group-hover:scale-110 group-hover:brightness-115"
                     />
                   </div>
-                  <p className={styles.newsTitle}>{news.title}</p>
+                  <p className="text-[13px] font-semibold leading-relaxed text-white/90 m-0 p-4 line-clamp-2 transition-all duration-300 group-hover:text-[#ff9900]">{news.title}</p>
                 </Link>
               ))}
             </div>
 
-            <div className={styles.moreNewsGrid}>
+            <div className="grid grid-cols-2 gap-4.5 md:grid-cols-1">
               {newsData.slice(6).map((news, index) => (
-                <Link 
-                  key={news.id} 
+                <Link
+                  key={news.id}
                   href={`/cricket/${news.slug}`}
-                  className={styles.moreNewsCard}
-                  style={{ animationDelay: `${(index + 6) * 0.1}s` }}
+                  className="group bg-white/4 backdrop-blur-3xl border border-white/10 rounded-xl overflow-hidden shadow-[0_3px_14px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.05)] transition-all duration-500 cubic-bezier(0.4,0,0.2,1) animate-in-fade-up opacity-0 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-0.5 before:bg-linear-to-r before:from-transparent before:via-orange-500/50 before:to-transparent before:opacity-0 hover:before:opacity-100 hover:-translate-y-1.5 hover:scale-[1.02] hover:shadow-[0_14px_28px_rgba(255,68,68,0.22),0_0_0_1px_rgba(255,153,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)] hover:border-orange-500/40 hover:bg-white/6"
+                  style={{ animationDelay: `${(index + 6) * 0.1}s`, animationFillMode: 'forwards' }}
                 >
-                  <div className={styles.moreNewsImageWrapper}>
-                    <Image 
-                      src={news.image} 
+                  <div className="relative w-full aspect-[16/10] overflow-hidden bg-linear-to-br from-[#1a1a2e]/95 to-[#16213e]/95">
+                    <Image
+                      src={news.image}
                       alt={news.title}
                       fill
-                      className={styles.moreNewsImage}
+                      className="object-cover transition-all duration-600 cubic-bezier(0.4,0,0.2,1) group-hover:scale-110 group-hover:brightness-115"
                     />
                   </div>
-                  <p className={styles.moreNewsTitle}>{news.title}</p>
+                  <p className="text-[13px] font-semibold leading-relaxed text-white/90 m-0 p-4 line-clamp-2 transition-all duration-300 group-hover:text-[#ff9900]">{news.title}</p>
                 </Link>
               ))}
             </div>
 
-            <button className={styles.readMoreButton}>
+            <button className="self-end inline-flex items-center gap-3 px-8 py-3.5 bg-linear-to-br from-red-500/15 to-orange-500/15 border-2 border-orange-500/30 rounded-xl text-[#ff9900] text-[13px] font-bold uppercase tracking-widest cursor-pointer transition-all duration-500 cubic-bezier(0.4,0,0.2,1) relative overflow-hidden shadow-[0_4px_15px_rgba(255,153,0,0.2)] before:absolute before:inset-y-0 before:-left-full before:w-full before:bg-linear-to-r before:from-transparent before:via-white/15 before:to-transparent before:transition-[left] before:duration-600 hover:before:left-full hover:bg-linear-to-br hover:from-red-500/25 hover:to-orange-500/25 hover:border-orange-500/50 hover:text-[#ffd700] hover:-translate-y-1 hover:shadow-[0_10px_25px_rgba(255,153,0,0.4)]">
               <span>Read More</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <svg className="w-5 h-5 transition-transform duration-400 group-hover:translate-x-1.5" viewBox="0 0 24 24" fill="none">
+                <path d="M9 18l6-6-6-6" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
 
-            <div className={styles.scheduleSection}>
-              <div className={styles.scheduleTitleWrapper}>
-                <div className={styles.titleIcon}></div>
-                <h3 className={styles.scheduleTitle}>SCHEDULE</h3>
+            <div className="mt-7">
+              <div className="flex items-center gap-3.5 mb-6 after:content-[''] after:flex-1 after:h-0.5 after:bg-linear-to-r after:from-orange-500/40 after:to-transparent after:ml-4">
+                <div className="w-2.5 h-2.5 bg-linear-to-br from-[#ff4444] to-[#ff9900] rounded-full shadow-[0_0_20px_rgba(255,153,0,0.9)] animate-pulse"></div>
+                <h3 className="text-[26px] font-extrabold text-[#ffffff] m-0 tracking-wide text-shadow-orange bg-linear-to-br from-white to-[#ffd700] bg-clip-text text-transparent uppercase">SCHEDULE</h3>
               </div>
 
-              <div className={styles.scheduleTabs}>
-                <button 
-                  className={`${styles.scheduleTab} ${scheduleTab === 'current' ? styles.active : ''}`}
+              <div className="flex gap-3.5 border-b-2 border-white/10 mb-6 pb-0.5">
+                <button
+                  className={`px-7 py-3 bg-white/3 backdrop-blur-md border border-white/10 border-b-0 rounded-t-xl text-xs font-bold uppercase tracking-widest transition-all duration-400 cubic-bezier(0.4,0,0.2,1) relative ${scheduleTab === 'current' ? 'text-[#ffd700] bg-orange-500/15 border-orange-500/40 shadow-[0_4px_12px_rgba(255,153,0,0.2)] before:content-[""] before:absolute before:bottom-[-2px] before:inset-x-0 before:h-1 before:bg-linear-to-r before:from-[#ff4444] before:via-[#ff9900] before:to-[#ffd700] before:shadow-[0_0_16px_rgba(255,153,0,0.7)]' : 'text-white/65 cursor-pointer hover:text-[#ff9900] hover:bg-orange-500/10 hover:border-orange-500/25 hover:-translate-y-0.5'}`}
                   onClick={() => setScheduleTab('current')}
                 >
                   CURRENT
                 </button>
-                <button 
-                  className={`${styles.scheduleTab} ${scheduleTab === 'upcoming' ? styles.active : ''}`}
+                <button
+                  className={`px-7 py-3 bg-white/3 backdrop-blur-md border border-white/10 border-b-0 rounded-t-xl text-xs font-bold uppercase tracking-widest transition-all duration-400 cubic-bezier(0.4,0,0.2,1) relative ${scheduleTab === 'upcoming' ? 'text-[#ffd700] bg-orange-500/15 border-orange-500/40 shadow-[0_4px_12px_rgba(255,153,0,0.2)] before:content-[""] before:absolute before:bottom-[-2px] before:inset-x-0 before:h-1 before:bg-linear-to-r before:from-[#ff4444] before:via-[#ff9900] before:to-[#ffd700] before:shadow-[0_0_16px_rgba(255,153,0,0.7)]' : 'text-white/65 cursor-pointer hover:text-[#ff9900] hover:bg-orange-500/10 hover:border-orange-500/25 hover:-translate-y-0.5'}`}
                   onClick={() => setScheduleTab('upcoming')}
                 >
                   UPCOMING
                 </button>
-                <button 
-                  className={`${styles.scheduleTab} ${scheduleTab === 'recent' ? styles.active : ''}`}
+                <button
+                  className={`px-7 py-3 bg-white/3 backdrop-blur-md border border-white/10 border-b-0 rounded-t-xl text-xs font-bold uppercase tracking-widest transition-all duration-400 cubic-bezier(0.4,0,0.2,1) relative ${scheduleTab === 'recent' ? 'text-[#ffd700] bg-orange-500/15 border-orange-500/40 shadow-[0_4px_12px_rgba(255,153,0,0.2)] before:content-[""] before:absolute before:bottom-[-2px] before:inset-x-0 before:h-1 before:bg-linear-to-r before:from-[#ff4444] before:via-[#ff9900] before:to-[#ffd700] before:shadow-[0_0_16px_rgba(255,153,0,0.7)]' : 'text-white/65 cursor-pointer hover:text-[#ff9900] hover:bg-orange-500/10 hover:border-orange-500/25 hover:-translate-y-0.5'}`}
                   onClick={() => setScheduleTab('recent')}
                 >
                   RECENT
                 </button>
               </div>
 
-              <div className={styles.scheduleMatches}>
+              <div className="flex flex-col gap-4">
                 {scheduleData.map((match, index) => (
-                  <div 
-                    key={match.id} 
-                    className={styles.scheduleMatch}
-                    style={{ animationDelay: `${index * 0.1}s` }}
+                  <div
+                    key={match.id}
+                    className="group bg-white/4 backdrop-blur-2xl border border-white/10 rounded-xl p-4.5 transition-all duration-500 cubic-bezier(0.4,0,0.2,1) shadow-[0_3px_14px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.05)] animate-in-fade-up opacity-0 relative before:content-[''] before:absolute before:top-0 before:inset-x-0 before:h-0.5 before:bg-linear-to-r before:from-transparent before:via-orange-500/50 before:to-transparent before:opacity-0 hover:before:opacity-100 after:content-[''] after:absolute after:left-0 after:top-1/2 after:-translate-y-1/2 after:w-0 after:h-3/5 after:bg-linear-to-b after:from-[#ff4444] after:to-[#ff9900] after:rounded-r after:transition-[width] after:duration-400 hover:translate-x-1.5 hover:shadow-[0_10px_24px_rgba(255,68,68,0.2),0_0_0_1px_rgba(255,153,0,0.35),inset_0_1px_0_rgba(255,255,255,0.1)] hover:border-orange-500/40 hover:bg-white/6 hover:after:w-1"
+                    style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'forwards' }}
                   >
-                    <div className={styles.matchInfo}>
-                      <p className={styles.matchMeta}>
-                        {match.matchNumber}, {match.group}, {match.venue} <span className={styles.matchDate}>{match.date}</span>
+                    <div className="flex flex-col gap-3">
+                      <p className="text-[11px] text-white/65 m-0 leading-relaxed">
+                        {match.matchNumber}, {match.group}, {match.venue} <span className="text-[#ff9900] font-bold transition-colors duration-300 group-hover:text-[#ffd700]">{match.date}</span>
                       </p>
-                      <div className={styles.teamsInfo}>
-                        <div className={styles.teamItem}>
-                          <Image 
-                            src={match.team1Flag} 
+                      <div className="flex flex-col gap-2.5">
+                        <div className="flex items-center gap-3 transition-transform duration-300 hover:translate-x-1">
+                          <Image
+                            src={match.team1Flag}
                             alt={match.team1}
                             width={20}
                             height={20}
-                            className={styles.teamFlag}
+                            className="rounded border border-orange-500/30 shadow-md"
                           />
-                          <span className={styles.teamName}>{match.team1}</span>
+                          <span className="text-sm font-bold text-[#f8f8f8] text-shadow-sm">{match.team1}</span>
                         </div>
-                        <div className={styles.teamItem}>
-                          <Image 
-                            src={match.team2Flag} 
+                        <div className="flex items-center gap-3 transition-transform duration-300 hover:translate-x-1">
+                          <Image
+                            src={match.team2Flag}
                             alt={match.team2}
                             width={20}
                             height={20}
-                            className={styles.teamFlag}
+                            className="rounded border border-orange-500/30 shadow-md"
                           />
-                          <span className={styles.teamName}>{match.team2}</span>
+                          <span className="text-sm font-bold text-[#f8f8f8] text-shadow-sm">{match.team2}</span>
                         </div>
                       </div>
                     </div>
@@ -291,46 +290,46 @@ const T20WorldCupSection: React.FC = () => {
             </div>
           </div>
 
-          <div className={styles.rightColumn}>
-            <div className={styles.adBanner}>
-              <Image 
-                src="/images/swadeshi-ad.jpg" 
+          <div className="flex flex-col gap-6">
+            <div className="relative w-full aspect-[3/4] rounded-xl overflow-hidden border border-white/10 shadow-lg transition-transform duration-300 hover:scale-[1.02]">
+              <Image
+                src="/images/swadeshi-ad.jpg"
                 alt="Advertisement"
                 fill
-                className={styles.adImage}
+                className="object-cover"
               />
-              <span className={styles.adLabel}>Advertisement</span>
+              <span className="absolute top-3 right-3 bg-black/80 text-white/75 px-3 py-1.5 text-[10px] rounded-md backdrop-blur-md font-semibold tracking-wider">Advertisement</span>
             </div>
 
-            <div className={styles.pointsTableWrapper}>
-              <div className={styles.pointsHeader}>
-                <h3 className={styles.pointsTitle}>ICC MENS T20 WORLD CUP POINTS TABLE</h3>
+            <div className="bg-white/4 backdrop-blur-3xl border border-white/10 rounded-2xl overflow-hidden shadow-[0_4px_16px_rgba(0,0,0,0.4),inset_0_1px_0_rgba(255,255,255,0.05)] transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-[0_6px_20px_rgba(0,0,0,0.5),inset_0_1px_0_rgba(255,255,255,0.08)]">
+              <div className="bg-linear-to-br from-[#003a70] to-[#00509e] p-4 text-center relative after:content-[''] after:absolute after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-linear-to-r after:from-transparent after:via-orange-500/60 after:to-transparent">
+                <h3 className="text-sm font-extrabold text-white m-0 tracking-wider uppercase text-shadow-md">ICC MENS T20 WORLD CUP POINTS TABLE</h3>
               </div>
 
-              <div className={styles.tableHeader}>
-                <span className={styles.thTeams}>TEAMS</span>
-                <span className={styles.th}>M</span>
-                <span className={styles.th}>W</span>
-                <span className={styles.th}>L</span>
-                <span className={styles.th}>NR</span>
-                <span className={styles.th}>NRR</span>
-                <span className={styles.th}>PTS</span>
+              <div className="grid grid-cols-[2fr_repeat(6,1fr)] gap-2.5 p-3.5 bg-linear-to-br from-[#003a70] to-[#00509e] border-b-2 border-orange-500/40">
+                <span className="text-[11px] font-extrabold text-white uppercase tracking-wider text-shadow-sm">TEAMS</span>
+                <span className="text-[11px] font-extrabold text-white uppercase tracking-wider text-center text-shadow-sm">M</span>
+                <span className="text-[11px] font-extrabold text-white uppercase tracking-wider text-center text-shadow-sm">W</span>
+                <span className="text-[11px] font-extrabold text-white uppercase tracking-wider text-center text-shadow-sm">L</span>
+                <span className="text-[11px] font-extrabold text-white uppercase tracking-wider text-center text-shadow-sm">NR</span>
+                <span className="text-[11px] font-extrabold text-white uppercase tracking-wider text-center text-shadow-sm">NRR</span>
+                <span className="text-[11px] font-extrabold text-white uppercase tracking-wider text-center text-shadow-sm">PTS</span>
               </div>
 
               {Object.entries(pointsTableData).map(([groupKey, teams], groupIndex) => (
-                <div key={groupKey} className={styles.groupSection}>
-                  <div className={styles.groupHeader}>
+                <div key={groupKey} className="border-b border-white/10 last:border-none">
+                  <div className="bg-linear-to-r from-blue-900/50 to-transparent p-2 text-[10px] font-black text-[#ff9900] tracking-widest pl-4 uppercase">
                     GROUP {String.fromCharCode(65 + groupIndex)}
                   </div>
                   {teams.map((team, index) => (
-                    <div key={team.team} className={styles.tableRow}>
-                      <span className={styles.tdTeam}>{team.team}</span>
-                      <span className={styles.td}>{team.m}</span>
-                      <span className={styles.td}>{team.w}</span>
-                      <span className={styles.td}>{team.l}</span>
-                      <span className={styles.td}>{team.nr}</span>
-                      <span className={styles.td}>{team.nrr}</span>
-                      <span className={styles.td}>{team.pts}</span>
+                    <div key={team.team} className="grid grid-cols-[2fr_repeat(6,1fr)] gap-2.5 p-3.5 border-b border-white/5 last:border-none transition-colors duration-200 hover:bg-white/5">
+                      <span className="text-[11px] font-extrabold text-[#ffd700] tracking-wider">{team.team}</span>
+                      <span className="text-[11px] font-bold text-white/80 text-center">{team.m}</span>
+                      <span className="text-[11px] font-bold text-white/80 text-center">{team.w}</span>
+                      <span className="text-[11px] font-bold text-white/80 text-center">{team.l}</span>
+                      <span className="text-[11px] font-bold text-white/80 text-center">{team.nr}</span>
+                      <span className="text-[11px] font-bold text-white/80 text-center">{team.nrr}</span>
+                      <span className="text-[11px] font-bold text-white/80 text-center">{team.pts}</span>
                     </div>
                   ))}
                 </div>

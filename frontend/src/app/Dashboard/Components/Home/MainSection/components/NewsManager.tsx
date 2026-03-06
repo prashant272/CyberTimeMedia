@@ -1,6 +1,6 @@
-"use client";
-import React, { useState, useEffect, useCallback, ChangeEvent, FC, useMemo } from "react";
+﻿import React, { useState, useEffect, useCallback, ChangeEvent, FC, useMemo } from "react";
 import { FaFacebook, FaWhatsapp, FaShareAlt } from "react-icons/fa";
+import { Edit2, Trash2, Star, TrendingUp, EyeOff, Calendar, Tag, Eye, Newspaper } from "lucide-react";
 import {
     NewsItem,
     useNewsBySection,
@@ -10,21 +10,21 @@ import {
     useSetNewsFlags
 } from "@/app/hooks/NewsApi";
 import { compressImage } from "@/Utils/Utils";
-import styles from "../Main.module.scss";
 
 const CATEGORIES = [
-    { id: 'home', label: 'Home', icon: '🏠' },
-    { id: 'india', label: 'India', icon: '🇮🇳' },
-    { id: 'sports', label: 'Sports', icon: '⚽' },
-    { id: 'business', label: 'Business', icon: '📈' },
-    { id: 'technology', label: 'Tech', icon: '💻' },
-    { id: 'entertainment', label: 'Entertainment', icon: '🎬' },
-    { id: 'lifestyle', label: 'Lifestyle', icon: '✨' },
-    { id: 'world', label: 'World', icon: '🌍' },
-    { id: 'health', label: 'Health', icon: '🏥' },
-    { id: 'regional', label: 'Regional', icon: '📍' },
-    { id: 'awards', label: 'Awards', icon: '🏆' },
+    { id: 'home', label: 'Home' },
+    { id: 'india', label: 'India' },
+    { id: 'sports', label: 'Sports' },
+    { id: 'business', label: 'Business' },
+    { id: 'entertainment', label: 'Entertainment' },
+    { id: 'lifestyle', label: 'Fashion' },
+    { id: 'world', label: 'World' },
+    { id: 'awards', label: 'Awards' },
 ] as const;
+
+const WORLD_SUB_CATEGORIES = [
+    "India", "Europe", "USA", "Africa", "Asia", "Middle East"
+];
 
 type NewsCategory = typeof CATEGORIES[number]['id'];
 
@@ -191,7 +191,7 @@ const NewsManager: FC<NewsManagerProps> = ({
             return;
         }
         try {
-            const authorName = userAuthData?.name || "Prime Time News";
+            const authorName = userAuthData?.name || "TIME CYBERMEDIA News";
             const currentUserId = userAuthData?.userId || userAuthData?._id || userAuthData?.id;
 
             await addNews({
@@ -229,7 +229,7 @@ const NewsManager: FC<NewsManagerProps> = ({
     const handleUpdate = useCallback(async () => {
         if (!canUpdate || !editingSlug) return;
         try {
-            const authorName = userAuthData?.name || "Prime Time News";
+            const authorName = userAuthData?.name || "TIME CYBERMEDIA News";
             const currentUserId = userAuthData?.userId || userAuthData?._id || userAuthData?.id;
 
             await updateNews({
@@ -319,7 +319,7 @@ const NewsManager: FC<NewsManagerProps> = ({
         const sectionSlug = selectedCategory.toLowerCase();
         const categorySlug = (item.category || selectedCategory).toLowerCase().replace(/\s+/g, '-');
         const fullUrl = `${siteUrl}/Pages/${sectionSlug}/${categorySlug}/${item.slug}`;
-        const shareText = `${item.title} | View more news on Prime Time Media:`;
+        const shareText = `${item.title} | View more news on TIME CYBERMEDIA Media:`;
 
         if (platform === 'facebook') {
             return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}`;
@@ -333,22 +333,24 @@ const NewsManager: FC<NewsManagerProps> = ({
     const isEditing = editingSlug !== null;
 
     return (
-        <div className={styles.newsManagerWrapper}>
+        <div className="space-y-8 font-['Outfit']">
             {section === 'previous_news' && (
-                <div className={styles.categoryFilterContainer}>
-                    <label className={styles.label}>Select Category to View News:</label>
-                    <div className={styles.categoryPills}>
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-4">Select Category to View News:</label>
+                    <div className="flex flex-wrap gap-2">
                         {CATEGORIES.map(cat => (
                             <button
                                 key={cat.id}
-                                className={`${styles.categoryPill} ${selectedCategory === cat.id ? styles.activePill : ''}`}
+                                className={`px-4 py-2 rounded-xl text-sm font-medium transition-all flex items-center gap-2 border ${selectedCategory === cat.id
+                                    ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/20'
+                                    : 'bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-blue-400'
+                                    }`}
                                 onClick={() => {
                                     setSelectedCategory(cat.id);
                                     setPage(1); // Reset page on category change
                                 }}
                             >
-                                <span className={styles.pillIcon}>{cat.icon}</span>
-                                <span>{cat.label}</span>
+                                {cat.label}
                             </button>
                         ))}
                     </div>
@@ -356,300 +358,435 @@ const NewsManager: FC<NewsManagerProps> = ({
             )}
 
             {(section === 'news_management' || isEditing) && (
-                <div className={styles.editor}>
-                    <div className={styles.editorHeader}>
-                        <h2 className={styles.editorTitle}>
+                <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden animate-in fade-in slide-in-from-top-4 duration-500">
+                    <div className="px-8 py-6 bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
                             {isEditing ? (
                                 <>
-                                    <span className={styles.editorIcon}>✏️</span> Edit Article
+                                    <span className="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center"><Edit2 size={20} className="text-amber-600" /></span> Edit Article
                                 </>
                             ) : (
                                 <>
-                                    <span className={styles.editorIcon}>➕</span> Create Article
+                                    <span className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center text-xl font-bold text-blue-600">+</span> Create Article
                                 </>
                             )}
                         </h2>
                         {isEditing && (
-                            <button onClick={resetForm} className={styles.closeBtn}>✕</button>
-                        )}
-                    </div>
-                    <div className={styles.formGrid}>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Title <span className={styles.required}>*</span></label>
-                            <input
-                                type="text"
-                                className={styles.input}
-                                value={formState.title ?? ""}
-                                onChange={handleChange("title")}
-                                placeholder="Enter title..."
-                            />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Slug <span className={styles.required}>*</span></label>
-                            <input
-                                type="text"
-                                className={styles.input}
-                                value={formState.slug ?? ""}
-                                onChange={handleChange("slug")}
-                                placeholder="article-slug"
-                            />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Category <span className={styles.required}>*</span></label>
-                            <select
-                                className={styles.select}
-                                value={selectedCategory}
-                                onChange={(e) => {
-                                    const newCat = e.target.value as NewsCategory;
-                                    setSelectedCategory(newCat);
-                                    setFormState(prev => ({
-                                        ...prev,
-                                        category: newCat.charAt(0).toUpperCase() + newCat.slice(1)
-                                    }));
-                                }}
-                            >
-                                {CATEGORIES.map(cat => (
-                                    <option key={cat.id} value={cat.id}>{cat.icon} {cat.label}</option>
-                                ))}
-                            </select>
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Sub-category</label>
-                            <input
-                                type="text"
-                                className={styles.input}
-                                value={formState.subCategory ?? ""}
-                                onChange={handleChange("subCategory")}
-                            />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Status</label>
-                            <select
-                                value={formState.status ?? "draft"}
-                                onChange={handleChange("status")}
-                                className={styles.select}
-                            >
-                                <option value="draft">Draft</option>
-                                <option value="published">Published</option>
-                                <option value="archived">Archived</option>
-                            </select>
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Featured Image</label>
-                            <input
-                                id="file-upload"
-                                type="file"
-                                accept="image/*"
-                                className={styles.hidden}
-                                onChange={handleImageChange}
-                            />
-                            <div
-                                className={styles.imageUploadArea}
-                                onClick={() => document.getElementById("file-upload")?.click()}
-                            >
-                                {showImage || imagePreview || formState.image ? (
-                                    <div className={styles.previewContainer}>
-                                        <img
-                                            src={imagePreview || formState.image || ""}
-                                            alt="Preview"
-                                            className={styles.imagePreview}
-                                        />
-                                        <button
-                                            type="button"
-                                            className={styles.removeImageBtn}
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setFormState((prev) => ({ ...prev, image: "" }));
-                                                setImagePreview(null);
-                                                setShowImage(false);
-                                            }}
-                                        >
-                                            Remove
-                                        </button>
-                                    </div>
-                                ) : (
-                                    <div className={styles.uploadPlaceholder}>
-                                        <span className={styles.uploadIcon}>📸</span>
-                                        <p>Click to upload image</p>
-                                        <small>PNG, JPG, max 5MB</small>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                            <label className={styles.label}>Summary</label>
-                            <textarea
-                                className={styles.textarea}
-                                value={formState.summary ?? ""}
-                                onChange={handleChange("summary")}
-                                rows={3}
-                                placeholder="Short summary..."
-                            />
-                        </div>
-                        <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                            <label className={styles.label}>Content <span className={styles.required}>*</span></label>
-                            <textarea
-                                className={styles.textarea}
-                                value={formState.content ?? ""}
-                                onChange={handleChange("content")}
-                                rows={12}
-                                placeholder="Write article content here..."
-                            />
-                        </div>
-                        <div className={`${styles.formGroup} ${styles.fullWidth}`}>
-                            <label className={styles.label}>Tags</label>
-                            <input
-                                type="text"
-                                className={styles.input}
-                                value={tagsInput}
-                                onChange={handleTagsChange}
-                                placeholder="comma, separated, tags"
-                            />
-                        </div>
-                    </div>
-                    <div className={styles.formActions}>
-                        {isEditing ? (
-                            <>
-                                <button onClick={handleUpdate} className={styles.primaryBtn}>Update Article</button>
-                                <button onClick={resetForm} className={styles.secondaryBtn}>Cancel</button>
-                            </>
-                        ) : (
-                            <button
-                                onClick={handleAdd}
-                                className={styles.primaryBtn}
-                                disabled={!canCreate || addLoading}
-                            >
-                                {addLoading ? "Creating..." : "Create Article"}
-                            </button>
+                            <button onClick={resetForm} className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-400 transition-colors">X</button>
                         )}
                     </div>
 
-                    {formState.slug && (
-                        <div className={styles.shareSection}>
-                            <div className={styles.shareLabel}><FaShareAlt /> Share this article</div>
-                            <div className={styles.shareButtons}>
-                                <a
-                                    href={getShareLink(formState, 'facebook')}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`${styles.shareBtn} ${styles.facebook}`}
-                                ><FaFacebook /> Facebook</a>
-                                <a
-                                    href={getShareLink(formState, 'whatsapp')}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className={`${styles.shareBtn} ${styles.whatsapp}`}
-                                ><FaWhatsapp /> WhatsApp</a>
+                    <div className="p-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Title <span className="text-red-500">*</span></label>
+                                <input
+                                    type="text"
+                                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-900 dark:text-white"
+                                    value={formState.title ?? ""}
+                                    onChange={handleChange("title")}
+                                    placeholder="Enter title..."
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Slug <span className="text-red-500">*</span></label>
+                                <input
+                                    type="text"
+                                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-900 dark:text-white font-mono text-sm"
+                                    value={formState.slug ?? ""}
+                                    onChange={handleChange("slug")}
+                                    placeholder="article-slug"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Category <span className="text-red-500">*</span></label>
+                                <select
+                                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-900 dark:text-white appearance-none"
+                                    value={selectedCategory}
+                                    onChange={(e) => {
+                                        const newCat = e.target.value as NewsCategory;
+                                        setSelectedCategory(newCat);
+                                        setFormState(prev => ({
+                                            ...prev,
+                                            category: newCat.charAt(0).toUpperCase() + newCat.slice(1)
+                                        }));
+                                    }}
+                                >
+                                    {CATEGORIES.map(cat => (
+                                        <option key={cat.id} value={cat.id}>{cat.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Sub-category</label>
+                                {selectedCategory === 'world' ? (
+                                    <select
+                                        className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-900 dark:text-white appearance-none"
+                                        value={formState.subCategory ?? ""}
+                                        onChange={handleChange("subCategory")}
+                                    >
+                                        <option value="">Select Sub-Region</option>
+                                        {WORLD_SUB_CATEGORIES.map(sub => (
+                                            <option key={sub} value={sub}>{sub}</option>
+                                        ))}
+                                    </select>
+                                ) : (
+                                    <input
+                                        type="text"
+                                        className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-900 dark:text-white"
+                                        value={formState.subCategory ?? ""}
+                                        onChange={handleChange("subCategory")}
+                                        placeholder="Optional sub-category"
+                                    />
+                                )}
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Status</label>
+                                <select
+                                    value={formState.status ?? "draft"}
+                                    onChange={handleChange("status")}
+                                    className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-900 dark:text-white appearance-none"
+                                >
+                                    <option value="draft">Draft</option>
+                                    <option value="published">Published</option>
+                                    <option value="archived">Archived</option>
+                                </select>
+                            </div>
+                            <div className="md:col-span-2 lg:col-span-1 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden group hover:border-blue-500/50 transition-colors">
+                                <input
+                                    id="file-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    className="hidden"
+                                    onChange={handleImageChange}
+                                />
+                                <div
+                                    className="h-full min-h-[140px] flex flex-col items-center justify-center p-4 cursor-pointer relative"
+                                    onClick={() => document.getElementById("file-upload")?.click()}
+                                >
+                                    {showImage || imagePreview || formState.image ? (
+                                        <div className="absolute inset-0 group">
+                                            <img
+                                                src={imagePreview || formState.image || ""}
+                                                alt="Preview"
+                                                className="w-full h-full object-cover transition-transform group-hover:scale-105"
+                                            />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <button
+                                                    type="button"
+                                                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg shadow-lg"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setFormState((prev) => ({ ...prev, image: "" }));
+                                                        setImagePreview(null);
+                                                        setShowImage(false);
+                                                    }}
+                                                >
+                                                    Remove Image
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <div className="text-center space-y-2 text-gray-400">
+                                            <p className="text-xs font-bold uppercase tracking-widest">Click to upload</p>
+                                            <p className="text-[10px]">PNG, JPG, max 10MB</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div className="md:col-span-2 lg:col-span-3 space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Summary</label>
+                                <textarea
+                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-900 dark:text-white resize-none"
+                                    value={formState.summary ?? ""}
+                                    onChange={handleChange("summary")}
+                                    rows={2}
+                                    placeholder="Write a catchy summary for previews..."
+                                />
+                            </div>
+
+                            <div className="md:col-span-2 lg:col-span-3 space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Content <span className="text-red-500">*</span></label>
+                                <textarea
+                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-900 dark:text-white font-serif"
+                                    value={formState.content ?? ""}
+                                    onChange={handleChange("content")}
+                                    rows={12}
+                                    placeholder="Write article content here..."
+                                />
+                            </div>
+
+                            <div className="md:col-span-2 lg:col-span-3 space-y-2">
+                                <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Tags</label>
+                                <div className="relative">
+                                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">#</span>
+                                    <input
+                                        type="text"
+                                        className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all text-gray-900 dark:text-white"
+                                        value={tagsInput}
+                                        onChange={handleTagsChange}
+                                        placeholder="comma, separated, tags"
+                                    />
+                                </div>
                             </div>
                         </div>
-                    )}
+
+                        <div className="mt-10 flex flex-wrap gap-4 border-t border-gray-100 dark:border-gray-700 pt-8">
+                            {isEditing ? (
+                                <>
+                                    <button onClick={handleUpdate} className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all flex-1 md:flex-none">
+                                        Update Article
+                                    </button>
+                                    <button onClick={resetForm} className="px-8 py-3 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-all flex-1 md:flex-none">
+                                        Cancel
+                                    </button>
+                                </>
+                            ) : (
+                                <button
+                                    onClick={handleAdd}
+                                    className="px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all disabled:opacity-50 flex items-center gap-2"
+                                    disabled={!canCreate || addLoading}
+                                >
+                                    {addLoading ? (
+                                        <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Creating...</>
+                                    ) : "Create Article"}
+                                </button>
+                            )}
+                        </div>
+
+                        {formState.slug && (
+                            <div className="mt-8 p-6 bg-blue-50/50 dark:bg-blue-900/10 rounded-2xl border border-blue-100/50 dark:border-blue-900/30 flex flex-col md:flex-row items-center justify-between gap-6">
+                                <div className="flex items-center gap-3 font-bold text-blue-700 dark:text-blue-400 text-sm">
+                                    <FaShareAlt className="text-lg" /> Share this article
+                                </div>
+                                <div className="flex gap-3 w-full md:w-auto">
+                                    <a
+                                        href={getShareLink(formState, 'facebook')}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-[#1877F2] text-white text-xs font-bold rounded-lg hover:brightness-110 shadow-md shadow-blue-500/20 transition-all"
+                                    ><FaFacebook /> Facebook</a>
+                                    <a
+                                        href={getShareLink(formState, 'whatsapp')}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex-1 md:flex-none flex items-center justify-center gap-2 px-6 py-2.5 bg-[#25D366] text-white text-xs font-bold rounded-lg hover:brightness-110 shadow-md shadow-emerald-500/20 transition-all"
+                                    ><FaWhatsapp /> WhatsApp</a>
+                                </div>
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
 
             {section === 'previous_news' && (
-                <div className={styles.articlesSection}>
-                    <div className={styles.articlesSectionHeader}>
-                        <h2 className={styles.sectionTitle}>
-                            Previous News: {selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} ({newsData?.length || 0})
-                        </h2>
-                        <div className={styles.toolbar}>
-                            <div className={styles.searchBox}>
-                                <span className={styles.searchIcon}>🔍</span>
+                <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-gray-50 dark:bg-gray-900/50 p-8 rounded-3xl border border-gray-100 dark:border-gray-800 transition-all hover:bg-white dark:hover:bg-gray-900 hover:shadow-xl hover:shadow-blue-500/5 group">
+                        <div className="space-y-1">
+                            <h2 className="text-2xl font-black text-gray-900 dark:text-white tracking-tight flex items-center gap-3">
+                                <span className="w-2 h-8 bg-blue-600 rounded-full group-hover:h-10 transition-all" />
+                                Previous News <span className="text-gray-400 font-medium">({newsData?.length || 0})</span>
+                            </h2>
+                            <p className="text-sm text-gray-500 font-medium ml-5">Managing {selectedCategory} archives</p>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-4">
+                            <div className="relative group/search w-full md:w-64">
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within/search:text-blue-500 transition-colors pointer-events-none">&#128269;</span>
                                 <input
                                     type="text"
-                                    className={styles.searchInput}
-                                    placeholder="Search articles..."
+                                    className="w-full pl-11 pr-4 py-3 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 rounded-2xl focus:border-blue-500 outline-none transition-all text-sm font-medium placeholder-gray-400"
+                                    placeholder="Search archive..."
                                     value={searchQuery}
                                     onChange={(e) => setSearchQuery(e.target.value)}
                                 />
                             </div>
-                            <div className={styles.filters}>
-                                <select className={styles.filterSelect} value={filterStatus} onChange={(e) => setFilterStatus(e.target.value as any)}>
-                                    <option value="all">All Status</option>
+
+                            <div className="flex items-center gap-2 bg-white dark:bg-gray-800 p-1.5 rounded-2xl border-2 border-gray-100 dark:border-gray-700">
+                                <select
+                                    className="bg-transparent px-3 py-1.5 text-xs font-black uppercase tracking-widest text-gray-500 focus:text-blue-600 outline-none cursor-pointer"
+                                    value={filterStatus}
+                                    onChange={(e) => setFilterStatus(e.target.value as any)}
+                                >
+                                    <option value="all">All</option>
                                     <option value="published">Published</option>
                                     <option value="draft">Draft</option>
                                 </select>
-                                <select className={styles.filterSelect} value={sortBy} onChange={(e) => setSortBy(e.target.value as any)}>
-                                    <option value="newest">Newest First</option>
-                                    <option value="oldest">Oldest First</option>
+                                <div className="w-px h-4 bg-gray-200 dark:bg-gray-700" />
+                                <select
+                                    className="bg-transparent px-3 py-1.5 text-xs font-black uppercase tracking-widest text-gray-500 focus:text-blue-600 outline-none cursor-pointer"
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value as any)}
+                                >
+                                    <option value="newest">Newest</option>
+                                    <option value="oldest">Oldest</option>
                                 </select>
                             </div>
+
+                            <button
+                                onClick={() => setViewMode(viewMode === "grid" ? "list" : "grid")}
+                                className="w-12 h-12 flex items-center justify-center rounded-2xl bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 text-xl hover:border-blue-500 hover:text-blue-600 transition-all shadow-sm active:scale-95"
+                                title={viewMode === 'grid' ? 'LIST' : 'GRID'}
+                            >
+                                {viewMode === 'grid' ? 'LIST' : 'GRID'}
+                            </button>
                         </div>
                     </div>
 
                     {fetchLoading ? (
-                        <div className={styles.loading}>
-                            <div className={styles.spinner} />
-                            <p>Loading news...</p>
+                        <div className="flex flex-col items-center justify-center py-32 space-y-6">
+                            <div className="relative">
+                                <div className="w-20 h-20 border-4 border-blue-50 dark:border-blue-900/20 rounded-full" />
+                                <div className="absolute inset-0 w-20 h-20 border-4 border-transparent border-t-blue-600 rounded-full animate-spin" />
+                            </div>
+                            <div className="text-center space-y-1">
+                                <h3 className="text-lg font-bold text-gray-900 dark:text-white">Loading News</h3>
+                                <p className="text-sm text-gray-500">Retrieving from the vault...</p>
+                            </div>
                         </div>
                     ) : filteredAndSortedItems.length === 0 ? (
-                        <div className={styles.emptyState}>
-                            <div className={styles.emptyIcon}>📄</div>
-                            <h3>No news found</h3>
+                        <div className="bg-gray-50 dark:bg-gray-900/20 border-4 border-dashed border-gray-100 dark:border-gray-800 rounded-[3rem] p-24 text-center space-y-6">
+                            <span className="text-8xl block grayscale opacity-20 transform hover:scale-110 transition-transform cursor-pointer">&#128194;</span>
+                            <div className="space-y-2">
+                                <h3 className="text-2xl font-black text-gray-900 dark:text-white">Nothing to show</h3>
+                                <p className="text-gray-500 max-w-xs mx-auto text-sm font-medium leading-relaxed">Try adjusting your filters or use different keywords to find what you're looking for.</p>
+                            </div>
                         </div>
                     ) : (
                         <>
-                            <div className={`${styles.grid} ${viewMode === "list" ? styles.listView : ""}`}>
+                            <div className={viewMode === "grid"
+                                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+                                : "space-y-6 max-w-5xl mx-auto"
+                            }>
                                 {filteredAndSortedItems.map((item) => (
-                                    <article key={item.slug} className={`${styles.card} ${item.isHidden ? styles.hiddenCard : ""}`}>
-                                        <div className={styles.cardImage}>
+                                    <article
+                                        key={item.slug}
+                                        className={`group bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 overflow-hidden hover:shadow-xl hover:shadow-black/5 hover:-translate-y-1 transition-all duration-300 flex ${viewMode === "list" ? "flex-row" : "flex-col"}`}
+                                    >
+                                        {/* Image */}
+                                        <div className={`relative overflow-hidden flex-shrink-0 ${viewMode === "list" ? "w-52 h-full" : "aspect-video w-full"}`}>
                                             {item.image ? (
-                                                <img src={item.image} alt={item.title} loading="lazy" />
+                                                <img
+                                                    src={item.image}
+                                                    alt={item.title}
+                                                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                    loading="lazy"
+                                                />
                                             ) : (
-                                                <div style={{ background: "linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1))", height: "100%" }} />
-                                            )}
-                                            <span className={`${styles.statusBadge} ${styles[item.status || "draft"]}`}>
-                                                {item.status || "draft"}
-                                            </span>
-                                        </div>
-                                        <div className={styles.cardContent}>
-                                            <h3 className={styles.cardTitle}>{item.title}</h3>
-                                            <div className={styles.cardFooter}>
-                                                <div className={styles.cardActions}>
-                                                    <button
-                                                        onClick={() => handleToggleFlag(item.slug, "isHidden", !item.isHidden)}
-                                                        className={styles.visibilityBtn}
-                                                        disabled={!canUpdate || flagsLoading}
-                                                        title={item.isHidden ? "Unhide" : "Hide"}
-                                                    >
-                                                        {item.isHidden ? "👁️" : "🙈"}
-                                                    </button>
-                                                    <button onClick={() => startEdit(item)} className={styles.editBtn} disabled={!canUpdate} title="Edit">✏️</button>
-                                                    <button onClick={() => handleDelete(item.slug)} className={styles.deleteBtn} disabled={!canDelete} title="Delete">🗑️</button>
+                                                <div className="w-full h-full min-h-[120px] bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800 flex flex-col items-center justify-center gap-2 text-gray-400 dark:text-gray-500">
+                                                    <Newspaper size={32} strokeWidth={1.5} />
+                                                    <span className="text-xs font-medium">No Image</span>
                                                 </div>
+                                            )}
+                                            {/* Status badge */}
+                                            <div className={`absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide ${item.status === 'published' ? 'bg-emerald-500 text-white' : item.status === 'archived' ? 'bg-gray-500 text-white' : 'bg-amber-400 text-white'}`}>
+                                                {item.status || 'draft'}
                                             </div>
-                                            <div style={{ display: "flex", gap: "0.5rem", marginTop: "0.75rem" }}>
+                                            {/* Active flags overlay */}
+                                            <div className="absolute top-2 right-2 flex flex-col gap-1">
+                                                {item.isLatest && <span className="bg-yellow-400 text-yellow-900 text-[9px] font-black px-1.5 py-0.5 rounded uppercase">Latest</span>}
+                                                {item.isTrending && <span className="bg-orange-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase">Trending</span>}
+                                                {item.isHidden && <span className="bg-gray-600 text-white text-[9px] font-black px-1.5 py-0.5 rounded uppercase">Hidden</span>}
+                                            </div>
+                                        </div>
+
+                                        {/* Content */}
+                                        <div className="p-4 flex flex-col flex-1 gap-3">
+                                            {/* Category + Date */}
+                                            <div className="flex items-center gap-3 text-[11px] text-gray-400 font-medium">
+                                                <span className="flex items-center gap-1">
+                                                    <Tag size={11} />
+                                                    {item.category || selectedCategory}
+                                                </span>
+                                                {item.publishedAt && (
+                                                    <span className="flex items-center gap-1">
+                                                        <Calendar size={11} />
+                                                        {new Date(item.publishedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' })}
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {/* Title */}
+                                            <h3 className="font-bold text-gray-900 dark:text-white text-sm leading-snug line-clamp-2 group-hover:text-blue-600 transition-colors flex-1">
+                                                {item.title}
+                                            </h3>
+
+                                            {/* Action bar */}
+                                            <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-700 mt-auto">
+                                                {/* Edit */}
                                                 <button
-                                                    onClick={() => handleToggleFlag(item.slug, "isLatest", !item.isLatest)}
-                                                    className={`${styles.flagBtn} ${item.isLatest ? styles.flagActive : ""}`}
-                                                    disabled={!canUpdate || flagsLoading}
-                                                >⭐ {item.isLatest ? "Latest" : "Mark Latest"}</button>
+                                                    onClick={() => startEdit(item)}
+                                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white text-xs font-semibold transition-all active:scale-95"
+                                                    title="Edit"
+                                                >
+                                                    <Edit2 size={13} />
+                                                    Edit
+                                                </button>
+                                                {/* Delete */}
                                                 <button
-                                                    onClick={() => handleToggleFlag(item.slug, "isTrending", !item.isTrending)}
-                                                    className={`${styles.flagBtn} ${item.isTrending ? styles.flagActive : ""}`}
-                                                    disabled={!canUpdate || flagsLoading}
-                                                >🔥 {item.isTrending ? "Trending" : "Mark Trending"}</button>
+                                                    onClick={() => handleDelete(item.slug)}
+                                                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-50 dark:bg-red-900/30 text-red-500 dark:text-red-400 hover:bg-red-500 hover:text-white text-xs font-semibold transition-all active:scale-95"
+                                                    title="Delete"
+                                                >
+                                                    <Trash2 size={13} />
+                                                    Del
+                                                </button>
+
+                                                {/* Flag buttons */}
+                                                <div className="flex items-center gap-1 ml-auto">
+                                                    <button
+                                                        onClick={() => handleToggleFlag(item.slug, 'isLatest', !item.isLatest)}
+                                                        disabled={!canUpdate || flagsLoading}
+                                                        className={`p-1.5 rounded-lg transition-all ${item.isLatest ? 'bg-yellow-400 text-yellow-900' : 'text-gray-400 hover:text-yellow-500 hover:bg-yellow-50 dark:hover:bg-yellow-900/30'}`}
+                                                        title="Toggle Latest"
+                                                    >
+                                                        <Star size={14} fill={item.isLatest ? 'currentColor' : 'none'} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleToggleFlag(item.slug, 'isTrending', !item.isTrending)}
+                                                        disabled={!canUpdate || flagsLoading}
+                                                        className={`p-1.5 rounded-lg transition-all ${item.isTrending ? 'bg-orange-100 text-orange-600 dark:bg-orange-900/30' : 'text-gray-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-orange-900/30'}`}
+                                                        title="Toggle Trending"
+                                                    >
+                                                        <TrendingUp size={14} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleToggleFlag(item.slug, 'isHidden', !item.isHidden)}
+                                                        disabled={!canUpdate || flagsLoading}
+                                                        className={`p-1.5 rounded-lg transition-all ${item.isHidden ? 'bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-300' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                                                        title="Toggle Hidden"
+                                                    >
+                                                        <EyeOff size={14} />
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </article>
                                 ))}
                             </div>
 
-                            {/* Simple Pagination Controls */}
-                            <div className={styles.pagination} style={{ marginTop: '2rem', display: 'flex', justifyContent: 'center', gap: '1rem', alignItems: 'center' }}>
+                            <div className="flex justify-center items-center gap-10 py-16">
                                 <button
                                     onClick={() => setPage(p => Math.max(1, p - 1))}
                                     disabled={page === 1 || fetchLoading}
-                                    className={styles.secondaryBtn}
-                                    style={{ width: 'auto' }}
-                                >Previous</button>
-                                <span>Page {page}</span>
+                                    className="w-16 h-16 flex items-center justify-center rounded-[2rem] bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 shadow-xl disabled:opacity-20 disabled:scale-90 transition-all hover:border-blue-600 group"
+                                >
+                                    <span className="text-2xl group-hover:-translate-x-1.5 transition-transform">&larr;</span>
+                                </button>
+
+                                <div className="text-center">
+                                    <div className="text-4xl font-black text-gray-900 dark:text-white tracking-widest">{page}</div>
+                                    <div className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mt-1">Archive Page</div>
+                                </div>
+
                                 <button
                                     onClick={() => setPage(p => p + 1)}
                                     disabled={filteredAndSortedItems.length < limit || fetchLoading}
-                                    className={styles.secondaryBtn}
-                                    style={{ width: 'auto' }}
-                                >Next</button>
+                                    className="w-16 h-16 flex items-center justify-center rounded-[2rem] bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 shadow-xl disabled:opacity-20 disabled:scale-90 transition-all hover:border-blue-600 group"
+                                >
+                                    <span className="text-2xl group-hover:translate-x-1.5 transition-transform">&rarr;</span>
+                                </button>
                             </div>
                         </>
                     )}

@@ -3,7 +3,6 @@ import React, { useState, useCallback, ChangeEvent, FC } from "react";
 import Image from "next/image";
 import { baseURL, compressImage } from "@/Utils/Utils";
 import { Ad, useAllAds, useAddAd } from "@/app/hooks/useAds";
-import styles from "../Main.module.scss";
 
 interface AdManagerProps {
     canCreate: boolean;
@@ -168,162 +167,166 @@ const AdManager: FC<AdManagerProps> = ({
     );
 
     return (
-        <div className={styles.adsTabContent}>
+        <div className="p-4 md:p-6">
             {(canCreate || canUpdate) && (
-                <div className={styles.editor}>
-                    <div className={styles.editorHeader}>
-                        <h2 className={styles.editorTitle}>
+                <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6 mb-8">
+                    <div className="flex justify-between items-center mb-6">
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
                             {editingAdId ? (
                                 <>
-                                    <span className={styles.editorIcon}>✏️</span> Edit Advertisement
+                                    <span className="text-2xl">✏️</span> Edit Advertisement
                                 </>
                             ) : (
                                 <>
-                                    <span className={styles.editorIcon}>📢</span> Create Advertisement
+                                    <span className="text-2xl">📢</span> Create Advertisement
                                 </>
                             )}
                         </h2>
                         {editingAdId && (
-                            <button onClick={resetAdForm} className={styles.closeBtn}>
-                                ✕
+                            <button onClick={resetAdForm} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors">
+                                <span className="text-xl">✕</span>
                             </button>
                         )}
                     </div>
-                    <div className={styles.formGrid}>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>
-                                Ad Title <span className={styles.required}>*</span>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Ad Title <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="text"
-                                className={styles.input}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                                 value={adFormState.title ?? ""}
                                 onChange={handleAdChange("title")}
                                 placeholder="Enter ad title..."
                             />
                         </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>
-                                Target Link <span className={styles.required}>*</span>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Target Link <span className="text-red-500">*</span>
                             </label>
                             <input
                                 type="url"
-                                className={styles.input}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                                 value={adFormState.link ?? ""}
                                 onChange={handleAdChange("link")}
                                 placeholder="https://example.com"
                             />
                         </div>
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Status</label>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Status</label>
                             <select
                                 value={adFormState.isActive ? "true" : "false"}
                                 onChange={handleAdChange("isActive")}
-                                className={styles.select}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                             >
                                 <option value="true">Active</option>
                                 <option value="false">Inactive</option>
                             </select>
                         </div>
 
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Header / In-Article Image</label>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Header / In-Article Image</label>
                             <input
                                 id="ad-header-upload"
                                 type="file"
                                 accept="image/*"
-                                className={styles.hidden}
+                                className="hidden"
                                 onChange={handleAdImageChange('header')}
                             />
                             <div
-                                className={styles.imageUploadArea}
+                                className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
                                 onClick={() => document.getElementById("ad-header-upload")?.click()}
                             >
                                 {adHeaderPreview || adFormState.headerImageUrl ? (
-                                    <div className={styles.previewContainer}>
+                                    <div className="relative group">
                                         <img
                                             src={adHeaderPreview || adFormState.headerImageUrl || ""}
                                             alt="Preview"
-                                            className={styles.imagePreview}
+                                            className="max-h-40 rounded-lg object-contain"
                                         />
                                         <button
                                             type="button"
-                                            className={styles.removeImageBtn}
+                                            className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setAdFormState((prev) => ({ ...prev, headerImageUrl: "" }));
                                                 setAdHeaderPreview(null);
                                             }}
                                         >
-                                            Remove
+                                            <span className="text-xs">Remove</span>
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className={styles.uploadPlaceholder}>
-                                        <span className={styles.uploadIcon}>📸</span>
-                                        <p>Upload Header Ad</p>
-                                        <small>1200x200 recommended</small>
+                                    <div className="space-y-1 text-center">
+                                        <span className="text-3xl block mb-2">📸</span>
+                                        <div className="flex text-sm text-gray-600 dark:text-gray-400">
+                                            <span>Upload Header Ad</span>
+                                        </div>
+                                        <p className="text-xs text-gray-500 dark:text-gray-500">1200x200 recommended</p>
                                     </div>
                                 )}
                             </div>
                         </div>
 
-                        <div className={styles.formGroup}>
-                            <label className={styles.label}>Sidebar Image</label>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Sidebar Image</label>
                             <input
                                 id="ad-sidebar-upload"
                                 type="file"
                                 accept="image/*"
-                                className={styles.hidden}
+                                className="hidden"
                                 onChange={handleAdImageChange('sidebar')}
                             />
                             <div
-                                className={styles.imageUploadArea}
+                                className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
                                 onClick={() => document.getElementById("ad-sidebar-upload")?.click()}
                             >
                                 {adSidebarPreview || adFormState.sidebarImageUrl ? (
-                                    <div className={styles.previewContainer}>
+                                    <div className="relative group">
                                         <img
                                             src={adSidebarPreview || adFormState.sidebarImageUrl || ""}
                                             alt="Preview"
-                                            className={styles.imagePreview}
+                                            className="max-h-40 rounded-lg object-contain"
                                         />
                                         <button
                                             type="button"
-                                            className={styles.removeImageBtn}
+                                            className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 setAdFormState((prev) => ({ ...prev, sidebarImageUrl: "" }));
                                                 setAdSidebarPreview(null);
                                             }}
                                         >
-                                            Remove
+                                            <span className="text-xs">Remove</span>
                                         </button>
                                     </div>
                                 ) : (
-                                    <div className={styles.uploadPlaceholder}>
-                                        <span className={styles.uploadIcon}>📸</span>
-                                        <p>Upload Sidebar Ad</p>
-                                        <small>300x600 recommended</small>
+                                    <div className="space-y-1 text-center">
+                                        <span className="text-3xl block mb-2">📸</span>
+                                        <div className="flex text-sm text-gray-600 dark:text-gray-400">
+                                            <span>Upload Sidebar Ad</span>
+                                        </div>
+                                        <p className="text-xs text-gray-500 dark:text-gray-500">300x600 recommended</p>
                                     </div>
                                 )}
                             </div>
                         </div>
                     </div>
-                    <div className={styles.formActions}>
+                    <div className="flex gap-4 mt-8">
                         {editingAdId ? (
                             <>
-                                <button onClick={handleUpdateAd} className={styles.primaryBtn} disabled={!canUpdate}>
+                                <button onClick={handleUpdateAd} className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled={!canUpdate}>
                                     Update Advertisement
                                 </button>
-                                <button onClick={resetAdForm} className={styles.secondaryBtn}>
+                                <button onClick={resetAdForm} className="px-6 py-2.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 font-semibold rounded-lg transition-colors">
                                     Cancel Edit
                                 </button>
                             </>
                         ) : (
                             <button
                                 onClick={handleAddAd}
-                                className={styles.primaryBtn}
+                                className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                                 disabled={!canCreate || addAdLoading}
                             >
                                 {addAdLoading ? "Creating..." : "Create Advertisement"}
@@ -333,69 +336,66 @@ const AdManager: FC<AdManagerProps> = ({
                 </div>
             )}
 
-            <div className={styles.articlesSection}>
-                <div className={styles.articlesSectionHeader}>
-                    <h2 className={styles.sectionTitle}>Advertisements ({adsData?.length || 0})</h2>
+            <div className="mt-8">
+                <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Advertisements ({adsData?.length || 0})</h2>
                 </div>
                 {adsLoading ? (
-                    <div className={styles.loading}>
-                        <div className={styles.spinner} />
-                        <p>Loading ads...</p>
+                    <div className="flex flex-col items-center justify-center py-20 grayscale brightness-90">
+                        <div className="animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent mb-4" />
+                        <p className="text-gray-600 dark:text-gray-400 font-medium">Loading ads...</p>
                     </div>
                 ) : !adsData || adsData.length === 0 ? (
-                    <div className={styles.emptyState}>
-                        <div className={styles.emptyIcon}>📢</div>
-                        <h3>No advertisements found</h3>
-                        <p>Create your first advertisement to get started</p>
+                    <div className="flex flex-col items-center justify-center py-20 bg-gray-50 dark:bg-gray-800/50 rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700">
+                        <div className="text-6xl mb-4">📢</div>
+                        <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No advertisements found</h3>
+                        <p className="text-gray-500 dark:text-gray-400">Create your first advertisement to get started</p>
                     </div>
                 ) : (
-                    <div className={styles.grid}>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {adsData.map((ad) => (
-                            <article key={ad._id} className={styles.card}>
-                                <div className={styles.cardImage}>
+                            <article key={ad._id} className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden hover:shadow-md transition-shadow">
+                                <div className="relative aspect-video bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
                                     {ad.headerImageUrl || ad.imageUrl ? (
-                                        <img src={ad.headerImageUrl || ad.imageUrl} alt={ad.title} loading="lazy" />
+                                        <img src={ad.headerImageUrl || ad.imageUrl} alt={ad.title} className="w-full h-full object-cover" loading="lazy" />
                                     ) : ad.sidebarImageUrl ? (
-                                        <img src={ad.sidebarImageUrl} alt={ad.title} loading="lazy" />
+                                        <img src={ad.sidebarImageUrl} alt={ad.title} className="w-full h-full object-cover" loading="lazy" />
                                     ) : (
-                                        <div
-                                            style={{
-                                                background: "linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(251, 146, 60, 0.1))",
-                                                height: "100%",
-                                            }}
-                                        />
+                                        <div className="w-full h-full bg-gradient-to-br from-red-500/10 to-orange-500/10" />
                                     )}
-                                    <span className={`${styles.statusBadge} ${ad.isActive ? styles.published : styles.draft}`}>
-                                        {ad.isActive ? "Active" : "Inactive"}
-                                    </span>
-                                    <span className={styles.placementBadge}>
-                                        {ad.headerImageUrl ? 'Header' : ad.sidebarImageUrl ? 'Sidebar' : (ad.placement || 'header')}
-                                    </span>
+                                    <div className="absolute top-3 right-3 flex flex-col gap-2">
+                                        <span className={`px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${ad.isActive ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400' : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400'}`}>
+                                            {ad.isActive ? "Active" : "Inactive"}
+                                        </span>
+                                        <span className="px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400">
+                                            {ad.headerImageUrl ? 'Header' : ad.sidebarImageUrl ? 'Sidebar' : (ad.placement || 'header')}
+                                        </span>
+                                    </div>
                                 </div>
-                                <div className={styles.cardContent}>
-                                    <h3 className={styles.cardTitle}>{ad.title}</h3>
-                                    <p className={styles.cardSummary}>
-                                        <a href={ad.link} target="_blank" rel="noopener noreferrer" className={styles.adLink}>
+                                <div className="p-5">
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 line-clamp-1">{ad.title}</h3>
+                                    <p className="text-sm text-blue-600 dark:text-blue-400 mb-4 line-clamp-1">
+                                        <a href={ad.link} target="_blank" rel="noopener noreferrer" className="hover:underline">
                                             {ad.link}
                                         </a>
                                     </p>
-                                    <div className={styles.cardFooter}>
-                                        <div className={styles.cardActions}>
+                                    <div className="flex items-center justify-end border-t border-gray-100 dark:border-gray-700 pt-4">
+                                        <div className="flex gap-2">
                                             <button
                                                 onClick={() => startEditAd(ad)}
-                                                className={styles.editBtn}
+                                                className="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors disabled:opacity-50"
                                                 disabled={!canUpdate}
                                                 title="Edit"
                                             >
-                                                ✏️
+                                                <span className="text-lg">✏️</span>
                                             </button>
                                             <button
                                                 onClick={() => handleDeleteAd(ad._id!)}
-                                                className={styles.deleteBtn}
+                                                className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors disabled:opacity-50"
                                                 disabled={!canDelete}
                                                 title="Delete"
                                             >
-                                                🗑️
+                                                <span className="text-lg">🗑️</span>
                                             </button>
                                         </div>
                                     </div>

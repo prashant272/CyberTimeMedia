@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from 'react';
 import { cricketService, LiveMatch } from '@/app/services/CricketService';
-import styles from '../Main.module.scss'; // Reusing some main styles
 import CricketScorecard from '@/app/Components/T20-world-cup/Scorecard/Scorecard';
 import CricketPointsTable from '@/app/Components/T20-world-cup/PointsTable/PointsTable';
 
@@ -284,64 +283,78 @@ const CricketManager: React.FC = () => {
     };
 
 
-    if (loading) return <div className={styles.loading}>Loading matches...</div>;
-    if (error) return <div className={styles.error}>Error: {error}</div>;
+    if (loading) return (
+        <div className="flex flex-col items-center justify-center py-20 grayscale brightness-90">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-emerald-500 border-t-transparent mb-4" />
+            <p className="text-gray-600 dark:text-gray-400 font-medium font-['Outfit']">Loading matches...</p>
+        </div>
+    );
+    if (error) return (
+        <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-lg m-6">
+            Error: {error}
+        </div>
+    );
 
     return (
-        <div className={styles.managerContainer}>
+        <div className="p-4 md:p-6 space-y-8 font-['Outfit']">
             {/* Global Cricket Settings */}
-            <div className={styles.settingsSection} style={{
-                background: '#222',
-                padding: '20px',
-                borderRadius: '8px',
-                marginBottom: '30px',
-                border: '1px solid #444'
-            }}>
-                <h3 style={{ color: '#fff', marginBottom: '15px' }}>Global Settings</h3>
-                <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                    <span className="text-2xl">⚙️</span> Global Settings
+                </h3>
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
 
                     {/* Filter & Series ID Row */}
-                    <div style={{ flex: 1, minWidth: '300px', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                        <div>
-                            <label style={{ display: 'block', color: '#aaa', marginBottom: '5px', fontSize: '13px' }}>Active Tournament Filter (e.g. IPL, World Cup)</label>
+                    <div className="flex flex-col gap-6">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Active Tournament Filter (e.g. IPL, World Cup)
+                            </label>
                             <input
                                 type="text"
                                 value={tournament}
                                 onChange={(e) => setTournament(e.target.value)}
-                                style={{ width: '100%', padding: '10px', borderRadius: '4px', background: '#111', border: '1px solid #333', color: '#fff' }}
+                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
                             />
                         </div>
-                        <div>
-                            <label style={{ display: 'block', color: '#aaa', marginBottom: '5px', fontSize: '13px' }}>Active Series ID (UUID for Points Table)</label>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                                Active Series ID (UUID for Points Table)
+                            </label>
                             <input
                                 type="text"
                                 value={seriesId}
                                 onChange={(e) => setSeriesId(e.target.value)}
                                 placeholder="e.g. bbcaa2ce-be45-4541-9eb3-9828d8b13197"
-                                style={{ width: '100%', padding: '10px', borderRadius: '4px', background: '#111', border: '1px solid #333', color: '#fff' }}
+                                className="w-full px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:border-transparent outline-none transition-all"
                             />
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                        <div className="flex items-center gap-3 p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-100 dark:border-emerald-800/30">
                             <input
                                 type="checkbox"
                                 id="autoTrack"
                                 checked={autoTrack}
                                 onChange={(e) => setAutoTrack(e.target.checked)}
+                                className="w-5 h-5 text-emerald-600 rounded border-gray-300 focus:ring-emerald-500 transition-all cursor-pointer"
                             />
-                            <label htmlFor="autoTrack" style={{ color: '#fff', cursor: 'pointer', fontSize: '14px' }}>Auto-track Live Scores</label>
+                            <label htmlFor="autoTrack" className="text-sm font-semibold text-emerald-900 dark:text-emerald-400 cursor-pointer">
+                                Auto-track Live Scores
+                            </label>
                         </div>
                     </div>
 
                     {/* Series Discovery Column */}
-                    <div style={{ flex: 1, minWidth: '300px', borderLeft: '1px solid #444', paddingLeft: '20px' }}>
-                        <h4 style={{ color: '#fff', fontSize: '14px', marginBottom: '10px' }}>Series Discovery (Find IDs)</h4>
-                        <div style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                    <div className="flex flex-col gap-4 lg:border-l lg:border-gray-100 dark:lg:border-gray-700 lg:pl-8">
+                        <h4 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Series Discovery (Find IDs)
+                        </h4>
+                        <div className="flex gap-2">
                             <input
                                 type="text"
                                 value={seriesSearchQuery}
                                 onChange={(e) => setSeriesSearchQuery(e.target.value)}
                                 placeholder="Search series (e.g. 'IPL 2024')"
-                                style={{ flex: 1, padding: '8px', borderRadius: '4px', background: '#111', border: '1px solid #333', color: '#fff' }}
+                                className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
                             />
                             <button
                                 onClick={async () => {
@@ -356,7 +369,7 @@ const CricketManager: React.FC = () => {
                                         setSearching(false);
                                     }
                                 }}
-                                style={{ padding: '8px 15px', background: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                                className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors shadow-sm disabled:opacity-50"
                                 disabled={searching}
                             >
                                 {searching ? '...' : 'Search'}
@@ -364,29 +377,33 @@ const CricketManager: React.FC = () => {
                         </div>
 
                         {searchResults.length > 0 && (
-                            <div style={{ maxHeight: '150px', overflowY: 'auto', background: '#111', borderRadius: '4px', border: '1px solid #333' }}>
-                                <table style={{ width: '100%', fontSize: '11px', textAlign: 'left', borderCollapse: 'collapse' }}>
-                                    <thead style={{ background: '#1a1a1a', position: 'sticky', top: 0 }}>
+                            <div className="max-h-[200px] overflow-y-auto bg-gray-50 dark:bg-gray-900/50 rounded-lg border border-gray-200 dark:border-gray-700">
+                                <table className="w-full text-left border-collapse">
+                                    <thead className="bg-gray-100 dark:bg-gray-800 sticky top-0">
                                         <tr>
-                                            <th style={{ padding: '8px', borderBottom: '1px solid #333' }}>Series</th>
-                                            <th style={{ padding: '8px', borderBottom: '1px solid #333' }}>Action</th>
+                                            <th className="px-4 py-2 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase">Series</th>
+                                            <th className="px-4 py-2 text-xs font-bold text-gray-500 dark:text-gray-400 uppercase text-right">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                                         {searchResults.map((s) => (
-                                            <tr key={s.id} style={{ borderBottom: '1px solid #222' }}>
-                                                <td style={{ padding: '8px' }}>
-                                                    <div style={{ color: '#fff' }}>{s.name}</div>
-                                                    <div style={{ color: '#aaa', fontSize: '9px' }}>{s.startDate} to {s.endDate}</div>
-                                                    <div style={{ color: '#666', fontSize: '8px', fontFamily: 'monospace' }}>{s.id}</div>
+                                            <tr key={s.id} className="hover:bg-white dark:hover:bg-gray-800 transition-colors">
+                                                <td className="px-4 py-3">
+                                                    <div className="font-bold text-gray-900 dark:text-white text-sm">{s.name}</div>
+                                                    <div className="text-[10px] text-gray-500 dark:text-gray-500 font-medium">
+                                                        {s.startDate} to {s.endDate}
+                                                    </div>
+                                                    <div className="text-[10px] text-blue-500 font-mono mt-1 select-all">
+                                                        {s.id}
+                                                    </div>
                                                 </td>
-                                                <td style={{ padding: '8px' }}>
+                                                <td className="px-4 py-3 text-right">
                                                     <button
                                                         onClick={() => {
                                                             setSeriesId(s.id);
                                                             setTournament(s.name);
                                                         }}
-                                                        style={{ color: '#007bff', background: 'none', border: 'none', padding: 0, textDecoration: 'underline', cursor: 'pointer' }}
+                                                        className="text-xs font-bold text-blue-600 dark:text-blue-400 hover:underline"
                                                     >
                                                         Select
                                                     </button>
@@ -401,94 +418,96 @@ const CricketManager: React.FC = () => {
                 </div>
 
                 {/* Settings Actions Row */}
-                <div style={{ marginTop: '20px', display: 'flex', gap: '10px', borderTop: '1px solid #444', paddingTop: '20px' }}>
+                <div className="mt-8 pt-6 border-t border-gray-100 dark:border-gray-700 flex flex-wrap gap-4">
                     <button
                         onClick={handleUpdateSettings}
                         disabled={updatingSettings}
-                        style={{ padding: '10px 30px', background: '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                        className="px-8 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50"
                     >
-                        {updatingSettings ? 'Saving...' : 'Save Settings'}
+                        {updatingSettings ? 'Saving...' : 'Save All Settings'}
                     </button>
                     <button
                         onClick={fetchMatches}
-                        style={{ padding: '10px 20px', background: '#6c757d', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                        className="px-6 py-3 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-bold rounded-xl transition-all"
                     >
-                        Sync Data
+                        🔄 Sync Data
                     </button>
                 </div>
             </div>
 
-            <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', flexWrap: 'wrap' }}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 {/* Manual Match Creation Form */}
-                <div style={{ flex: 1, minWidth: '400px', background: '#1a1a1a', padding: '20px', borderRadius: '8px', border: '1px solid #333' }}>
-                    <h3 style={{ color: '#fff', marginBottom: '15px', fontSize: '18px' }}>🔨 Create Manual Match</h3>
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                        <div style={{ gridColumn: 'span 2' }}>
-                            <label style={{ color: '#aaa', fontSize: '12px' }}>Match Name</label>
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+                        <span className="text-2xl">🔨</span> Create Manual Match
+                    </h3>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div className="sm:col-span-2 flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Match Name</label>
                             <input
                                 type="text" value={manualMatch.name}
                                 onChange={(e) => setManualMatch({ ...manualMatch, name: e.target.value })}
                                 placeholder="e.g. India vs Pakistan"
-                                style={{ width: '100%', padding: '8px', borderRadius: '4px', background: '#000', border: '1px solid #444', color: '#fff' }}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                             />
                         </div>
-                        <div>
-                            <label style={{ color: '#aaa', fontSize: '12px' }}>Team 1</label>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Team 1</label>
                             <input
                                 type="text" value={manualMatch.teams[0]}
                                 onChange={(e) => setManualMatch({ ...manualMatch, teams: [e.target.value, manualMatch.teams[1]] })}
-                                style={{ width: '100%', padding: '8px', borderRadius: '4px', background: '#000', border: '1px solid #444', color: '#fff' }}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                             />
                         </div>
-                        <div>
-                            <label style={{ color: '#aaa', fontSize: '12px' }}>Team 2</label>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Team 2</label>
                             <input
                                 type="text" value={manualMatch.teams[1]}
                                 onChange={(e) => setManualMatch({ ...manualMatch, teams: [manualMatch.teams[0], e.target.value] })}
-                                style={{ width: '100%', padding: '8px', borderRadius: '4px', background: '#000', border: '1px solid #444', color: '#fff' }}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                             />
                         </div>
-                        <div>
-                            <label style={{ color: '#aaa', fontSize: '12px' }}>Date</label>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
                             <input
                                 type="date" value={manualMatch.date}
                                 onChange={(e) => setManualMatch({ ...manualMatch, date: e.target.value })}
-                                style={{ width: '100%', padding: '8px', borderRadius: '4px', background: '#000', border: '1px solid #444', color: '#fff' }}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                             />
                         </div>
-                        <div>
-                            <label style={{ color: '#aaa', fontSize: '12px' }}>Start Time</label>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Start Time</label>
                             <input
                                 type="time" value={manualMatch.startTime}
                                 onChange={(e) => setManualMatch({ ...manualMatch, startTime: e.target.value })}
-                                style={{ width: '100%', padding: '8px', borderRadius: '4px', background: '#000', border: '1px solid #444', color: '#fff' }}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                             />
                         </div>
-                        <div>
-                            <label style={{ color: '#aaa', fontSize: '12px' }}>Category</label>
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
                             <select
                                 value={manualMatch.category}
                                 onChange={(e) => setManualMatch({ ...manualMatch, category: e.target.value as any })}
-                                style={{ width: '100%', padding: '8px', borderRadius: '4px', background: '#000', border: '1px solid #444', color: '#fff' }}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                             >
                                 <option value="upcoming">Upcoming</option>
                                 <option value="live">Live</option>
                                 <option value="recent">Recent</option>
                             </select>
                         </div>
-                        <div style={{ gridColumn: 'span 2' }}>
-                            <label style={{ color: '#aaa', fontSize: '12px' }}>Venue</label>
+                        <div className="sm:col-span-2 flex flex-col gap-2">
+                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Venue</label>
                             <input
                                 type="text" value={manualMatch.venue}
                                 onChange={(e) => setManualMatch({ ...manualMatch, venue: e.target.value })}
                                 placeholder="e.g. Melbourne Cricket Ground"
-                                style={{ width: '100%', padding: '8px', borderRadius: '4px', background: '#000', border: '1px solid #444', color: '#fff' }}
+                                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-emerald-500 outline-none transition-all"
                             />
                         </div>
                         <button
                             onClick={handleCreateManualMatch}
                             disabled={creatingManual}
-                            style={{ gridColumn: 'span 2', padding: '10px', background: '#28a745', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }}
+                            className="sm:col-span-2 mt-4 px-6 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg transition-all shadow-md disabled:opacity-50"
                         >
                             {creatingManual ? 'Creating...' : 'Create Manual Match'}
                         </button>
@@ -496,225 +515,278 @@ const CricketManager: React.FC = () => {
                 </div>
 
                 {/* Manual Points Table Editor */}
-                <div style={{ flex: 1, minWidth: '400px', background: '#1a1a1a', padding: '20px', borderRadius: '8px', border: '1px solid #333' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                        <h3 style={{ color: '#fff', margin: 0, fontSize: '18px' }}>📝 Manual Points Table</h3>
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                            {isManualPoints && <span style={{ fontSize: '10px', background: '#28a745', color: '#fff', padding: '2px 6px', borderRadius: '10px' }}>MANUAL MODE</span>}
+                <div className="bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 font-['Outfit']">
+                    <div className="flex justify-between items-center mb-6">
+                        <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <span className="text-2xl">📝</span> Manual Points Table
+                        </h3>
+                        <div className="flex gap-2 items-center">
+                            {isManualPoints && (
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-400 uppercase tracking-widest">
+                                    MANUAL MODE
+                                </span>
+                            )}
                             <button
                                 onClick={() => { setHasFetchedPoints(false); fetchPointsTable(); setHasFetchedPoints(true); }}
-                                style={{ fontSize: '11px', padding: '3px 10px', background: '#444', color: '#aaa', border: '1px solid #666', borderRadius: '4px', cursor: 'pointer' }}
+                                className="p-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
                                 title="Reload from DB (will discard unsaved changes)"
-                            >🔄 Reload</button>
+                            >
+                                🔄
+                            </button>
                         </div>
                     </div>
                     {seriesId ? (
-                        <div>
+                        <div className="space-y-6">
                             {/* Group Tabs */}
-                            <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap', marginBottom: '10px', alignItems: 'center' }}>
+                            <div className="flex flex-wrap gap-2 items-center">
                                 {pointsGroups.map((g, idx) => (
-                                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: '3px' }}>
+                                    <div key={idx} className="flex items-center gap-1 group">
                                         <button
                                             onClick={() => setActiveGroupIndex(idx)}
-                                            style={{
-                                                padding: '4px 10px', fontSize: '11px', borderRadius: '4px', cursor: 'pointer', border: 'none',
-                                                background: activeGroupIndex === idx ? '#007bff' : '#333', color: '#fff', fontWeight: activeGroupIndex === idx ? 'bold' : 'normal'
-                                            }}
+                                            className={`px-4 py-1.5 text-xs font-bold rounded-lg transition-all border ${activeGroupIndex === idx ? 'bg-emerald-600 border-emerald-600 text-white shadow-md' : 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-emerald-500'}`}
                                         >
                                             {g.groupName}
                                         </button>
-                                        <button onClick={() => removeGroup(idx)} style={{ color: '#dc3545', background: 'none', border: 'none', cursor: 'pointer', fontSize: '12px', lineHeight: 1 }}>×</button>
+                                        <button onClick={() => removeGroup(idx)} className="text-red-400 hover:text-red-600 transition-colors opacity-0 group-hover:opacity-100 p-1">
+                                            ✕
+                                        </button>
                                     </div>
                                 ))}
-                                <button onClick={addGroup} style={{ padding: '4px 8px', fontSize: '11px', borderRadius: '4px', background: '#444', color: '#aaa', border: '1px dashed #666', cursor: 'pointer' }}>+ Add Group</button>
+                                <button onClick={addGroup} className="px-4 py-1.5 text-xs font-bold rounded-lg border border-dashed border-gray-300 dark:border-gray-600 text-gray-400 hover:border-emerald-500 hover:text-emerald-500 transition-all">
+                                    + Add Group
+                                </button>
                             </div>
 
                             {/* Rename active group */}
-                            <div style={{ marginBottom: '10px' }}>
+                            <div className="flex flex-col gap-2">
+                                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Group Name</label>
                                 <input
                                     type="text"
                                     value={pointsGroups[activeGroupIndex]?.groupName || ''}
                                     onChange={(e) => renameGroup(activeGroupIndex, e.target.value)}
-                                    style={{ padding: '4px 8px', borderRadius: '4px', background: '#000', border: '1px solid #555', color: '#fff', fontSize: '12px', width: '180px' }}
+                                    className="max-w-[200px] px-3 py-1.5 text-sm rounded-lg bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white focus:ring-1 focus:ring-emerald-500 outline-none transition-all"
                                     placeholder="Group name"
                                 />
                             </div>
 
                             {/* Table */}
-                            <div style={{ overflowX: 'auto' }}>
-                                <table style={{ width: '100%', fontSize: '11px', color: '#fff' }}>
-                                    <thead>
+                            <div className="overflow-x-auto rounded-lg border border-gray-100 dark:border-gray-700">
+                                <table className="w-full text-left text-[11px] border-collapse">
+                                    <thead className="bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-bold uppercase">
                                         <tr>
-                                            <th style={{ textAlign: 'left' }}>Team</th>
-                                            <th>P</th><th>W</th><th>L</th><th>NR</th><th>Pts</th><th>NRR</th><th></th>
+                                            <th className="px-2 py-3">Team</th>
+                                            <th className="px-1 py-3 text-center">P</th>
+                                            <th className="px-1 py-3 text-center">W</th>
+                                            <th className="px-1 py-3 text-center">L</th>
+                                            <th className="px-1 py-3 text-center">NR</th>
+                                            <th className="px-1 py-3 text-center text-emerald-600">Pts</th>
+                                            <th className="px-2 py-3 text-center">NRR</th>
+                                            <th className="px-2 py-3 opacity-0">.</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
+                                    <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                                         {pointsRows.map((row, idx) => (
-                                            <tr key={idx}>
-                                                <td><input type="text" value={row.teamname ?? ''} onChange={(e) => updatePointsRow(idx, 'teamname', e.target.value)} style={{ width: '80px', background: '#000', border: '1px solid #444', color: '#fff', padding: '2px' }} /></td>
-                                                <td><input type="number" value={row.matches ?? 0} onChange={(e) => updatePointsRow(idx, 'matches', parseInt(e.target.value, 10) || 0)} style={{ width: '35px', background: '#000', border: '1px solid #444', color: '#fff', padding: '2px' }} /></td>
-                                                <td><input type="number" value={row.wins ?? 0} onChange={(e) => updatePointsRow(idx, 'wins', parseInt(e.target.value, 10) || 0)} style={{ width: '35px', background: '#000', border: '1px solid #444', color: '#fff', padding: '2px' }} /></td>
-                                                <td><input type="number" value={row.loss ?? 0} onChange={(e) => updatePointsRow(idx, 'loss', parseInt(e.target.value, 10) || 0)} style={{ width: '35px', background: '#000', border: '1px solid #444', color: '#fff', padding: '2px' }} /></td>
-                                                <td><input type="number" value={row.nr ?? 0} onChange={(e) => updatePointsRow(idx, 'nr', parseInt(e.target.value, 10) || 0)} style={{ width: '35px', background: '#000', border: '1px solid #444', color: '#fff', padding: '2px' }} /></td>
-                                                <td style={{ textAlign: 'center' }}><strong>{row.pts ?? 0}</strong></td>
-                                                <td><input type="text" value={row.nrr ?? '0.000'} onChange={(e) => updatePointsRow(idx, 'nrr', e.target.value)} style={{ width: '50px', background: '#000', border: '1px solid #444', color: '#fff', padding: '2px' }} /></td>
-                                                <td><button onClick={() => removePointsRow(idx)} style={{ color: '#dc3545', background: 'none', border: 'none', cursor: 'pointer' }}>×</button></td>
+                                            <tr key={idx} className="hover:bg-gray-50/50 dark:hover:bg-gray-900/50 transition-colors">
+                                                <td className="px-2 py-2">
+                                                    <input type="text" value={row.teamname ?? ''} onChange={(e) => updatePointsRow(idx, 'teamname', e.target.value)} className="w-[100px] px-1 py-0.5 bg-transparent border-b border-gray-200 dark:border-gray-700 focus:border-emerald-500 outline-none text-gray-900 dark:text-white" />
+                                                </td>
+                                                <td className="px-1 py-2 text-center text-gray-900 dark:text-white">
+                                                    <input type="number" value={row.matches ?? 0} onChange={(e) => updatePointsRow(idx, 'matches', parseInt(e.target.value, 10) || 0)} className="w-[30px] text-center bg-transparent outline-none" />
+                                                </td>
+                                                <td className="px-1 py-2 text-center text-emerald-600 font-bold leading-none">
+                                                    <input type="number" value={row.wins ?? 0} onChange={(e) => updatePointsRow(idx, 'wins', parseInt(e.target.value, 10) || 0)} className="w-[30px] text-center bg-transparent outline-none" />
+                                                </td>
+                                                <td className="px-1 py-2 text-center text-red-500 leading-none">
+                                                    <input type="number" value={row.loss ?? 0} onChange={(e) => updatePointsRow(idx, 'loss', parseInt(e.target.value, 10) || 0)} className="w-[30px] text-center bg-transparent outline-none" />
+                                                </td>
+                                                <td className="px-1 py-2 text-center text-gray-400 leading-none">
+                                                    <input type="number" value={row.nr ?? 0} onChange={(e) => updatePointsRow(idx, 'nr', parseInt(e.target.value, 10) || 0)} className="w-[30px] text-center bg-transparent outline-none" />
+                                                </td>
+                                                <td className="px-1 py-2 text-center leading-none"><strong className="text-emerald-600">{row.pts ?? 0}</strong></td>
+                                                <td className="px-2 py-2 text-gray-900 dark:text-white">
+                                                    <input type="text" value={row.nrr ?? '0.000'} onChange={(e) => updatePointsRow(idx, 'nrr', e.target.value)} className="w-[50px] text-center px-1 bg-transparent border-b border-gray-200 dark:border-gray-700 focus:border-emerald-500 outline-none" />
+                                                </td>
+                                                <td className="px-2 py-2 text-right">
+                                                    <button onClick={() => removePointsRow(idx)} className="text-red-400 hover:text-red-600 transition-colors text-lg">×</button>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>
                                 </table>
-                                <div style={{ display: 'flex', gap: '10px', marginTop: '15px' }}>
-                                    <button onClick={addPointsRow} style={{ flex: 1, padding: '8px', background: '#6c757d', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px' }}>+ Add Team</button>
-                                    <button onClick={handleSavePoints} disabled={savingPoints} style={{ flex: 1, padding: '8px', background: '#007bff', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '12px', fontWeight: 'bold' }}>
+                                <div className="p-4 bg-gray-50 dark:bg-gray-800/50 flex flex-wrap gap-4 border-t border-gray-100 dark:border-gray-700 font-['Outfit']">
+                                    <button onClick={addPointsRow} className="flex-1 min-w-[120px] px-4 py-2 bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 font-bold rounded-lg border border-gray-200 dark:border-gray-600 transition-all text-xs">
+                                        + Add Team
+                                    </button>
+                                    <button
+                                        onClick={handleSavePoints}
+                                        disabled={savingPoints}
+                                        className="flex-1 min-w-[120px] px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all shadow-md text-xs disabled:opacity-50"
+                                    >
                                         {savingPoints ? 'Saving...' : 'Save All Groups'}
                                     </button>
                                 </div>
                             </div>
                         </div>
                     ) : (
-                        <p style={{ color: '#666', fontSize: '12px' }}>Set an Active Series ID in settings to enable manual points table.</p>
+                        <div className="flex flex-col items-center justify-center py-12 text-center space-y-4 font-['Outfit']">
+                            <span className="text-4xl">📭</span>
+                            <p className="text-sm text-gray-500 dark:text-gray-400 italic">
+                                Set an Active Series ID in settings to enable manual points table.
+                            </p>
+                        </div>
                     )}
                 </div>
             </div>
 
             {/* Manual Match Add Section */}
-            <div className={styles.addMatchSection} style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
-                <input
-                    type="text"
-                    placeholder="Enter Match ID or Cricbuzz URL to add manually"
-                    value={matchInput}
-                    onChange={(e) => setMatchInput(e.target.value)}
-                    style={{ padding: '10px', borderRadius: '4px', border: '1px solid #444', flex: 1, background: '#1a1a1a', color: '#fff' }}
-                />
+            <div className="flex flex-col md:flex-row gap-4 items-center bg-white dark:bg-gray-800 p-4 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+                <div className="relative flex-1">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">🔗</span>
+                    <input
+                        type="text"
+                        placeholder="Enter Match ID or Cricbuzz URL to add manually"
+                        value={matchInput}
+                        onChange={(e) => setMatchInput(e.target.value)}
+                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 outline-none transition-all"
+                    />
+                </div>
                 <button
                     onClick={handleAddMatch}
                     disabled={adding}
-                    style={{ padding: '10px 20px', borderRadius: '4px', background: '#007bff', color: '#fff', border: 'none', cursor: 'pointer' }}
+                    className="w-full md:w-auto px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg transition-all shadow-md disabled:opacity-50"
                 >
                     {adding ? 'Adding...' : 'Add Match Manually'}
                 </button>
             </div>
 
             {/* Previews: Scorecard & Points Table */}
-            {selectedMatchId && (
-                <div style={{ marginBottom: '30px', position: 'relative', border: '1px solid #444', borderRadius: '8px', padding: '20px', background: '#111' }}>
-                    <button
-                        onClick={() => setSelectedMatchId(null)}
-                        style={{ position: 'absolute', top: '10px', right: '10px', background: '#dc3545', color: 'white', border: 'none', padding: '5px 10px', borderRadius: '4px', cursor: 'pointer', zIndex: 10 }}
-                    >
-                        Close Preview
-                    </button>
-                    <h3 style={{ color: '#fff', marginBottom: '15px' }}>Match Scorecard Preview</h3>
-                    <CricketScorecard matchId={selectedMatchId} />
-                </div>
-            )}
-
-            {seriesId && (
-                <div style={{ marginBottom: '30px', padding: '20px', background: '#fff', borderRadius: '8px', border: '4px solid #007bff' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                        <h3 style={{ color: '#000', margin: 0 }}>Points Table Preview</h3>
-                        <span style={{ fontSize: '12px', background: '#007bff', color: '#fff', padding: '2px 8px', borderRadius: '10px' }}>ID: {seriesId}</span>
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-8 items-start">
+                {selectedMatchId && (
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
+                        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
+                            <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                Match Scorecard Preview
+                            </h3>
+                            <button onClick={() => setSelectedMatchId(null)} className="text-gray-400 hover:text-red-500 transition-colors p-1">✕</button>
+                        </div>
+                        <div className="p-4 max-h-[600px] overflow-y-auto">
+                            <CricketScorecard matchId={selectedMatchId} />
+                        </div>
                     </div>
-                    <CricketPointsTable seriesId={seriesId} />
-                </div>
-            )}
+                )}
+
+                {seriesId && (
+                    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden flex flex-col">
+                        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-100 border-b border-blue-200 flex justify-between items-center">
+                            <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                                <span className="text-xl">📊</span> Points Table Preview
+                            </h3>
+                            <span className="px-2 py-0.5 bg-blue-600 text-white text-[10px] font-bold rounded-lg">ID: {seriesId}</span>
+                        </div>
+                        <div className="p-4 overflow-x-auto">
+                            <CricketPointsTable seriesId={seriesId} />
+                        </div>
+                    </div>
+                )}
+            </div>
 
             {/* Matches List Table */}
-            <div className={styles.tableWrapper}>
-                <h3 style={{ color: '#fff', marginBottom: '15px' }}>All Discovered Matches</h3>
-                <table className={styles.table}>
-                    <thead>
-                        <tr>
-                            <th>Match</th>
-                            <th>Status</th>
-                            <th>Category</th>
-                            <th>Tracking Actions</th>
-                            <th>Last Sync</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {matches.map((match) => (
-                            <tr key={match.id}>
-                                <td>
-                                    <div className={styles.matchName}>{match.name}</div>
-                                    <div className={styles.matchMeta}>{match.matchType} • {match.venue}</div>
-                                    <div style={{ display: 'flex', gap: '5px', marginTop: '5px', flexWrap: 'wrap' }}>
-                                        {match.isManual && <span style={{ color: '#6f42c1', fontSize: '9px', border: '1px solid #6f42c1', padding: '1px 4px', borderRadius: '3px', fontWeight: 'bold' }}>MANUAL</span>}
-                                        {match.isLiveTracked && <span style={{ color: '#28a745', fontSize: '9px', border: '1px solid #28a745', padding: '1px 4px', borderRadius: '3px' }}>LIVE</span>}
-                                        {match.showInUpcoming && <span style={{ color: '#ffc107', fontSize: '9px', border: '1px solid #ffc107', padding: '1px 4px', borderRadius: '3px' }}>UPCOMING</span>}
-                                        {match.showInRecent && <span style={{ color: '#6c757d', fontSize: '9px', border: '1px solid #6c757d', padding: '1px 4px', borderRadius: '3px' }}>RECENT</span>}
-                                    </div>
-
-                                </td>
-                                <td>{match.status}</td>
-                                <td>
-                                    <span className={`${styles.badge} ${styles[match.category]}`}>
-                                        {match.category}
-                                    </span>
-                                </td>
-                                <td>
-                                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '5px' }}>
-                                        <button
-                                            onClick={() => handleToggleStatus(match.id, 'isLiveTracked', match.isLiveTracked)}
-                                            style={{
-                                                padding: '5px 10px',
-                                                borderRadius: '4px',
-                                                background: match.isLiveTracked ? '#28a745' : '#111',
-                                                color: '#fff',
-                                                border: '1px solid #444',
-                                                cursor: 'pointer',
-                                                fontSize: '11px',
-                                                flex: '1 1 40%'
-                                            }}
-                                        >
-                                            {match.isLiveTracked ? "🔴 Tracking ON" : "⚪ Tracking OFF"}
-                                        </button>
-                                        <button
-                                            onClick={() => handleToggleStatus(match.id, 'showInUpcoming', match.showInUpcoming)}
-                                            style={{
-                                                padding: '5px 10px',
-                                                borderRadius: '4px',
-                                                background: match.showInUpcoming ? '#ffc107' : '#111',
-                                                color: match.showInUpcoming ? '#000' : '#fff',
-                                                border: '1px solid #444',
-                                                cursor: 'pointer',
-                                                fontSize: '11px',
-                                                flex: '1 1 40%'
-                                            }}
-                                        >
-                                            {match.showInUpcoming ? "🔔 In Upcoming" : "➕ Add Upcoming"}
-                                        </button>
-                                        <button
-                                            onClick={() => handleToggleStatus(match.id, 'showInRecent', match.showInRecent)}
-                                            style={{
-                                                padding: '5px 10px',
-                                                borderRadius: '4px',
-                                                background: match.showInRecent ? '#6c757d' : '#111',
-                                                color: '#fff',
-                                                border: '1px solid #444',
-                                                cursor: 'pointer',
-                                                fontSize: '11px',
-                                                flex: '1 1 40%'
-                                            }}
-                                        >
-                                            {match.showInRecent ? "🏁 In Recent" : "➕ Add Recent"}
-                                        </button>
-                                        <button
-                                            onClick={() => setSelectedMatchId(match.id)}
-                                            style={{ padding: '5px 10px', borderRadius: '4px', background: '#007bff', color: '#fff', border: 'none', cursor: 'pointer', fontSize: '11px', flex: '1 1 40%' }}
-                                        >
-                                            👁️ Preview
-                                        </button>
-                                    </div>
-
-                                </td>
-                                <td>{new Date(match.lastUpdated).toLocaleTimeString()}</td>
+            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
+                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-900/50">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">All Discovered Matches</h3>
+                </div>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead className="bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-[10px] font-bold uppercase tracking-widest border-b border-gray-100 dark:border-gray-800">
+                            <tr>
+                                <th className="px-6 py-4">Match / Info</th>
+                                <th className="px-6 py-4 text-center">Status</th>
+                                <th className="px-6 py-4 text-center">Category</th>
+                                <th className="px-6 py-4">Tracking Actions</th>
+                                <th className="px-6 py-4 text-right">Last Sync</th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
-                {matches.length === 0 && <p className={styles.empty}>No matches discovered yet. Try clicking "Sync Data" above.</p>}
+                        </thead>
+                        <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
+                            {matches.map((match) => (
+                                <tr key={match.id} className="hover:bg-gray-50/50 dark:hover:bg-gray-900/30 transition-colors group">
+                                    <td className="px-6 py-4">
+                                        <div className="flex flex-col gap-1">
+                                            <div className="font-bold text-gray-900 dark:text-white group-hover:text-blue-600 transition-colors">{match.name}</div>
+                                            <div className="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap items-center gap-2">
+                                                <span>{match.matchType}</span>
+                                                <span className="w-1 h-1 rounded-full bg-gray-300 dark:bg-gray-600" />
+                                                <span>{match.venue}</span>
+                                            </div>
+                                            <div className="flex gap-1.5 mt-1 flex-wrap">
+                                                {match.isManual && (
+                                                    <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400 text-[9px] font-bold rounded border border-purple-200 dark:border-purple-800 uppercase tracking-tighter">MANUAL</span>
+                                                )}
+                                                {match.isLiveTracked && (
+                                                    <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-[9px] font-bold rounded border border-emerald-200 dark:border-emerald-800 uppercase tracking-tighter">LIVE</span>
+                                                )}
+                                                {match.showInUpcoming && (
+                                                    <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400 text-[9px] font-bold rounded border border-amber-200 dark:border-amber-800 uppercase tracking-tighter">UPCOMING</span>
+                                                )}
+                                                {match.showInRecent && (
+                                                    <span className="px-1.5 py-0.5 bg-gray-100 text-gray-700 dark:bg-gray-700 dark:text-gray-400 text-[9px] font-bold rounded border border-gray-200 dark:border-gray-600 uppercase tracking-tighter">RECENT</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-center">
+                                        <span className="text-xs font-medium text-gray-600 dark:text-gray-300">{match.status}</span>
+                                    </td>
+                                    <td className="px-6 py-4 text-center">
+                                        <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded ${match.category === 'live' ? 'bg-red-500 text-white' :
+                                            match.category === 'upcoming' ? 'bg-blue-500 text-white' :
+                                                'bg-gray-500 text-white'
+                                            }`}>
+                                            {match.category}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4">
+                                        <div className="grid grid-cols-2 gap-2 max-w-[300px]">
+                                            <button
+                                                onClick={() => handleToggleStatus(match.id, 'isLiveTracked', match.isLiveTracked)}
+                                                className={`px-3 py-1.5 text-[10px] font-bold rounded transition-all border ${match.isLiveTracked ? 'bg-emerald-600 border-emerald-600 text-white shadow-sm' : 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-emerald-500'}`}
+                                            >
+                                                {match.isLiveTracked ? "� Tracking ON" : "⚪ Tracking OFF"}
+                                            </button>
+                                            <button
+                                                onClick={() => handleToggleStatus(match.id, 'showInUpcoming', match.showInUpcoming)}
+                                                className={`px-3 py-1.5 text-[10px] font-bold rounded transition-all border ${match.showInUpcoming ? 'bg-amber-500 border-amber-500 text-black shadow-sm' : 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-amber-500'}`}
+                                            >
+                                                {match.showInUpcoming ? "🔔 In Upcoming" : "➕ Add Upcoming"}
+                                            </button>
+                                            <button
+                                                onClick={() => handleToggleStatus(match.id, 'showInRecent', match.showInRecent)}
+                                                className={`px-3 py-1.5 text-[10px] font-bold rounded transition-all border ${match.showInRecent ? 'bg-gray-600 border-gray-600 text-white shadow-sm' : 'bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 hover:border-gray-500'}`}
+                                            >
+                                                {match.showInRecent ? "🏁 In Recent" : "➕ Add Recent"}
+                                            </button>
+                                            <button
+                                                onClick={() => setSelectedMatchId(match.id)}
+                                                className="px-3 py-1.5 text-[10px] font-bold bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded border border-blue-100 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-all"
+                                            >
+                                                👁️ Preview
+                                            </button>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 text-right text-xs text-gray-400 font-mono">
+                                        {new Date(match.lastUpdated).toLocaleTimeString()}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                {matches.length === 0 && (
+                    <div className="py-20 flex flex-col items-center justify-center text-gray-400 space-y-4">
+                        <span className="text-4xl">📭</span>
+                        <p className="text-sm italic">No matches discovered yet. Try clicking "Sync Data" above.</p>
+                    </div>
+                )}
             </div>
         </div>
     );

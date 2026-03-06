@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useNewsContext } from '@/app/context/NewsContext';
 import { getImageSrc } from '@/Utils/imageUtils';
-import { formatDateTime } from '@/Utils/Utils';
-import styles from './NewsCard.module.scss';
+import { formatDateTime, calculateReadingTime } from '@/Utils/Utils';
 import { NewsItem as SharedNewsItem } from '@/app/services/NewsService';
+import { ChevronRight } from 'lucide-react';
 
 // --- SINGULAR NEWS CARD COMPONENT (Used in Search, NewsSection, etc.) ---
 
@@ -77,38 +77,67 @@ export const NewsCard: React.FC<NewsCardProps> = (props) => {
 
   const cardContent = (
     <>
-      <div className={styles.imageWrapper}>
-        <img
+      <div className="relative w-full pb-[60%] overflow-hidden bg-[var(--muted)] shrink-0 group-hover:shadow-lg transition-shadow duration-300">
+        <Image
           src={displayImage}
           alt={title}
-          loading="lazy"
+          fill
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.165,0.84,0.44,1)] group-hover:scale-[1.1]"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
-        <div className={styles.imageOverlay}></div>
-        {category && <span className={styles.categoryBadge}>{category}</span>}
+        <div className="absolute inset-0 bg-linear-to-b from-transparent via-[rgba(0,0,0,0.02)] to-[rgba(0,0,0,0.5)] opacity-80 z-[1] transition-opacity duration-300"></div>
+
+        {/* Category Badge */}
+        {category && (
+          <span className="absolute top-4 left-4 px-4 py-1.5 bg-white/95 backdrop-blur-md rounded-xl border border-white/20 font-['Inter',sans-serif] font-bold text-[10px] text-[#dc2626] uppercase tracking-widest shadow-xl z-[2] transition-all duration-300 group-hover:bg-[#dc2626] group-hover:text-white">
+            {category}
+          </span>
+        )}
+
+        {/* Live/Trending Badge */}
         {isTrending && (
-          <span className={styles.trendingBadge}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z" />
-            </svg>
+          <span className="absolute top-4 right-4 px-3 py-1.5 bg-red-600 backdrop-blur-md rounded-lg border border-red-400/30 font-['Inter',sans-serif] font-bold text-[10px] text-white uppercase tracking-wider shadow-lg z-[2] flex items-center gap-1.5 animate-pulse">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-blink"></span>
             Trending
           </span>
         )}
-      </div>
-      <div className={styles.cardContent}>
-        <div className={styles.cardMeta}>
-          {displaySubCategory && <span className={styles.subCategoryName}>{displaySubCategory}</span>}
-          {date && <span className={styles.newsDate}>{formatDateTime(date)}</span>}
+
+        {/* Reading Time Overlay */}
+        <div className="absolute bottom-4 left-4 z-[2] flex items-center gap-2 text-white/90 text-[10px] font-bold uppercase tracking-widest bg-black/40 backdrop-blur-sm px-2 py-1 rounded-md border border-white/10">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+            <circle cx="12" cy="12" r="10" />
+            <polyline points="12 6 12 12 16 14" />
+          </svg>
+          {calculateReadingTime(item?.content || title)}
         </div>
-        <p className={styles.newsTitle}>{title}</p>
+      </div>
+
+      <div className="p-6 flex-1 flex flex-col gap-4">
+        <div className="flex justify-between items-center">
+          {displaySubCategory && (
+            <span className="font-['Inter',sans-serif] text-[11px] font-extrabold text-[#dc2626] uppercase tracking-widest bg-red-50 px-2 py-1 rounded-md">
+              {displaySubCategory}
+            </span>
+          )}
+          {date && (
+            <span className="font-['Inter',sans-serif] text-[11px] text-gray-400 font-bold uppercase tracking-tight">
+              {formatDateTime(date)}
+            </span>
+          )}
+        </div>
+
+        <h3 className="font-['Lora',serif] text-[1.25rem] font-bold leading-[1.3] text-gray-900 tracking-tight m-0 line-clamp-2 transition-colors duration-300 group-hover:text-[#dc2626]">
+          {title}
+        </h3>
 
         {(section?.toLowerCase() === "awards" || category?.toUpperCase() === "AWARDS") && (
-          <div className={styles.awardActions}>
+          <div className="flex gap-3 pt-2">
             {targetLink && (
               <a
                 href={targetLink.startsWith('http') ? targetLink : `https://${targetLink}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={styles.moreInfoBtn}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-gray-50 text-gray-900 border border-gray-200 font-bold text-[11px] uppercase tracking-widest text-center transition-all hover:bg-black hover:text-white hover:border-black"
                 onClick={(e) => e.stopPropagation()}
               >
                 More Info
@@ -119,34 +148,38 @@ export const NewsCard: React.FC<NewsCardProps> = (props) => {
                 href={nominationLink.startsWith('http') ? nominationLink : `https://${nominationLink}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={styles.nominationBtn}
+                className="flex-1 py-2.5 px-4 rounded-xl bg-red-600 text-white font-bold text-[11px] uppercase tracking-widest text-center transition-all hover:bg-red-700 shadow-md"
                 onClick={(e) => e.stopPropagation()}
               >
-                Nomination
+                Nominate
               </a>
             )}
           </div>
         )}
 
-        <div className={styles.readMore}>
-          <span>Read More</span>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 18l6-6-6-6" />
-          </svg>
+        <div className="mt-auto pt-4 flex items-center justify-between border-t border-gray-50 group/more">
+          <div className="flex items-center gap-2 text-[#dc2626] font-black text-[11px] uppercase tracking-widest opacity-0 -translate-x-2 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0">
+            <span>Read Story</span>
+            <svg className="transition-transform duration-300 group-hover:translate-x-1" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </div>
+          <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center transition-all duration-300 group-hover:bg-[#dc2626] group-hover:text-white">
+            <ChevronRight size={16} />
+          </div>
         </div>
       </div>
     </>
   );
 
   if (!href) {
-    return <div className={styles.newsCard}>{cardContent}</div>;
+    return <div className="group bg-[var(--card-bg)] rounded-2xl overflow-hidden border border-[var(--card-border)] shadow-sm transition-all duration-300 flex flex-col h-full relative">{cardContent}</div>;
   }
 
   return (
     <div
       onClick={handleCardClick}
-      className={styles.newsCard}
-      style={{ cursor: 'pointer' }}
+      className="group bg-white rounded-[32px] overflow-hidden border border-gray-100 shadow-sm hover:-translate-y-2 hover:shadow-[0_40px_80px_rgba(0,0,0,0.1)] hover:border-[#dc2626]/20 transition-all duration-500 ease-[cubic-bezier(0.165,0.84,0.44,1)] flex flex-col h-full relative cursor-pointer"
     >
       {cardContent}
     </div>
@@ -359,12 +392,12 @@ const NewsCards: React.FC<NewsCardsProps> = ({
           return (
             <div
               key={categorySection.categoryName}
-              className={`group/card relative flex flex-col overflow-hidden rounded-2xl border border-[var(--card-border)] bg-[var(--card-bg)] shadow-sm transition-all duration-400 hover:-translate-y-1.5 hover:border-[var(--primary)] hover:shadow-xl after:absolute after:left-0 after:right-0 after:top-0 after:h-[3px] after:bg-gradient-to-r after:from-[var(--primary)] after:to-[var(--accent)] after:opacity-0 after:transition-opacity after:duration-400 hover:after:opacity-100 ${animationEnabled ? 'animate-fade-in-up' : 'opacity-100'}`}
+              className={`group/card relative flex flex-col overflow-hidden rounded-[32px] border border-gray-100 bg-white shadow-sm transition-all duration-500 hover:-translate-y-2 hover:border-[#dc2626]/20 hover:shadow-[0_40px_80px_rgba(0,0,0,0.08)] after:absolute after:left-0 after:right-0 after:top-0 after:h-[4px] after:bg-[#dc2626] after:opacity-0 after:transition-opacity after:duration-500 hover:after:opacity-100 ${animationEnabled ? 'animate-fade-in-up' : 'opacity-100'}`}
               style={animationEnabled ? { animationDelay: `${index * 0.1}s` } : undefined}
             >
-              <div className="relative border-b border-[var(--border)] bg-[var(--nav-hover-bg)] px-6 py-5 pb-4 transition-all duration-300 sm:px-5">
-                <h2 className="m-0 flex items-center gap-3 font-['Lora'] text-[1.25rem] font-bold leading-tight tracking-tight text-[var(--heading-color)] transition-colors duration-300 uppercase sm:text-[1.125rem]">
-                  <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-gradient-to-br from-[var(--primary)] to-[var(--accent)] shadow-[0_0_8px_var(--primary)] animate-pulse-custom"></span>
+              <div className="relative border-b border-gray-50 bg-gray-50/30 px-6 py-6 pb-5 transition-all duration-300 sm:px-5">
+                <h2 className="m-0 flex items-center gap-3 font-['Lora'] text-[1.4rem] font-bold leading-tight tracking-tight text-[#0f172a] transition-colors duration-300 uppercase sm:text-[1.125rem]">
+                  <span className="h-3 w-3 shrink-0 rounded-full bg-[#dc2626] shadow-[0_0_12px_rgba(220,38,38,0.5)] animate-pulse"></span>
                   {categorySection.categoryName}
                 </h2>
 
@@ -378,7 +411,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({
                         <Link
                           key={`${subcat}-${idx}`}
                           href={`/Pages/${subcatSection}/${subcatSlug}`}
-                          className="inline-block rounded-full border border-[var(--primary)] bg-[var(--nav-hover-bg)] px-3 py-1.5 font-['Inter'] text-[0.6875rem] font-semibold uppercase leading-tight tracking-wider text-[var(--primary)] no-underline transition-all duration-300 hover:-translate-y-px hover:border-[var(--primary-hover)] hover:text-[var(--primary-hover)] hover:shadow-sm"
+                          className="inline-block rounded-full border border-gray-100 bg-white px-3 py-1.5 font-['Inter'] text-[10px] font-black uppercase leading-tight tracking-widest text-gray-400 no-underline transition-all duration-300 hover:-translate-y-px hover:border-[#dc2626] hover:text-[#dc2626] hover:shadow-sm"
                         >
                           {subcat}
                         </Link>
@@ -396,7 +429,7 @@ const NewsCards: React.FC<NewsCardsProps> = ({
                     if (fLink) router.push(fLink);
                   }}
                 >
-                  <div className="relative aspect-video w-full overflow-hidden bg-[var(--muted)] before:absolute before:inset-0 before:z-[1] before:bg-gradient-to-b before:from-transparent before:via-black/20 before:to-black/50 before:opacity-50 before:transition-opacity before:duration-300 before:pointer-events-none group-hover/featured:before:opacity-30">
+                  <div className="relative aspect-video w-full overflow-hidden bg-gray-100 before:absolute before:inset-0 before:z-[1] before:bg-gradient-to-b before:from-transparent before:via-black/20 before:to-black/60 before:opacity-60 before:transition-opacity before:duration-300 before:pointer-events-none group-hover/featured:before:opacity-40">
                     {featuredItem.image ? (
                       <>
                         <Image
@@ -443,9 +476,9 @@ const NewsCards: React.FC<NewsCardsProps> = ({
                     )}
                   </div>
 
-                  <h3 className="m-0 px-6 py-4 pb-2 font-['Lora'] text-[0.9375rem] font-semibold leading-normal tracking-tight text-[var(--heading-color)] transition-colors duration-300 line-clamp-2 md:text-[0.875rem] group-hover/featured:text-[var(--primary)]">{featuredItem.title}</h3>
+                  <h3 className="m-0 px-6 py-5 pb-2 font-['Lora'] text-[1.1rem] font-bold leading-snug tracking-tight text-[#0f172a] transition-colors duration-300 line-clamp-2 md:text-[0.875rem] group-hover/featured:text-[#dc2626]">{featuredItem.title}</h3>
 
-                  <span className="block px-6 pb-3 font-['Inter'] text-[0.6875rem] font-semibold uppercase leading-tight tracking-wider text-[var(--muted-foreground)] transition-colors duration-300 sm:px-5">
+                  <span className="block px-6 pb-4 font-['Inter'] text-[10px] font-black uppercase leading-tight tracking-widest text-[#dc2626]/60 transition-colors duration-300 sm:px-5">
                     {featuredItem.date ? formatDateTime(featuredItem.date) : 'Just now'}
                   </span>
                 </div>
@@ -494,11 +527,11 @@ const NewsCards: React.FC<NewsCardsProps> = ({
                           if (hLink) router.push(hLink);
                         }}
                       >
-                        <span className="z-[1] mt-1 h-4 w-[3.5px] shrink-0 rounded-[3px] bg-gradient-to-b from-[var(--primary)] to-[var(--accent)] opacity-40 transition-all duration-300 group-hover/headline:h-full group-hover/headline:opacity-100 group-hover/headline:shadow-[0_0_8px_var(--primary)]"></span>
-                        <div className="z-[1] flex flex-1 flex-col gap-1">
-                          <p className="m-0 font-['Lora'] text-[0.8125rem] font-medium leading-normal tracking-tight text-[var(--text-color)] transition-colors duration-300 line-clamp-2 md:text-[0.78125rem] group-hover/headline:text-[var(--primary)]">{item.title}</p>
+                        <span className="z-[1] mt-1 h-4 w-[3.5px] shrink-0 rounded-[3px] bg-[#dc2626] opacity-30 transition-all duration-300 group-hover/headline:h-full group-hover/headline:opacity-100 group-hover/headline:shadow-[0_0_8px_rgba(220,38,38,0.5)]"></span>
+                        <div className="z-[1] flex flex-1 flex-col gap-1.5">
+                          <p className="m-0 font-['Lora'] text-[0.9rem] font-semibold leading-normal tracking-tight text-[#0f172a] transition-colors duration-300 line-clamp-2 md:text-[0.78125rem] group-hover/headline:text-[#dc2626]">{item.title}</p>
                           {item.date && (
-                            <span className="font-['Inter'] text-[0.625rem] font-semibold uppercase tracking-wider text-[var(--muted-foreground)] sm:text-[0.5625rem]">{formatDateTime(item.date)}</span>
+                            <span className="font-['Inter'] text-[9px] font-black uppercase tracking-[0.1em] text-[#dc2626]/50 sm:text-[0.5625rem]">{formatDateTime(item.date)}</span>
                           )}
                         </div>
 
@@ -539,12 +572,12 @@ const NewsCards: React.FC<NewsCardsProps> = ({
               </div>
 
               {featuredItem.relatedLinks && featuredItem.relatedLinks.length > 0 && (
-                <div className="border-t border-[var(--border)] bg-[var(--nav-hover-bg)] p-4 px-6 sm:px-5">
-                  <h4 className="mb-2 font-['Inter'] text-[0.6875rem] font-bold uppercase tracking-wider text-[var(--primary)]">Related Stories</h4>
-                  <ul className="m-0 flex flex-col list-none gap-2 p-0">
+                <div className="border-t border-gray-50 bg-gray-50/20 p-5 px-6 sm:px-5">
+                  <h4 className="mb-3 font-['Inter'] text-[9px] font-black uppercase tracking-[0.2em] text-[#dc2626]">Related Stories</h4>
+                  <ul className="m-0 flex flex-col list-none gap-3 p-0">
                     {featuredItem.relatedLinks.slice(0, 3).map((link, idx) => (
-                      <li key={idx} className="group/related flex items-start gap-2 font-['Lora'] text-[0.75rem] leading-normal text-[var(--text-color)] cursor-pointer transition-all hover:text-[var(--primary)] hover:pl-1">
-                        <span className="font-bold text-[var(--primary)] transition-transform group-hover/related:translate-x-0.5">→</span>
+                      <li key={idx} className="group/related flex items-start gap-2 font-['Lora'] text-[13px] leading-snug text-gray-600 cursor-pointer transition-all hover:text-[#dc2626] hover:pl-1">
+                        <span className="font-bold text-[#dc2626] transition-transform group-hover/related:translate-x-0.5">→</span>
                         <span className="line-clamp-2">{link}</span>
                       </li>
                     ))}
@@ -553,14 +586,14 @@ const NewsCards: React.FC<NewsCardsProps> = ({
               )}
 
               {showViewMore && (
-                <div className="mt-auto border-t border-[var(--border)] bg-[var(--nav-hover-bg)] p-4 px-6 sm:px-5">
+                <div className="mt-auto border-t border-gray-50 bg-gray-50/30 p-5 px-6 sm:px-5">
                   <Link
                     href={getCategoryLink(categorySection.categoryName)}
-                    className="group/btn relative flex w-full items-center justify-between overflow-hidden rounded-full border border-[var(--primary)] bg-gradient-to-br from-[var(--primary)] to-[var(--primary-hover)] px-5 py-3 font-['Inter'] text-[0.75rem] font-semibold tracking-wide text-white shadow-md transition-all duration-300 hover:-translate-y-0.5 hover:border-[var(--primary-hover)] hover:from-[var(--primary-hover)] hover:to-[var(--primary)] hover:shadow-lg after:absolute after:left-[-100%] after:top-0 after:h-full after:w-full after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent after:transition-[left] after:duration-500 hover:after:left-[100%]"
+                    className="group/btn relative flex w-full items-center justify-between overflow-hidden rounded-full bg-[#0f172a] px-6 py-4 font-['Inter'] text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-xl transition-all duration-500 hover:bg-[#dc2626] hover:-translate-y-1 hover:shadow-[#dc2626]/20"
                   >
-                    <span>More About {categorySection.categoryName}</span>
-                    <svg className="h-4 w-4 shrink-0 transition-transform group-hover/btn:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    <span>Explore {categorySection.categoryName}</span>
+                    <svg className="h-5 w-5 shrink-0 transition-transform duration-500 group-hover:translate-x-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>
                 </div>

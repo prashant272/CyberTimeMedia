@@ -21,7 +21,6 @@ import {
   Key,
 } from "lucide-react";
 import { AuthChildProps } from "./types";
-import styles from "./SignUp.module.scss";
 
 interface SignUpProps {
   setMode: (mode: string) => void;
@@ -85,9 +84,9 @@ export const SignUp: React.FC<AuthChildProps> = ({ setMode }) => {
   );
 
   // Secret key is now required for ALL roles
-  const isFormValid = 
-    formData.name.trim() && 
-    isValid.email && 
+  const isFormValid =
+    formData.name.trim() &&
+    isValid.email &&
     isValid.password &&
     formData.secretKey.trim();
 
@@ -127,7 +126,7 @@ export const SignUp: React.FC<AuthChildProps> = ({ setMode }) => {
   const handleSignUp = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      
+
       if (!isFormValid) {
         toast.error("Please fill all fields correctly", {
           position: "top-center",
@@ -185,24 +184,18 @@ export const SignUp: React.FC<AuthChildProps> = ({ setMode }) => {
     [formData, isFormValid, UserSignUp, setMode]
   );
 
-  const RoleIcon = ({ role }: { role: Role }) => {
-    const icons = { USER: Users, ADMIN: Shield };
-    const Icon = icons[role];
-    return <Icon className={`${styles.roleIcon} ${styles[role]}`} />;
-  };
-
   return (
-    <div className={styles.page}>
-      <div className={styles.card}>
-        <div className={styles.header}>
-          <div className={styles.iconWrapper}>
-            <Users className={styles.headerIcon} />
+    <div className="min-h-screen flex items-center justify-center bg-[linear-gradient(135deg,#0f172a_0%,#1e1b4b_50%,#0f172a_100%)] p-4 font-sans">
+      <div className="w-full max-w-[380px] bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-7 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.6)]">
+        <div className="text-center mb-7">
+          <div className="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-3">
+            <Users className="w-7 h-7 text-teal-400" />
           </div>
-          <h2 className={styles.title}>Create Account</h2>
+          <h2 className="text-[1.75rem] font-bold bg-gradient-to-r from-teal-400 to-violet-400 bg-clip-text text-transparent">Create Account</h2>
         </div>
 
-        <form onSubmit={handleSignUp} className={styles.form}>
-          <div className={styles.selectWrapper}>
+        <form onSubmit={handleSignUp} className="flex flex-col gap-3.5">
+          <div className="relative">
             <select
               value={formData.role}
               onChange={(e) =>
@@ -211,100 +204,98 @@ export const SignUp: React.FC<AuthChildProps> = ({ setMode }) => {
                   role: e.target.value as Role,
                 }))
               }
-              className={styles.select}
+              className="w-full p-[0.625rem_1rem_0.625rem_2.25rem] bg-white/8 border border-white/15 rounded-xl text-white text-[0.875rem] font-medium appearance-none cursor-pointer duration-200 focus:outline-none focus:border-teal-400 focus:ring-3 focus:ring-teal-400/40 disabled:opacity-60 disabled:cursor-not-allowed"
               disabled={loading}
             >
-              <option value="USER">👤 User</option>
-              <option value="ADMIN">🛡️ Admin</option>
+              <option value="USER" className="bg-[#0f172a] text-white">👤 User</option>
+              <option value="ADMIN" className="bg-[#0f172a] text-white">🛡️ Admin</option>
             </select>
-            <RoleIcon role={formData.role} />
+            <div className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none text-slate-400">
+              {formData.role === "USER" ? <Users className="w-4 h-4 text-blue-400" /> : <Shield className="w-4 h-4 text-orange-400" />}
+            </div>
           </div>
 
-          <div className={styles.grid}>
-            <div className={styles.inputGroup}>
-              <Users className={styles.inputIcon} />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="relative">
+              <Users className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="text"
                 placeholder="Full Name"
                 value={formData.name}
                 onChange={handleChange("name")}
-                className={styles.input}
+                className="w-full p-[0.625rem_1rem_0.625rem_2.25rem] bg-white/8 border border-white/15 rounded-xl text-white text-[0.875rem] transition-all duration-200 placeholder:text-slate-400 focus:outline-none focus:border-teal-400 focus:ring-3 focus:ring-teal-400/40 disabled:opacity-60 disabled:cursor-not-allowed"
                 disabled={loading}
               />
             </div>
 
-            <div className={styles.inputGroup}>
-              <Mail className={styles.inputIcon} />
+            <div className="relative">
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
               <input
                 type="email"
                 placeholder="Email"
                 value={formData.email}
                 onChange={handleChange("email")}
-                className={`${styles.input} ${
-                  !isValid.email && formData.email ? styles.inputError : ""
-                }`}
+                className={`w-full p-[0.625rem_1rem_0.625rem_2.25rem] bg-white/8 border border-white/15 rounded-xl text-white text-[0.875rem] transition-all duration-200 placeholder:text-slate-400 focus:outline-none focus:border-teal-400 focus:ring-3 focus:ring-teal-400/40 disabled:opacity-60 disabled:cursor-not-allowed ${!isValid.email && formData.email ? "!border-red-400 !ring-red-400/20" : ""}`}
                 disabled={loading}
               />
             </div>
           </div>
 
-          <div className={styles.inputGroup}>
-            <Lock className={styles.inputIcon} />
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type={showPassword ? "text" : "password"}
-              placeholder="Password (8+ chars, A-Z, a-z, 0-9, @$!%*?&)"
+              placeholder="Password (8+ chars, A-Z, a-z, 0-9, @$)"
               value={formData.password}
               onChange={handleChange("password")}
-              className={`${styles.input} ${
-                !isValid.password && formData.password ? styles.inputError : ""
-              }`}
+              className={`w-full p-[0.625rem_1rem_0.625rem_2.25rem] bg-white/8 border border-white/15 rounded-xl text-white text-[0.875rem] transition-all duration-200 placeholder:text-slate-400 focus:outline-none focus:border-teal-400 focus:ring-3 focus:ring-teal-400/40 disabled:opacity-60 disabled:cursor-not-allowed ${!isValid.password && formData.password ? "!border-red-400 !ring-red-400/20" : ""}`}
               disabled={loading}
             />
             <button
               type="button"
               onClick={() => setShowPassword((v) => !v)}
-              className={styles.passwordToggle}
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-none border-none text-slate-400 cursor-pointer p-0 hover:text-teal-400"
             >
-              {showPassword ? <EyeOff /> : <Eye />}
+              {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
 
           {/* Secret Key Input - Required for ALL roles */}
-          <div className={styles.inputGroup}>
-            <Key className={styles.inputIcon} />
+          <div className="relative">
+            <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
             <input
               type={showSecretKey ? "text" : "password"}
               placeholder="Secret Key (Required)"
               value={formData.secretKey}
               onChange={handleChange("secretKey")}
-              className={styles.input}
+              className="w-full p-[0.625rem_1rem_0.625rem_2.25rem] bg-white/8 border border-white/15 rounded-xl text-white text-[0.875rem] transition-all duration-200 placeholder:text-slate-400 focus:outline-none focus:border-teal-400 focus:ring-3 focus:ring-teal-400/40 disabled:opacity-60 disabled:cursor-not-allowed"
               disabled={loading}
             />
             <button
               type="button"
               onClick={() => setShowSecretKey((v) => !v)}
-              className={styles.passwordToggle}
+              className="absolute right-3 top-1/2 -translate-y-1/2 bg-none border-none text-slate-400 cursor-pointer p-0 hover:text-teal-400"
             >
-              {showSecretKey ? <EyeOff /> : <Eye />}
+              {showSecretKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
             </button>
           </div>
 
-          <label className={styles.fileLabel}>
+          <label className="flex items-center justify-center w-full h-12 border-2 border-dashed border-white/30 rounded-xl bg-white/5 text-slate-400 text-[0.75rem] cursor-pointer transition-all duration-200 hover:border-teal-400 hover:bg-teal-400/10 hover:text-teal-400">
             <input
               type="file"
               accept="image/*"
               onChange={handleFileChange}
-              className={styles.hidden}
+              className="hidden"
               disabled={loading}
             />
             {formData.profilePicture ? (
               <img
                 src={formData.profilePicture}
                 alt="Preview"
-                className={styles.previewImage}
+                className="w-8 h-8 rounded-full object-cover mr-2 border border-teal-400"
               />
             ) : (
-              <ImageIcon className={styles.fileIcon} />
+              <ImageIcon className="w-4 h-4 mr-1" />
             )}
             {formData.profilePicture ? "Change" : "Photo"} (Optional)
           </label>
@@ -312,13 +303,11 @@ export const SignUp: React.FC<AuthChildProps> = ({ setMode }) => {
           <button
             type="submit"
             disabled={!isFormValid || loading}
-            className={`${styles.submitBtn} ${
-              !isFormValid || loading ? styles.disabled : ""
-            }`}
+            className="w-full flex items-center justify-center gap-2 p-[0.75rem_1.25rem] bg-gradient-to-r from-teal-600 to-teal-800 text-white text-[0.875rem] font-semibold rounded-xl shadow-[0_4px_12px_rgba(45,212,191,0.25)] transition-all duration-200 mt-2 hover:not-disabled:from-teal-700 hover:not-disabled:to-teal-600 hover:not-disabled:-translate-y-0.5 hover:not-disabled:shadow-[0_8px_20px_rgba(45,212,191,0.35)] disabled:from-slate-600 disabled:to-slate-700 disabled:cursor-not-allowed disabled:shadow-none"
           >
             {loading ? (
               <>
-                <Loader2 className={styles.spinner} />
+                <Loader2 className="w-4 h-4 animate-spin" />
                 Creating Account...
               </>
             ) : (
@@ -327,11 +316,11 @@ export const SignUp: React.FC<AuthChildProps> = ({ setMode }) => {
           </button>
         </form>
 
-        <p className={styles.footerText}>
+        <p className="text-center text-[0.75rem] text-slate-400 mt-6 pt-4 border-t border-white/5">
           Already have account?{" "}
           <button
             onClick={() => setMode("signin")}
-            className={styles.signInLink}
+            className="text-teal-400 font-semibold bg-none border-none cursor-pointer underline hover:text-teal-300 disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={loading}
           >
             Sign In

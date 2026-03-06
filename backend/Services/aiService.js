@@ -12,7 +12,7 @@ const client = new OpenAI({
 const generateArticle = async (facts) => {
     try {
         const response = await client.chat.completions.create({
-            model: "google/gemini-2.0-flash-lite-preview-02-05:free",
+            model: "openai/gpt-4o",
             messages: [
                 {
                     role: "system",
@@ -82,7 +82,7 @@ ${facts}
                 },
             ],
             response_format: { type: "json_object" },
-            max_tokens: 4096,
+            max_tokens: 3500,
         });
 
         const content = response.choices[0].message.content;

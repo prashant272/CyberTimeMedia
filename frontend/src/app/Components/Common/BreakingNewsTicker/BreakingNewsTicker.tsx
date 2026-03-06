@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import styles from './BreakingNewsTicker.module.scss';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -81,14 +80,18 @@ const BreakingNewsTicker: React.FC = () => {
     if (!currentItem) return null;
 
     return (
-        <div className={styles.tickerWrapper}>
-            <div className={styles.container} onClick={() => router.push(currentItem.isLive ? "/sports/live" : "/breaking-news")}>
-                <div className={styles.label}>
-                    <span className={styles.liveDot}></span>
-                    {currentItem.isLive ? "LIVE SCORE" : "BREAKING NEWS"}
+        <div className="w-full mt-1 mb-2 flex justify-center items-center z-[99]">
+            <div
+                className="bg-[#e10000] text-white h-9 sm:h-10 flex items-center rounded-full px-[10px] sm:px-[15px] w-[96%] max-w-[1200px] cursor-pointer shadow-md relative overflow-hidden group"
+                onClick={() => router.push(currentItem.isLive ? "/sports/live" : "/breaking-news")}
+            >
+                <div className="flex items-center gap-1.5 sm:gap-[15px] font-black text-xs sm:text-base whitespace-nowrap pl-1 sm:pl-[15px] pr-2 sm:pr-[50px] tracking-widest sm:tracking-[3px] uppercase text-white font-['Georgia','Times_New_Roman',serif] italic shrink-0">
+                    <span className="w-2 h-2 sm:w-3 sm:h-3 bg-[#f8f8f6] rounded-full animate-live-pulse shadow-[0_0_5px_rgba(255,255,255,0.8)]"></span>
+                    <span className="hidden sm:inline">{currentItem.isLive ? "LIVE SCORE" : "BREAKING NEWS"}</span>
+                    <span className="inline sm:hidden">{currentItem.isLive ? "LIVE" : "BREAKING"}</span>
                 </div>
-                <div className={styles.separator}></div>
-                <div className={styles.newsTrack}>
+                <div className="w-px h-[14px] sm:h-[18px] bg-white/40 mr-2 sm:mr-[15px] shrink-0"></div>
+                <div className="flex-1 flex items-center h-full overflow-hidden">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={currentItem._id}
@@ -96,19 +99,21 @@ const BreakingNewsTicker: React.FC = () => {
                             animate={{ y: 0, opacity: 1 }}
                             exit={{ y: -20, opacity: 0 }}
                             transition={{ duration: 0.5 }}
-                            className={styles.newsItem}
+                            className="text-xs sm:text-[0.95rem] font-medium text-white whitespace-nowrap block w-full text-left overflow-hidden text-ellipsis pr-6 sm:pr-10 font-['Georgia','Times_New_Roman',serif] italic tracking-[0.2px] sm:tracking-[0.3px]"
                         >
-                            {currentItem.isLive && <span style={{ color: '#ff3b3b', fontWeight: '900', marginRight: '8px' }}>[LIVE]</span>}
+                            {currentItem.isLive && <span className="text-[#f8f8f6] font-black mr-1 sm:mr-2">[LIVE]</span>}
                             {currentItem.title}
                         </motion.div>
                     </AnimatePresence>
                 </div>
-                <button className={styles.closeBtn} onClick={(e) => {
-                    e.stopPropagation();
-                    // In a real app, you might hide the ticker for the session
-                    const wrapper = e.currentTarget.closest(`.${styles.tickerWrapper}`);
-                    if (wrapper) (wrapper as HTMLElement).style.display = 'none';
-                }}>
+                <button
+                    className="bg-transparent border-none text-white text-[1rem] sm:text-[1.1rem] cursor-pointer p-0.5 sm:p-1 flex items-center justify-center opacity-70 sm:opacity-80 absolute right-[10px] sm:right-[15px] top-1/2 -translate-y-1/2 transition-opacity duration-200 hover:opacity-100"
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        const wrapper = e.currentTarget.closest('div.w-full');
+                        if (wrapper) (wrapper as HTMLElement).style.display = 'none';
+                    }}
+                >
                     ✕
                 </button>
             </div>

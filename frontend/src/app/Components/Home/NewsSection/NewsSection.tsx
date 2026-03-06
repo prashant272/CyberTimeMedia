@@ -4,7 +4,8 @@ import React, { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useNewsContext } from '@/app/context/NewsContext';
 import { formatDateTime } from '@/Utils/Utils';
-import styles from './NewsSection.module.scss';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Calendar, Play, ArrowRight, Share2, Star } from 'lucide-react';
 
 interface NewsItem {
   slug: string;
@@ -65,10 +66,8 @@ const NewsSection: React.FC = () => {
   const liveNews = useMemo(() => {
     if (!allNews || loading) return [];
 
-    // Filter and map with unique IDs
     const trendingOrLatest = allNews.filter((item) => item.isLatest === true || item.isTrending === true);
 
-    // Use a Set to avoid duplicates if context has them
     const seen = new Set();
     const unique = [];
 
@@ -99,22 +98,22 @@ const NewsSection: React.FC = () => {
 
   if (loading && (!allNews || allNews.length === 0)) {
     return (
-      <section className={styles.newsSection}>
-        <div className={styles.container}>
-          <div className={styles.newsGrid}>
-            <div className={`${styles.loadingCard} ${styles.featuredArticle}`}>
-              <div className={`${styles.loadingSkeleton}`} style={{ height: '400px' }}></div>
-              <div style={{ padding: '2.5rem' }}>
-                <div className={`${styles.loadingSkeleton}`} style={{ height: '32px', width: '80%', marginBottom: '1rem', borderRadius: '8px' }}></div>
-                <div className={`${styles.loadingSkeleton}`} style={{ height: '20px', width: '60%', borderRadius: '8px' }}></div>
+      <section className="bg-[var(--background)] py-16 px-8 md:px-6 relative overflow-hidden transition-colors duration-300">
+        <div className="max-w-[1400px] mx-auto relative z-[1]">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="col-span-1 md:col-span-full bg-[var(--card-bg)] rounded-[20px] border border-[var(--card-border)] overflow-hidden shadow-md animate-pulse">
+              <div className="h-[400px] bg-gray-200"></div>
+              <div className="p-10">
+                <div className="h-8 bg-gray-200 rounded-lg w-4/5 mb-4"></div>
+                <div className="h-5 bg-gray-200 rounded-lg w-3/5"></div>
               </div>
             </div>
             {Array(3).fill(0).map((_, i) => (
-              <div key={i} className={styles.loadingCard}>
-                <div className={`${styles.loadingSkeleton}`} style={{ height: '240px' }}></div>
-                <div style={{ padding: '1.75rem' }}>
-                  <div className={`${styles.loadingSkeleton}`} style={{ height: '24px', width: '90%', marginBottom: '0.75rem', borderRadius: '6px' }}></div>
-                  <div className={`${styles.loadingSkeleton}`} style={{ height: '16px', width: '70%', borderRadius: '6px' }}></div>
+              <div key={i} className="bg-[var(--card-bg)] rounded-2xl border border-[var(--border)] overflow-hidden animate-pulse">
+                <div className="h-[240px] bg-gray-200"></div>
+                <div className="p-7">
+                  <div className="h-6 bg-gray-200 rounded-lg w-[90%] mb-3"></div>
+                  <div className="h-4 bg-gray-200 rounded-lg w-[70%]"></div>
                 </div>
               </div>
             ))}
@@ -125,150 +124,163 @@ const NewsSection: React.FC = () => {
   }
 
   if (liveNews.length === 0) {
-    return null; // Don't show anything if no live news
+    return null;
   }
 
   const featuredArticle = liveNews[0];
   const regularArticles = liveNews.slice(1);
 
   return (
-    <section className={styles.newsSection}>
-      <div className={styles.container}>
-        <div className={styles.newsGrid}>
+    <section className="bg-white py-24 px-4 md:px-8 lg:px-12 relative overflow-hidden">
+      {/* Decorative Branding Text */}
+      <div className="absolute top-0 left-12 h-full flex flex-col justify-center pointer-events-none opacity-[0.02]">
+        <span className="text-[200px] font-black uppercase rotate-90 origin-left whitespace-nowrap">Trending Pulse</span>
+      </div>
+
+      <div className="max-w-[1440px] mx-auto relative z-10">
+        <div className="flex items-center gap-4 mb-16">
+          <div className="w-12 h-12 rounded-2xl bg-[#dc2626] flex items-center justify-center shadow-[0_10px_20px_rgba(220,38,38,0.2)]">
+            <Star className="text-white" size={24} fill="white" />
+          </div>
+          <div>
+            <span className="text-[#dc2626] font-black text-[12px] uppercase tracking-[0.3em] block mb-1">Editor's Choice</span>
+            <h2 className="font-['Lora',serif] font-bold text-[clamp(2rem,5vw,3rem)] text-[#0f172a] leading-none tracking-tighter">
+              Trending <span className="text-[#dc2626]">Now</span>
+            </h2>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Featured Hero Article */}
-          <article
-            className={styles.featuredArticle}
+          <motion.article
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+            className="group relative lg:col-span-12 grid grid-cols-1 lg:grid-cols-[1.4fr_1fr] bg-white rounded-[48px] overflow-hidden border border-gray-100 shadow-[0_40px_80px_rgba(0,0,0,0.06)] cursor-pointer transition-all duration-700 hover:shadow-[0_50px_100px_rgba(0,0,0,0.1)] hover:border-[#dc2626]/20"
             onClick={() => handleCardClick(featuredArticle)}
-            style={{ cursor: 'pointer' }}
           >
-            <div className={styles.featuredImage}>
-              <img src={featuredArticle.image} alt={featuredArticle.title} loading="eager" />
-              <div className={styles.overlay}>
-                <span className={styles.category}>{featuredArticle.category}</span>
+            <div className="relative h-[450px] lg:h-[600px] overflow-hidden">
+              <img
+                src={featuredArticle.image}
+                alt={featuredArticle.title}
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-[1200ms] scale-105 group-hover:scale-110"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/20 to-transparent lg:opacity-60" />
+
+              <div className="absolute top-10 left-10">
+                <div className="flex items-center gap-3 px-6 py-3 bg-[#dc2626] text-white rounded-2xl font-black text-[11px] uppercase tracking-[0.2em] shadow-xl">
+                  <span className="w-2 h-2 rounded-full bg-white animate-pulse" />
+                  Breaking News
+                </div>
               </div>
             </div>
-            <div className={styles.featuredContent}>
-              <div className={styles.cardMeta} style={{ borderTop: 'none', paddingTop: 0, marginBottom: '1rem', marginTop: 0 }}>
+
+            <div className="p-12 md:p-10 flex flex-col justify-center bg-white">
+              <div className="flex items-center gap-4 mb-8">
+                <span className="px-4 py-1.5 bg-red-50 text-[#dc2626] rounded-xl font-black text-[10px] uppercase tracking-wider">
+                  {featuredArticle.category}
+                </span>
                 {featuredArticle.date && (
-                  <span className={styles.timestamp}>
-                    {formatDateTime(featuredArticle.date)}
+                  <span className="flex items-center gap-2 text-[12px] font-bold text-gray-400 uppercase tracking-widest">
+                    <Calendar size={14} className="text-[#dc2626]" />
+                    {formatDateTime(featuredArticle.date).split('at')[0]}
                   </span>
                 )}
               </div>
-              <h1 className={styles.featuredTitle}>{featuredArticle.title}</h1>
-              <p className={styles.featuredDescription}>{featuredArticle.description}</p>
 
-              {(featuredArticle.category?.toUpperCase() === "AWARDS" || featuredArticle.category?.toLowerCase() === "awards") && (
-                <div className={styles.awardActions}>
-                  {featuredArticle.targetLink && (
-                    <a
-                      href={featuredArticle.targetLink.startsWith('http') ? featuredArticle.targetLink : `https://${featuredArticle.targetLink}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.moreInfoBtn}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      More Info
-                    </a>
-                  )}
-                  {featuredArticle.nominationLink && (
-                    <a
-                      href={featuredArticle.nominationLink.startsWith('http') ? featuredArticle.nominationLink : `https://${featuredArticle.nominationLink}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.nominationBtn}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      Nomination
-                    </a>
+              <h1 className="font-['Lora',serif] font-bold text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] text-[#0f172a] mb-8 tracking-tighter group-hover:text-[#dc2626] transition-colors duration-300">
+                {featuredArticle.title}
+              </h1>
+
+              <p className="font-['Inter',sans-serif] text-[18px] md:text-base leading-relaxed text-gray-500 mb-10 line-clamp-3">
+                {featuredArticle.description}
+              </p>
+
+              <div className="flex flex-wrap items-center gap-6">
+                <button
+                  className="flex items-center gap-4 px-10 py-5 bg-[#dc2626] text-white rounded-full font-black text-[13px] uppercase tracking-[0.2em] shadow-[0_20px_40px_rgba(220,38,38,0.25)] hover:bg-[#b91c1c] hover:-translate-y-1 transition-all duration-300 group/btn"
+                >
+                  Explore Full Story
+                  <ArrowRight size={18} className="group-hover/btn:translate-x-2 transition-transform" />
+                </button>
+
+                <div className="flex items-center gap-3">
+                  <button className="w-12 h-12 rounded-full border border-gray-100 flex items-center justify-center text-gray-400 hover:bg-gray-50 hover:text-[#dc2626] transition-all">
+                    <Share2 size={18} />
+                  </button>
+                  {(featuredArticle as any).nominationLink && (
+                    <button className="px-8 py-5 border-2 border-[#dc2626] text-[#dc2626] rounded-full font-black text-[12px] uppercase tracking-widest hover:bg-[#dc2626] hover:text-white transition-all">
+                      Join Discussion
+                    </button>
                   )}
                 </div>
-              )}
-
-              <button
-                className={styles.readMore}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleCardClick(featuredArticle);
-                }}
-              >
-                Read Full Story
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M7 4L13 10L7 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-                </svg>
-              </button>
+              </div>
             </div>
-          </article>
+          </motion.article>
 
-          {/* Regular Article Cards */}
-          {regularArticles.map((item) => (
-            <article
-              key={item.id}
-              className={styles.articleCard}
-              onClick={() => handleCardClick(item)}
-              style={{ cursor: 'pointer' }}
-            >
-              <div className={styles.cardImage}>
-                <img src={item.image} alt={item.title} loading="lazy" />
-                {item.isVideo && (
-                  <>
-                    <div className={styles.liveTag}>
-                      <span className={styles.pulseDot}></span>
-                      Live
-                    </div>
-                    <div className={styles.playButton}>
-                      <svg width="56" height="56" viewBox="0 0 56 56" fill="none">
-                        <circle cx="28" cy="28" r="28" fill="rgba(255, 255, 255, 0.98)" />
-                        <path d="M22 16L40 28L22 40V16Z" fill="#3b82f6" />
-                      </svg>
-                    </div>
-                  </>
-                )}
-              </div>
-              <div className={styles.cardContent}>
-                <h3 className={styles.cardTitle}>{item.title}</h3>
-                <p className={styles.cardDescription}>{item.description}</p>
+          {/* Regular Article Grid */}
+          <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-6">
+            {regularArticles.map((item, idx) => (
+              <motion.article
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: idx * 0.1 }}
+                className="group cursor-pointer"
+                onClick={() => handleCardClick(item)}
+              >
+                <div className="bg-white rounded-[40px] p-2 border border-gray-200 transition-all duration-500 hover:shadow-[0_30px_60px_rgba(0,0,0,0.06)] hover:border-[#dc2626]/20 h-full flex flex-col">
+                  <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden mb-6 bg-gray-50 border border-gray-50">
+                    <img
+                      src={item.image}
+                      alt={item.title}
+                      className="w-full h-full object-cover transition-transform duration-700 scale-105 group-hover:scale-110"
+                    />
 
-                {(item.category?.toUpperCase() === "AWARDS" || item.category?.toLowerCase() === "awards") && (
-                  <div className={styles.awardActions}>
-                    {item.targetLink && (
-                      <a
-                        href={item.targetLink.startsWith('http') ? item.targetLink : `https://${item.targetLink}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.moreInfoBtn}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Info
-                      </a>
+                    {item.isVideo && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="w-16 h-16 rounded-full bg-white text-[#dc2626] flex items-center justify-center shadow-2xl scale-75 group-hover:scale-100 transition-transform">
+                          <Play fill="#dc2626" size={24} className="ml-1" />
+                        </div>
+                      </div>
                     )}
-                    {item.nominationLink && (
-                      <a
-                        href={item.nominationLink.startsWith('http') ? item.nominationLink : `https://${item.nominationLink}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={styles.nominationBtn}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        Nominate
-                      </a>
-                    )}
+
+                    <div className="absolute top-5 left-5">
+                      <span className="px-4 py-1.5 bg-white/90 backdrop-blur-md rounded-xl font-black text-[10px] uppercase tracking-widest text-[#dc2626] shadow-sm">
+                        {item.category}
+                      </span>
+                    </div>
                   </div>
-                )}
 
-                <div className={styles.cardMeta}>
-                  <span style={{ textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: 600, color: '#8b5cf6' }}>
-                    {item.category}
-                  </span>
-                  {item.date && (
-                    <span className={styles.timestamp}>
-                      {formatDateTime(item.date)}
-                    </span>
-                  )}
+                  <div className="px-5 pb-6 flex-1 flex flex-col">
+                    <div className="flex items-center gap-2 mb-4">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                        {item.date ? formatDateTime(item.date).split('at')[0] : 'Today'}
+                      </span>
+                      <span className="w-1 h-1 rounded-full bg-red-200" />
+                      <span className="text-[10px] font-black text-[#dc2626] uppercase tracking-widest opacity-80">
+                        Trending
+                      </span>
+                    </div>
+
+                    <h3 className="font-['Lora',serif] font-bold text-[20px] leading-tight text-[#0f172a] mb-4 group-hover:text-[#dc2626] transition-colors duration-300">
+                      {item.title}
+                    </h3>
+
+                    <p className="font-['Inter',sans-serif] text-[14px] leading-relaxed text-gray-500 line-clamp-2 mb-6 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                      {item.description}
+                    </p>
+
+                    <div className="mt-auto flex items-center gap-2 text-[11px] font-black text-[#dc2626] uppercase tracking-[0.2em] opacity-0 group-hover:opacity-100 transition-all group-hover:translate-x-1">
+                      Read Analysis <ArrowRight size={14} />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
+              </motion.article>
+            ))}
+          </div>
         </div>
       </div>
     </section>

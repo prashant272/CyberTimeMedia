@@ -108,7 +108,7 @@ export const useApi = <T,>(fetchFn: () => Promise<ApiResponse<T>>): UseApiResult
     return () => {
       mounted = false;
     };
-  }, [load]);
+  }, []); // Only run once on mount or when manually refetched via refetch()
 
   return { data, loading, error, refetch: load };
 };

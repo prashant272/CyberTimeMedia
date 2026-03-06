@@ -45,13 +45,13 @@ async function triggerFacebookPost(newsItem) {
     }
 
     const articleUrl = `https://www.primetimemedia.in/Pages/${newsItem.category}/${newsItem.subCategory || newsItem.category}/${newsItem.slug}`;
-    const message = `📰 ${newsItem.title}\n\n${newsItem.summary || ""}\n\nRead more 👇`;
+    const message = `ðŸ“° ${newsItem.title}\n\n${newsItem.summary || ""}\n\nRead more ðŸ‘‡`;
 
     const result = await facebookService.postToPage(pageId, pageAccessToken, message, articleUrl);
     if (result.success) {
-      console.log(`[Facebook] ✅ Auto-posted: "${newsItem.title}" → Post ID: ${result.postId}`);
+      console.log(`[Facebook] âœ… Auto-posted: "${newsItem.title}" â†’ Post ID: ${result.postId}`);
     } else {
-      console.error(`[Facebook] ❌ Auto-post failed: ${result.error}`);
+      console.error(`[Facebook] âŒ Auto-post failed: ${result.error}`);
     }
   } catch (error) {
     console.error("[Facebook] triggerFacebookPost Error:", error);
@@ -104,7 +104,7 @@ exports.AddNews = async (req, res) => {
       title, slug, category: finalCategory, subCategory: subCategory || null,
       summary: summary || null, content, image: imageUrl, tags,
       targetLink: targetLink || null, nominationLink: nominationLink || null,
-      author: author || "Prime Time News",
+      author: author || "TIME CYBERMEDIA News",
       authorId: authorId || null,
       status: status || "draft",
       publishedAt: status === "published" ? new Date() : null

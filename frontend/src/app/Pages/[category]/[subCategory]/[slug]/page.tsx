@@ -18,8 +18,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   try {
     const sectionKey = category.toLowerCase();
-    const res = await newsService.getNewsBySlug(sectionKey, slug).catch(() => null);
-    if (!res) return { title: "News | Prime Time Media" };
+    const res = await newsService.getNewsBySlug(sectionKey, slug).catch(err => null);
+
+    if (!res) return { title: "News | TIME CYBERMEDIA" };
     const news = res.news || res.data;
 
     if (news) {
@@ -28,8 +29,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         imageUrl = `${siteUrl}${imageUrl.startsWith('/') ? '' : '/'}${imageUrl}`;
       }
 
-      const descriptionSnippet = news.summary || news.content?.substring(0, 150) || "";
-      const fullDescription = `${descriptionSnippet.replace(/[#*]/g, '')}... | Click to read full news and view more updates on Prime Time Media`;
+      const snippet = news.summary || news.content?.substring(0, 150) || "Read the latest news";
+      const fullDescription = `${snippet.replace(/[#*]/g, '')}... | Click to read full news and view more updates on TIME CYBERMEDIA`;
 
       const { subCategory } = await params;
       const articleUrl = `${siteUrl}/Pages/${category}/${subCategory}/${slug}`;
@@ -42,7 +43,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           title: news.title,
           description: fullDescription,
           url: articleUrl,
-          siteName: 'Prime Time News',
+          siteName: 'TIME CYBERMEDIA',
           images: [
             {
               url: imageUrl,
@@ -68,8 +69,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     metadataBase: new URL(siteUrl),
-    title: "News | Prime Time News",
-    description: "Latest breaking news and updates on Prime Time Media."
+    title: "News | TIME CYBERMEDIA",
+    description: "Latest breaking news and updates on TIME CYBERMEDIA."
   };
 }
 
@@ -118,7 +119,7 @@ function renderArticle(foundArticle: any, categoryNews: any[], category: string,
     subtitle: foundArticle.summary || '',
     image: foundArticle.image || '/placeholder.jpg',
     date: foundArticle.publishedAt || foundArticle.createdAt || new Date().toISOString(),
-    author: foundArticle.author || 'Prime Time News',
+    author: foundArticle.author || 'TIME CYBERMEDIA',
     authorId: foundArticle.authorId,
     readTime: '',
     content: foundArticle.content || 'Content not available',
@@ -159,14 +160,37 @@ function renderArticle(foundArticle: any, categoryNews: any[], category: string,
     category: news.subCategory || ''
   }));
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
+    "headline": articleData.title,
+    "description": articleData.subtitle || articleData.content.substring(0, 160),
+    "image": [
+      articleData.image.startsWith('http') ? articleData.image : `${siteUrl}${articleData.image.startsWith('/') ? '' : '/'}${articleData.image}`
+    ],
+    "datePublished": articleData.date,
+    "dateModified": articleData.date,
+    "author": [{
+      "@type": "Organization",
+      "name": "TIME CYBERMEDIA",
+      "url": siteUrl
+    }]
+  };
+
   return (
-    <ArticlePageClient
-      article={articleData}
-      relatedArticles={related}
-      topNews={topNews}
-      recommendedStories={recommendedStories}
-      section={category}
-      category={subCategory}
-    />
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ArticlePageClient
+        article={articleData}
+        relatedArticles={related}
+        topNews={topNews}
+        recommendedStories={recommendedStories}
+        section={category}
+        category={subCategory}
+      />
+    </>
   );
 }

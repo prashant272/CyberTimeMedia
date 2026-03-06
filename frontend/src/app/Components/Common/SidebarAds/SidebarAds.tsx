@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import styles from './SidebarAds.module.scss';
 import { useActiveAds } from '@/app/hooks/useAds';
 
 interface SidebarAdsProps {
@@ -19,7 +18,7 @@ const SidebarAds: React.FC<SidebarAdsProps> = ({ count = 5 }) => {
 
         const interval = setInterval(() => {
             setAdIndices(prev => prev.map(idx => (idx + 1) % sidebarAds.length));
-        }, 5000 + Math.random() * 2000); // Slight randomization for natural feel
+        }, 5000 + Math.random() * 2000);
 
         return () => clearInterval(interval);
     }, [sidebarAds.length]);
@@ -27,7 +26,7 @@ const SidebarAds: React.FC<SidebarAdsProps> = ({ count = 5 }) => {
     const renderAd = (containerIndex: number) => {
         if (adsLoading) {
             return (
-                <div className={styles.adPlaceholder}>
+                <div className="w-full min-h-[150px] bg-[var(--nav-hover-bg)] border-2 border-dashed border-[var(--border)] rounded-xl flex items-center justify-center text-[var(--muted-foreground)] font-['Inter',sans-serif] text-sm">
                     <span>Loading advertisement...</span>
                 </div>
             );
@@ -35,10 +34,10 @@ const SidebarAds: React.FC<SidebarAdsProps> = ({ count = 5 }) => {
 
         if (sidebarAds.length === 0) {
             return (
-                <div className={styles.adPlaceholder}>
-                    <div className={styles.emptyAdBox}>
-                        <span>AD SPACE</span>
-                        <small>Sidebar Ad Position {containerIndex + 1}</small>
+                <div className="w-full min-h-[150px] bg-[var(--nav-hover-bg)] border-2 border-dashed border-[var(--border)] rounded-xl flex items-center justify-center text-[var(--muted-foreground)] font-['Inter',sans-serif] text-sm animate-in-slide-up">
+                    <div className="flex flex-col items-center gap-1">
+                        <span className="font-bold tracking-wider">AD SPACE</span>
+                        <small className="text-[0.7rem] opacity-70">Sidebar Ad Position {containerIndex + 1}</small>
                     </div>
                 </div>
             );
@@ -48,17 +47,17 @@ const SidebarAds: React.FC<SidebarAdsProps> = ({ count = 5 }) => {
         const currentAd = sidebarAds[currentAdIndex];
 
         return (
-            <div className={styles.adWrapper} key={currentAdIndex}>
+            <div className="group relative w-full rounded-xl overflow-hidden border border-[var(--border)] bg-transparent leading-none transition-transform duration-300 animate-slide-up hover:scale-105" key={currentAdIndex}>
                 <a
                     href={currentAd.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className={styles.adLink}
+                    className="block leading-none"
                 >
                     <img
                         src={currentAd.sidebarImageUrl || currentAd.imageUrl}
                         alt={currentAd.title || "Advertisement"}
-                        className={styles.adImage}
+                        className="w-full h-auto block object-contain"
                         loading="lazy"
                     />
                 </a>
@@ -67,9 +66,9 @@ const SidebarAds: React.FC<SidebarAdsProps> = ({ count = 5 }) => {
     };
 
     return (
-        <div className={styles.adSpace}>
-            <span className={styles.adLabel}>ADVERTISEMENT</span>
-            <div className={styles.sidebarAdsList}>
+        <div className="bg-[var(--card-bg)] rounded-2xl border border-[var(--card-border)] shadow-[var(--shadow-color)] p-8 mb-8 w-full">
+            <span className="font-['Inter',sans-serif] font-semibold text-[12px] tracking-widest uppercase text-gray-400 block text-center mb-5">ADVERTISEMENT</span>
+            <div className="flex flex-col gap-6 w-full">
                 {Array.from({ length: count }).map((_, i) => (
                     <React.Fragment key={i}>
                         {renderAd(i)}

@@ -55,7 +55,7 @@ const newsItemSchema = new mongoose.Schema({
   isHidden: { type: Boolean, default: false },
   targetLink: { type: String, trim: true, default: null },
   nominationLink: { type: String, trim: true, default: null },
-  author: { type: String, trim: true, default: "Prime Time News" },
+  author: { type: String, trim: true, default: "TIME CYBERMEDIA News" },
   status: {
     type: String,
     enum: ["draft", "published", "archived"],

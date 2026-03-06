@@ -11,8 +11,6 @@ import { ThemeProvider } from "./context/ThemeContext";
 
 import ConditionalLayout from "./Components/Common/ConditionalLayout";
 import Script from "next/script";
-import AwardsPopup from "./Components/Common/AwardsPopup/AwardsPopup";
-import GoogleAd from "./Components/Common/GoogleAd/GoogleAd";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,13 +25,13 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.primetimemedia.in"),
   title: {
-    default: "Prime Time News - Latest Breaking News & Updates",
-    template: "%s | Prime Time News",
+    default: "TIME CYBERMEDIA News - Latest Breaking News & Updates",
+    template: "%s | TIME CYBERMEDIA News",
   },
-  description: "Prime Time News — India's trusted source for breaking news, politics, sports, entertainment, technology, business and world news. Get live updates 24/7.",
+  description: "TIME CYBERMEDIA News â€” India's trusted source for breaking news, politics, sports, entertainment, technology, business and world news. Get live updates 24/7.",
   keywords: [
-    "Prime Time News",
-    "प्राइम टाइम न्यूज़",
+    "TIME CYBERMEDIA News",
+    "à¤ªà¥à¤°à¤¾à¤‡à¤® à¤Ÿà¤¾à¤‡à¤® à¤¨à¥à¤¯à¥‚à¤œà¤¼",
     "Breaking News India",
     "Latest News Today",
     "India News Live",
@@ -55,11 +53,11 @@ export const metadata: Metadata = {
     "World News Today",
     "State News India",
     "Education News",
-    "Prime Time Media News",
+    "TIME CYBERMEDIA Media News",
     "primetimemedia.in",
   ],
-  authors: [{ name: "Prime Time News Editorial Team" }],
-  publisher: "Prime Time News",
+  authors: [{ name: "TIME CYBERMEDIA News Editorial Team" }],
+  publisher: "TIME CYBERMEDIA News",
   category: "news",
   robots: {
     index: true,
@@ -73,16 +71,16 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Prime Time News - Latest Breaking News & Updates",
+    title: "TIME CYBERMEDIA News - Latest Breaking News & Updates",
     description: "India's trusted news portal for live breaking news, politics, sports, business, entertainment and more.",
     url: "https://www.primetimemedia.in/",
-    siteName: "Prime Time News",
+    siteName: "TIME CYBERMEDIA News",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Prime Time News - India's Leading News Portal",
+        alt: "TIME CYBERMEDIA News - India's Leading News Portal",
       },
     ],
     locale: "en_IN",
@@ -90,7 +88,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Prime Time News - Latest Breaking News & Updates",
+    title: "TIME CYBERMEDIA News - Latest Breaking News & Updates",
     description: "India's trusted news portal for live breaking news, politics, sports, business, entertainment and more.",
     images: ["/og-image.jpg"],
     site: "@PrimeTimeNews",
@@ -112,7 +110,7 @@ export default function RootLayout({
         "@type": "WebSite",
         "@id": "https://www.primetimemedia.in/#website",
         "url": "https://www.primetimemedia.in",
-        "name": "Prime Time News",
+        "name": "TIME CYBERMEDIA News",
         "description": "India's trusted source for breaking news, politics, sports, entertainment, technology, business and world news.",
         "publisher": {
           "@id": "https://www.primetimemedia.in/#organization"
@@ -130,8 +128,8 @@ export default function RootLayout({
       {
         "@type": "NewsMediaOrganization",
         "@id": "https://www.primetimemedia.in/#organization",
-        "name": "Prime Time News",
-        "alternateName": "Prime Time Media",
+        "name": "TIME CYBERMEDIA News",
+        "alternateName": "TIME CYBERMEDIA Media",
         "url": "https://www.primetimemedia.in",
         "logo": {
           "@type": "ImageObject",
@@ -163,11 +161,11 @@ export default function RootLayout({
         "@type": "WebPage",
         "@id": "https://www.primetimemedia.in/#webpage",
         "url": "https://www.primetimemedia.in",
-        "name": "Prime Time News - Latest Breaking News & Updates",
+        "name": "TIME CYBERMEDIA News - Latest Breaking News & Updates",
         "isPartOf": {
           "@id": "https://www.primetimemedia.in/#website"
         },
-        "description": "Prime Time News — India's trusted source for breaking news, politics, sports, entertainment, technology, business and world news. Get live updates 24/7.",
+        "description": "TIME CYBERMEDIA News â€” India's trusted source for breaking news, politics, sports, entertainment, technology, business and world news. Get live updates 24/7.",
         "breadcrumb": {
           "@id": "https://www.primetimemedia.in/#breadcrumb"
         },
@@ -185,27 +183,20 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en">
+    <html lang="en" className="scroll-smooth">
       <head>
-        <meta name="google-adsense-account" content="ca-pub-5571209076881303" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#f8fafc] text-[#0f172a] min-h-screen transition-colors duration-300`}
       >
-        <Script
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5571209076881303"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
         <ThemeProvider>
           <NewsProvider>
             <UserProvider>
               <ToastContainer />
-              <AwardsPopup />
               <ConditionalLayout>
                 <main>
                   {children}

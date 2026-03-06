@@ -54,7 +54,7 @@ const newsArticleSchema = new mongoose.Schema(
         targetLink: { type: String, trim: true, default: null },
         urlHash: { type: String, trim: true, index: true, unique: true, sparse: true },
         nominationLink: { type: String, trim: true, default: null },
-        author: { type: String, trim: true, default: "Prime Time News" },
+        author: { type: String, trim: true, default: "TIME CYBERMEDIA News" },
         authorId: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User",

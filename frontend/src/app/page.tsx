@@ -3,9 +3,7 @@
 import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import Navbar from "./Components/Common/Navbar/Navbar";
-import HeroSection from "./Components/Home/HeroSection/HeroSection";
-import NewsSection from "./Components/Home/NewsSection/NewsSection";
-import NewsList from "./Components/Home/Newslist/Newslist";
+import HeroBanner from "./Components/Home/HeroBanner/HeroBanner";
 import LatestNews from "./Components/Home/LatestNewsSection/LatestNews";
 import Sports from "./Components/Home/SportsNewsSection/SportsNews";
 import Entertainment from "./Components/Home/EntertainmentNewsSection/EntertainmentNews";
@@ -28,18 +26,20 @@ const LifestyleSection = dynamic(() => import("./Components/Home/Lifestyle/Lifes
 export default function Home() {
   return (
     <>
-      <NewsSection />
-      <NewsList />
+      <HeroBanner />
 
       <LatestNews />
+
       <Sports />
       <Entertainment />
+
       <VideosSection />
+
       <LifestyleSection />
 
       <SocialShare
         url={typeof window !== 'undefined' ? window.location.href : 'https://primetime-media-news.vercel.app/'}
-        title="Prime Time News - Latest Breaking News & Updates"
+        title="TIME CYBERMEDIA News - Latest Breaking News & Updates"
         description="Get the latest breaking news, sports updates, entertainment stories, lifestyle tips, and more. Your trusted source for news."
         image="/og-image.jpg"
         isArticle={false}

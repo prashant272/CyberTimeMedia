@@ -24,7 +24,7 @@ export const MainAuth: FC = () => {
   const [mode, setMode] = useState<Mode>("signin");
 
   return (
-    <div style={{ height: "100vh", backgroundColor: "#f7f7f7" }}>
+    <div className="h-screen bg-[#f7f7f7]">
       {mode === "signin" ? (
         <NoSSRSignIn setMode={setMode} />
       ) : mode === "signup" ? (

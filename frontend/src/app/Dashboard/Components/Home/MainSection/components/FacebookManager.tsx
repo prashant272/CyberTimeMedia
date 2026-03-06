@@ -1,8 +1,6 @@
-"use client";
 import React, { useState, useEffect, useCallback, FC } from "react";
 import { FaFacebook } from "react-icons/fa";
 import { API } from "@/Utils/Utils";
-import styles from "../Main.module.scss";
 
 interface FacebookManagerProps {
     showNotification: (message: string, type: "success" | "error") => void;
@@ -77,88 +75,109 @@ const FacebookManager: FC<FacebookManagerProps> = ({ showNotification }) => {
     };
 
     return (
-        <div className={styles.facebookSection}>
-            <div className={styles.headerCard} style={{ marginBottom: '2rem' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <span style={{ fontSize: '2rem' }}>📱</span>
+        <div className="p-4 md:p-6 space-y-8 font-['Outfit']">
+            {/* Header section */}
+            <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
+                <div className="flex items-center gap-4">
+                    <div className="w-16 h-16 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center text-3xl">
+                        📱
+                    </div>
                     <div>
-                        <h2 className={styles.pageTitle}>Facebook Auto-Post Settings</h2>
-                        <p className={styles.subtitle}>Connect your page to automatically share news</p>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Facebook Auto-Post Settings</h2>
+                        <p className="text-gray-500 dark:text-gray-400">Connect your page to automatically share news</p>
                     </div>
                 </div>
             </div>
 
-            <div className={styles.userListCard}>
-                <div style={{ padding: '2rem', textAlign: 'center' }}>
+            {/* Main content area */}
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
+                <div className="p-12 flex flex-col items-center text-center">
                     {fbStatus?.connected ? (
-                        <div className={styles.connectedState}>
-                            <div style={{ fontSize: '3rem', color: '#1877F2', marginBottom: '1rem' }}>
+                        <div className="w-full max-w-sm">
+                            <div className="text-6xl text-[#1877F2] mb-6 flex justify-center">
                                 <FaFacebook />
                             </div>
-                            <h3 style={{ color: '#22c55e', marginBottom: '0.5rem' }}>✓ System Connected</h3>
-                            <p style={{ marginBottom: '1.5rem' }}>
-                                Posting to: <strong>{fbStatus.facebook.pageName}</strong>
+                            <h3 className="text-xl font-bold text-emerald-500 mb-2">✓ System Connected</h3>
+                            <p className="text-gray-600 dark:text-gray-400 mb-8 border-b border-gray-100 dark:border-gray-700 pb-4">
+                                Posting to: <strong className="text-gray-900 dark:text-white">{fbStatus.facebook.pageName}</strong>
                             </p>
-                            <button
-                                onClick={handleFacebookTestPost}
-                                disabled={fbLoading}
-                                className={styles.primaryBtn}
-                                style={{ backgroundColor: '#059669', border: 'none', marginBottom: '1rem', width: 'auto', display: 'flex', alignItems: 'center', gap: '0.5rem', margin: '0 auto 1.5rem' }}
-                            >
-                                {fbLoading ? 'Processing...' : '🚀 Test Post to Facebook'}
-                            </button>
-                            <button
-                                onClick={handleDisconnectFacebook}
-                                className={styles.secondaryBtn}
-                                style={{ borderColor: '#ef4444', color: '#ef4444' }}
-                            >
-                                🔌 Disconnect Facebook
-                            </button>
+
+                            <div className="flex flex-col gap-4">
+                                <button
+                                    onClick={handleFacebookTestPost}
+                                    disabled={fbLoading}
+                                    className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 disabled:opacity-50"
+                                >
+                                    {fbLoading ? 'Processing...' : '🚀 Test Post to Facebook'}
+                                </button>
+                                <button
+                                    onClick={handleDisconnectFacebook}
+                                    className="w-full py-3.5 border-2 border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/10 font-bold rounded-xl transition-all"
+                                >
+                                    🔌 Disconnect Facebook
+                                </button>
+                            </div>
                         </div>
                     ) : fbPages.length > 0 ? (
-                        <div className={styles.pageSelection}>
-                            <h3>Select Facebook Page</h3>
-                            <p style={{ marginBottom: '1.5rem', color: '#666' }}>Choose the page where news should be posted</p>
-                            <div className={styles.grid} style={{ maxWidth: '600px', margin: '0 auto' }}>
+                        <div className="w-full">
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Select Facebook Page</h3>
+                            <p className="text-gray-500 mb-8">Choose the page where news should be posted</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
                                 {fbPages.map(page => (
-                                    <div key={page.id} className={styles.card} style={{ padding: '1.5rem', cursor: 'pointer' }} onClick={() => handleSaveFacebookPage(page.id, page.name, page.access_token)}>
-                                        <h4 style={{ marginBottom: '0.5rem' }}>{page.name}</h4>
-                                        <span style={{ fontSize: '0.8rem', color: '#888' }}>ID: {page.id}</span>
-                                        <div style={{ marginTop: '1rem' }}>
-                                            <button className={styles.primaryBtn} style={{ fontSize: '0.8rem', padding: '0.4rem 1rem' }}>Select this Page</button>
-                                        </div>
+                                    <div
+                                        key={page.id}
+                                        className="p-6 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl hover:border-blue-500 cursor-pointer transition-all group"
+                                        onClick={() => handleSaveFacebookPage(page.id, page.name, page.access_token)}
+                                    >
+                                        <h4 className="font-bold text-gray-900 dark:text-white mb-1 group-hover:text-blue-500">{page.name}</h4>
+                                        <div className="text-xs text-gray-400 font-mono mb-4">ID: {page.id}</div>
+                                        <button className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg transition-colors">
+                                            Select this Page
+                                        </button>
                                     </div>
                                 ))}
                             </div>
                         </div>
                     ) : (
-                        <div className={styles.setupState}>
-                            <div style={{ fontSize: '3rem', color: '#cbd5e1', marginBottom: '1rem' }}>
+                        <div className="w-full max-w-md">
+                            <div className="text-6xl text-gray-200 dark:text-gray-700 mb-6 flex justify-center">
                                 <FaFacebook />
                             </div>
-                            <h3 style={{ marginBottom: '1rem' }}>Not Connected</h3>
-                            <p style={{ marginBottom: '2rem', color: '#64748b', maxWidth: '400px', margin: '0 auto 2rem' }}>
+                            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">Not Connected</h3>
+                            <p className="text-gray-500 dark:text-gray-400 mb-8">
                                 Authorize your Facebook account to enable automatic news sharing to your pages.
                             </p>
                             <button
                                 onClick={handleFacebookConnect}
-                                className={styles.primaryBtn}
                                 disabled={fbLoading}
-                                style={{ backgroundColor: '#1877F2', border: 'none', display: 'flex', alignItems: 'center', gap: '0.75rem', margin: '0 auto' }}
+                                className="w-full py-4 bg-[#1877F2] hover:bg-[#0e69de] text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20 flex items-center justify-center gap-3 disabled:opacity-50"
                             >
-                                <FaFacebook /> {fbLoading ? 'Connecting...' : 'Connect Facebook Page'}
+                                <FaFacebook className="text-xl" />
+                                {fbLoading ? 'Connecting...' : 'Connect Facebook Page'}
                             </button>
                         </div>
                     )}
                 </div>
             </div>
 
-            <div className={styles.analyticsCard} style={{ marginTop: '2rem' }}>
-                <h4 style={{ marginBottom: '1rem' }}>How it works?</h4>
-                <ul style={{ textAlign: 'left', listStyleType: 'none', padding: 0, color: '#64748b' }}>
-                    <li style={{ marginBottom: '0.5rem' }}>✅ Once connected, every "Published" news will be shared automatically.</li>
-                    <li style={{ marginBottom: '0.5rem' }}>✅ No manual copy-pasting required.</li>
-                    <li style={{ marginBottom: '0.5rem' }}>✅ You can disconnect anytime from this settings panel.</li>
+            {/* Help / Footer section */}
+            <div className="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl border border-gray-100 dark:border-gray-800">
+                <h4 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+                    <span className="text-lg">💡</span> How it works?
+                </h4>
+                <ul className="space-y-3 text-gray-600 dark:text-gray-400 text-sm">
+                    <li className="flex gap-2">
+                        <span className="text-emerald-500">✅</span>
+                        Once connected, every "Published" news will be shared automatically.
+                    </li>
+                    <li className="flex gap-2">
+                        <span className="text-emerald-500">✅</span>
+                        No manual copy-pasting required.
+                    </li>
+                    <li className="flex gap-2">
+                        <span className="text-emerald-500">✅</span>
+                        You can disconnect anytime from this settings panel.
+                    </li>
                 </ul>
             </div>
         </div>
