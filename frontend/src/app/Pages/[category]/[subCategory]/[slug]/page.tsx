@@ -39,6 +39,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         metadataBase: new URL(siteUrl),
         title: news.title,
         description: fullDescription,
+        alternates: {
+          canonical: articleUrl,
+        },
         openGraph: {
           title: news.title,
           description: fullDescription,
@@ -54,6 +57,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           ],
           type: 'article',
           publishedTime: news.publishedAt || (news as any).createdAt,
+          section: category,
+          tags: news.tags || [],
         },
         twitter: {
           card: 'summary_large_image',
@@ -61,6 +66,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           description: fullDescription,
           images: [imageUrl],
         },
+        category: category,
       };
     }
   } catch (error) {
