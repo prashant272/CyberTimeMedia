@@ -83,25 +83,31 @@ export default function ArticlePageClient({
   const structuredData = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `https://www.timecybermedia.com/Pages/${article.section}/${article.category}/${article.slug}`
+    },
     "headline": article.title,
     "image": [
       normalizeUrl(article.image)
     ],
     "datePublished": article.date,
     "dateModified": article.date,
-    "author": [{
+    "author": {
       "@type": "Person",
-      "name": article.author || "TIME CYBERMEDIA News"
-    }],
+      "name": article.author || "Time Cyber Media"
+    },
     "publisher": {
       "@type": "Organization",
-      "name": "TIME CYBERMEDIA Media",
+      "name": "Time Cyber Media",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://www.primetimemedia.in/logo.png"
+        "url": "https://www.timecybermedia.com/logo.png"
       }
     },
-    "description": article.subtitle || article.content.substring(0, 150)
+    "description": article.subtitle || article.content.substring(0, 160),
+    "articleSection": article.section,
+    "articleBody": article.content.substring(0, 5000)
   };
 
   return (
@@ -117,15 +123,15 @@ export default function ArticlePageClient({
           { name: article.title, item: `/Pages/${section}/${category}/${article.slug}` }
         ]}
       />
-      <div className="max-w-[1200px] mx-auto px-5 relative z-[1]">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 relative z-[1]">
         <Breadcrumb
           section={section}
           category={category}
           title={article.title}
         />
 
-        <div className="grid grid-cols-[1fr_350px] gap-8 mt-5 lg:grid-cols-1 lg:gap-10">
-          <div className="bg-white p-10 md:p-6 rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 transition-all duration-300 cubic-bezier(0.4,0,0.2,1)">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8 mt-5 lg:gap-10">
+          <div className="bg-white p-5 sm:p-8 md:p-10 rounded-[24px] md:rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 transition-all duration-300 cubic-bezier(0.4,0,0.2,1)">
             <ArticleHeader article={article} />
             <ArticleContent content={article.content} summary={article.subtitle} />
             <RelatedArticles articles={relatedArticles} />
@@ -165,7 +171,7 @@ export default function ArticlePageClient({
             )}
             <div className="my-6 py-4 border-y border-gray-200">
               <SocialShare
-                url={typeof window !== 'undefined' ? window.location.href : `https://www.primetimemedia.in/Pages/${article.section}/${article.category}/${article.slug}`}
+                url={typeof window !== 'undefined' ? window.location.href : `https://www.timecybermedia.com/Pages/${article.section}/${article.category}/${article.slug}`}
                 title={article.title}
                 description={article.subtitle}
                 image={article.image}
@@ -190,7 +196,7 @@ export default function ArticlePageClient({
                 ) : (
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-500">Published by:</span>
-                    <span className="text-sm font-bold text-gray-900">{article.author || 'TIME CYBERMEDIA News'}</span>
+                    <span className="text-sm font-bold text-gray-900">{article.author || "Time Cyber Media"}</span>
                   </div>
                 )}
               </div>

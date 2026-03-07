@@ -329,11 +329,35 @@ const newsSources = [
         category: "world",
     },
     {
-        name: "NDTV - World News",
-        url: "https://feeds.feedburner.com/ndtvnews-world-news",
+        name: "Aaj Tak - Latest",
+        url: "https://www.aajtak.in/rss/news-update",
+        category: "india",
+    },
+    {
+        name: "Zee News - India",
+        url: "https://zeenews.india.com/rss/india-national-news.xml",
+        category: "india",
+    },
+    {
+        name: "News18 - India",
+        url: "https://www.news18.com/rss/india.xml",
+        category: "india",
+    },
+    {
+        name: "WION - World",
+        url: "https://www.wionews.com/rss-feeds",
         category: "world",
     },
-
+    {
+        name: "Firstpost - Latest",
+        url: "https://www.firstpost.com/rss/news.xml",
+        category: "home",
+    },
+    {
+        name: "Deccan Herald - National",
+        url: "https://www.deccanherald.com/national/feeder/default.rss",
+        category: "india",
+    }
 ];
 
 module.exports = newsSources;

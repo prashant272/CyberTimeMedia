@@ -23,41 +23,41 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://www.primetimemedia.in"),
+  metadataBase: new URL("https://www.timecybermedia.com"),
   title: {
-    default: "TIME CYBERMEDIA News - Latest Breaking News & Updates",
-    template: "%s | TIME CYBERMEDIA News",
+    default: "Time Cyber Media - Latest Breaking News, Global Updates & Excellence Awards",
+    template: "%s | Time Cyber Media",
   },
-  description: "TIME CYBERMEDIA News â€” India's trusted source for breaking news, politics, sports, entertainment, technology, business and world news. Get live updates 24/7.",
+  description: "Time Cyber Media is Asia's leading media house, providing trusted news coverage in politics, business, technology, and entertainment. We are also known for organizing prestigious corporate and healthcare awards.",
   keywords: [
-    "TIME CYBERMEDIA News",
-    "à¤ªà¥à¤°à¤¾à¤‡à¤® à¤Ÿà¤¾à¤‡à¤® à¤¨à¥à¤¯à¥‚à¤œà¤¼",
+    "Time Cyber Media",
+    "Time Media",
+    "Cyber Media",
+    "Time Cyber",
+    "Cyber Time",
+    "Time Media Cyber",
+    "Media Cyber Time",
+    "TC Media",
+    "Time Cyber News",
+    "Cyber News Portal",
+    "Time News Network",
+    "International Healthcare Awards",
+    "Corporate Excellence Awards India",
+    "Asia Leading Media House",
     "Breaking News India",
-    "Latest News Today",
-    "India News Live",
-    "Hindi News",
-    "Indian News Portal",
-    "News Headlines India",
-    "Politics News India",
-    "Modi News Today",
-    "Parliament News",
-    "Sports News India",
-    "IPL Cricket News",
-    "Entertainment News Bollywood",
-    "Business News India",
-    "Stock Market Updates",
-    "Technology News India",
-    "Health News",
-    "Science News",
-    "International News",
-    "World News Today",
-    "State News India",
-    "Education News",
-    "TIME CYBERMEDIA Media News",
-    "primetimemedia.in",
+    "Latest Global News Today",
+    "Business and Tech Updates",
+    "International Education Awards",
+    "India Brand Icon Awards",
+    "News Portal India",
+    "Real-time News Coverage",
+    "Time Cyber Media Awards",
+    "Digital Media Asia",
+    "timecybermedia.com",
+    "www.timecybermedia.com",
   ],
-  authors: [{ name: "TIME CYBERMEDIA News Editorial Team" }],
-  publisher: "TIME CYBERMEDIA News",
+  authors: [{ name: "Time Cyber Media Editorial Team" }],
+  publisher: "Time Cyber Media Pvt. Ltd.",
   category: "news",
   robots: {
     index: true,
@@ -71,16 +71,16 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "TIME CYBERMEDIA News - Latest Breaking News & Updates",
-    description: "India's trusted news portal for live breaking news, politics, sports, business, entertainment and more.",
-    url: "https://www.primetimemedia.in/",
-    siteName: "TIME CYBERMEDIA News",
+    title: "Time Cyber Media - Asia's Leading News & Awards Platform",
+    description: "Your trusted destination for live breaking news and global award ceremonies. Stay informed with Time Cyber Media.",
+    url: "https://www.timecybermedia.com/",
+    siteName: "Time Cyber Media",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "TIME CYBERMEDIA News - India's Leading News Portal",
+        alt: "Time Cyber Media - Truth in Every Story",
       },
     ],
     locale: "en_IN",
@@ -88,13 +88,23 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "TIME CYBERMEDIA News - Latest Breaking News & Updates",
-    description: "India's trusted news portal for live breaking news, politics, sports, business, entertainment and more.",
+    title: "Time Cyber Media - Global News & Excellence Awards",
+    description: "Stay updated with the latest in politics, business, and prestige awards only on Time Cyber Media.",
     images: ["/og-image.jpg"],
-    site: "@PrimeTimeNews",
+    site: "@TimeCyberMedia",
   },
   alternates: {
-    canonical: "https://www.primetimemedia.in",
+    canonical: "https://www.timecybermedia.com",
+  },
+  icons: {
+    icon: [
+      { url: "/icon.png", sizes: "32x32", type: "image/png" },
+      { url: "/icon.png", sizes: "192x192", type: "image/png" },
+      { url: "/icon.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [
+      { url: "/icon.png", sizes: "180x180", type: "image/png" },
+    ],
   },
 };
 
@@ -108,18 +118,18 @@ export default function RootLayout({
     "@graph": [
       {
         "@type": "WebSite",
-        "@id": "https://www.primetimemedia.in/#website",
-        "url": "https://www.primetimemedia.in",
-        "name": "TIME CYBERMEDIA News",
-        "description": "India's trusted source for breaking news, politics, sports, entertainment, technology, business and world news.",
+        "@id": "https://www.timecybermedia.com/#website",
+        "url": "https://www.timecybermedia.com",
+        "name": "Time Cyber Media",
+        "description": "Asia's leading media house and awards organization.",
         "publisher": {
-          "@id": "https://www.primetimemedia.in/#organization"
+          "@id": "https://www.timecybermedia.com/#organization"
         },
         "potentialAction": {
           "@type": "SearchAction",
           "target": {
             "@type": "EntryPoint",
-            "urlTemplate": "https://www.primetimemedia.in/search?q={search_term_string}"
+            "urlTemplate": "https://www.timecybermedia.com/search?q={search_term_string}"
           },
           "query-input": "required name=search_term_string"
         },
@@ -127,21 +137,21 @@ export default function RootLayout({
       },
       {
         "@type": "NewsMediaOrganization",
-        "@id": "https://www.primetimemedia.in/#organization",
-        "name": "TIME CYBERMEDIA News",
-        "alternateName": "TIME CYBERMEDIA Media",
-        "url": "https://www.primetimemedia.in",
+        "@id": "https://www.timecybermedia.com/#organization",
+        "name": "Time Cyber Media",
+        "alternateName": "Time Cyber News",
+        "url": "https://www.timecybermedia.com",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://www.primetimemedia.in/primetimelogo.gif",
+          "url": "https://www.timecybermedia.com/logo.png",
           "width": 192,
           "height": 192
         },
         "sameAs": [
-          "https://www.facebook.com/primetimemedia",
-          "https://twitter.com/PrimeTimeNews"
+          "https://www.facebook.com/TimeCyberMedia/",
+          "https://twitter.com/timecybermedia"
         ],
-        "description": "India's trusted source for breaking news, politics, sports, entertainment, technology, business and world news.",
+        "description": "Providing trusted news and organizing prestigious global excellence awards.",
         "foundingDate": "2020",
         "address": {
           "@type": "PostalAddress",
@@ -153,28 +163,28 @@ export default function RootLayout({
         "contactPoint": {
           "@type": "ContactPoint",
           "contactType": "editorial",
-          "email": "editor@primetimemedia.in",
-          "url": "https://www.primetimemedia.in/Contact"
+          "email": "info@timecybermedia.com",
+          "url": "https://www.timecybermedia.com/Contact"
         }
       },
       {
         "@type": "WebPage",
-        "@id": "https://www.primetimemedia.in/#webpage",
-        "url": "https://www.primetimemedia.in",
-        "name": "TIME CYBERMEDIA News - Latest Breaking News & Updates",
+        "@id": "https://www.timecybermedia.com/#webpage",
+        "url": "https://www.timecybermedia.com",
+        "name": "Time Cyber Media - News & Excellence Awards",
         "isPartOf": {
-          "@id": "https://www.primetimemedia.in/#website"
+          "@id": "https://www.timecybermedia.com/#website"
         },
-        "description": "TIME CYBERMEDIA News â€” India's trusted source for breaking news, politics, sports, entertainment, technology, business and world news. Get live updates 24/7.",
+        "description": "Latest breaking news and information about international awards.",
         "breadcrumb": {
-          "@id": "https://www.primetimemedia.in/#breadcrumb"
+          "@id": "https://www.timecybermedia.com/#breadcrumb"
         },
         "inLanguage": "en-IN",
         "potentialAction": [
           {
             "@type": "ReadAction",
             "target": [
-              "https://www.primetimemedia.in"
+              "https://www.timecybermedia.com"
             ]
           }
         ]

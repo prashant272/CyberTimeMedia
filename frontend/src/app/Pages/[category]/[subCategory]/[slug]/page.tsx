@@ -11,7 +11,7 @@ interface PageProps {
   }>;
 }
 
-const siteUrl = "https://www.primetimemedia.in";
+const siteUrl = "https://www.timecybermedia.com";
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug, category } = await params;
@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     const sectionKey = category.toLowerCase();
     const res = await newsService.getNewsBySlug(sectionKey, slug).catch(err => null);
 
-    if (!res) return { title: "News | TIME CYBERMEDIA" };
+    if (!res) return { title: "News | Time Cyber Media" };
     const news = res.news || res.data;
 
     if (news) {
@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       }
 
       const snippet = news.summary || news.content?.substring(0, 150) || "Read the latest news";
-      const fullDescription = `${snippet.replace(/[#*]/g, '')}... | Click to read full news and view more updates on TIME CYBERMEDIA`;
+      const fullDescription = `${snippet.replace(/[#*]/g, '')}... | Click to read full news and view more updates on Time Cyber Media`;
 
       const { subCategory } = await params;
       const articleUrl = `${siteUrl}/Pages/${category}/${subCategory}/${slug}`;
@@ -43,7 +43,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
           title: news.title,
           description: fullDescription,
           url: articleUrl,
-          siteName: 'TIME CYBERMEDIA',
+          siteName: 'Time Cyber Media',
           images: [
             {
               url: imageUrl,
@@ -69,8 +69,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   return {
     metadataBase: new URL(siteUrl),
-    title: "News | TIME CYBERMEDIA",
-    description: "Latest breaking news and updates on TIME CYBERMEDIA."
+    title: "News | Time Cyber Media",
+    description: "Latest breaking news and updates on Time Cyber Media."
   };
 }
 
@@ -119,7 +119,7 @@ function renderArticle(foundArticle: any, categoryNews: any[], category: string,
     subtitle: foundArticle.summary || '',
     image: foundArticle.image || '/placeholder.jpg',
     date: foundArticle.publishedAt || foundArticle.createdAt || new Date().toISOString(),
-    author: foundArticle.author || 'TIME CYBERMEDIA',
+    author: foundArticle.author || 'Time Cyber Media',
     authorId: foundArticle.authorId,
     readTime: '',
     content: foundArticle.content || 'Content not available',
@@ -163,6 +163,10 @@ function renderArticle(foundArticle: any, categoryNews: any[], category: string,
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "NewsArticle",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": `${siteUrl}/Pages/${foundArticle.category}/${foundArticle.subCategory}/${foundArticle.slug}`
+    },
     "headline": articleData.title,
     "description": articleData.subtitle || articleData.content.substring(0, 160),
     "image": [
@@ -170,11 +174,21 @@ function renderArticle(foundArticle: any, categoryNews: any[], category: string,
     ],
     "datePublished": articleData.date,
     "dateModified": articleData.date,
-    "author": [{
-      "@type": "Organization",
-      "name": "TIME CYBERMEDIA",
+    "author": {
+      "@type": "Person",
+      "name": articleData.author || "Time Cyber Media",
       "url": siteUrl
-    }]
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Time Cyber Media",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${siteUrl}/logo.png`
+      }
+    },
+    "articleSection": foundArticle.category,
+    "articleBody": articleData.content.substring(0, 5000)
   };
 
   return (

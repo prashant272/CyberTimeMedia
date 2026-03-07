@@ -27,10 +27,8 @@ export const SignIn: React.FC<AuthChildProps> = ({ setMode }) => {
     role: "USER" as Role,
     email: "",
     password: "",
-    secretKey: ""
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showSecretKey, setShowSecretKey] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -40,8 +38,7 @@ export const SignIn: React.FC<AuthChildProps> = ({ setMode }) => {
   const isFormValid =
     formData.email.trim() &&
     formData.password.trim() &&
-    isValidEmail &&
-    (formData.role === "SUPER_ADMIN" ? formData.secretKey.trim() : true);
+    isValidEmail;
 
   const handleChange = useCallback(
     (field: keyof typeof formData) =>
@@ -70,11 +67,6 @@ export const SignIn: React.FC<AuthChildProps> = ({ setMode }) => {
           password: formData.password,
           role: formData.role,
         };
-
-        // Add secret key only for Super Admin
-        if (formData.role === "SUPER_ADMIN") {
-          loginPayload.secretKey = formData.secretKey;
-        }
 
         const result: LoginResponse | null = await UserSignIn(loginPayload);
 
@@ -164,7 +156,6 @@ export const SignIn: React.FC<AuthChildProps> = ({ setMode }) => {
               onChange={(e) => setFormData((prev) => ({
                 ...prev,
                 role: e.target.value as Role,
-                secretKey: ""
               }))}
               className="w-full p-[0.625rem_1rem_0.625rem_2.25rem] bg-white/8 border border-white/15 rounded-xl text-white text-[0.875rem] font-medium appearance-none cursor-pointer duration-200 focus:outline-none focus:border-teal-400 focus:ring-3 focus:ring-teal-400/40 disabled:opacity-60 disabled:cursor-not-allowed"
               disabled={loading}
@@ -206,27 +197,6 @@ export const SignIn: React.FC<AuthChildProps> = ({ setMode }) => {
             </button>
           </div>
 
-          {/* Secret Key Input - Only visible for Super Admin */}
-          {formData.role === "SUPER_ADMIN" && (
-            <div className="relative">
-              <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-              <input
-                type={showSecretKey ? "text" : "password"}
-                placeholder="Super Admin Secret Key"
-                value={formData.secretKey}
-                onChange={handleChange("secretKey")}
-                className="w-full p-[0.625rem_1rem_0.625rem_2.25rem] bg-white/8 border border-white/15 rounded-xl text-white text-[0.875rem] transition-all duration-200 placeholder:text-slate-400 focus:outline-none focus:border-teal-400 focus:ring-3 focus:ring-teal-400/40 disabled:opacity-60 disabled:cursor-not-allowed"
-                disabled={loading}
-              />
-              <button
-                type="button"
-                onClick={() => setShowSecretKey((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 bg-none border-none text-slate-400 cursor-pointer p-0 hover:text-teal-400"
-              >
-                {showSecretKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          )}
 
           <button
             type="submit"

@@ -211,7 +211,7 @@ export default function CategoryPage() {
       </div>
 
       <SocialShare
-        url={currentUrl || `https://www.primetimemedia.in/Pages/${category}`}
+        url={currentUrl || `https://www.timecybermedia.com/Pages/${category}`}
         title={`${categoryTitle} - Latest News & Updates`}
         description={`Stay updated with the latest ${categoryTitle} news, breaking stories, trending topics, and in-depth analysis.`}
         image={infiniteNews[0]?.image || ''}
@@ -236,7 +236,7 @@ export default function CategoryPage() {
       />
 
       <SocialShare
-        url={currentUrl || `https://www.primetimemedia.in/Pages/${category}`}
+        url={currentUrl || `https://www.timecybermedia.com/Pages/${category}`}
         title={`${categoryTitle} - Latest News & Updates`}
         description={`Stay updated with the latest ${categoryTitle} news, breaking stories, trending topics, and in-depth analysis.`}
         image={infiniteNews[0]?.image || ''}

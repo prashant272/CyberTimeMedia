@@ -14,24 +14,24 @@ const FALLBACK_AWARDS = [
         title: "Global Healthcare Excellence Awards ,2026 & Summit",
         subtitle: "Recognizing outstanding achievements in India's healthcare sector.",
         badge: "🏥 Healthcare",
-        nominateUrl: "https://healthcareawards.primetimemedia.in/nominate",
-        articleUrl: "https://healthcareawards.primetimemedia.in/",
+        nominateUrl: "https://healthcareawards.timecybermedia.com/nominate",
+        articleUrl: "https://healthcareawards.timecybermedia.com/",
     },
     {
         _id: 'f2',
         title: "Global Education Excellence Awards ,2026 & Summit",
         subtitle: "Celebrating visionaries shaping the future of education in India.",
         badge: "🎓 Education",
-        nominateUrl: "https://education-awards.primetimemedia.in/nominate",
-        articleUrl: "https://education-awards.primetimemedia.in/",
+        nominateUrl: "https://education-awards.timecybermedia.com/nominate",
+        articleUrl: "https://education-awards.timecybermedia.com/",
     },
     {
         _id: 'f3',
         title: "UK Busnieiness Leadership Awards ,2026 & Summit",
         subtitle: "Honoring India's most influential business leaders of the year.",
         badge: "💼 Business",
-        nominateUrl: "https://business-leadership.primetimemedia.in/nominate",
-        articleUrl: "https://business-leadership.primetimemedia.in/",
+        nominateUrl: "https://business-leadership.timecybermedia.com/nominate",
+        articleUrl: "https://business-leadership.timecybermedia.com/",
     },
 ];
 
@@ -88,7 +88,7 @@ const AwardsPopup: React.FC = () => {
         const item = liveAwards[idx] as any;
         articleUrl = item.targetLink
             ? (item.targetLink.startsWith('http') ? item.targetLink : `https://${item.targetLink}`)
-            : `https://www.primetimemedia.in/Pages/awards/${item.category}/${item.slug}`;
+            : `https://www.timecybermedia.com/Pages/awards/${item.category}/${item.slug}`;
         nominateUrl = item.nominationLink
             ? (item.nominationLink.startsWith('http') ? item.nominationLink : `https://${item.nominationLink}`)
             : articleUrl;

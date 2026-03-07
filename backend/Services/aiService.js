@@ -4,15 +4,15 @@ const client = new OpenAI({
     baseURL: "https://openrouter.ai/api/v1",
     apiKey: process.env.OPENROUTER_API_KEY,
     defaultHeaders: {
-        "HTTP-Referer": "http://localhost:3000", // Optional, for OpenRouter rankings
-        "X-Title": "PrimeTime Media", // Optional, for OpenRouter rankings
+        "HTTP-Referer": "https://www.timecybermedia.com", // Optional, for OpenRouter rankings
+        "X-Title": "Time Cyber Media", // Optional, for OpenRouter rankings
     }
 });
 
 const generateArticle = async (facts) => {
     try {
         const response = await client.chat.completions.create({
-            model: "openai/gpt-4o",
+            model: "google/gemini-2.0-flash-001",
             messages: [
                 {
                     role: "system",
@@ -82,7 +82,7 @@ ${facts}
                 },
             ],
             response_format: { type: "json_object" },
-            max_tokens: 3500,
+            max_tokens: 2000,
         });
 
         const content = response.choices[0].message.content;

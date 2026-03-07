@@ -11,12 +11,25 @@ const resolveGoogleNewsUrl = async (url) => {
 
     try {
         // Google News URLs redirect to actual articles - follow the redirect
+        const userAgents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36 Edg/122.0.0.0',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0'
+        ];
+        const randomUA = userAgents[Math.floor(Math.random() * userAgents.length)];
+
         const response = await axios.get(url, {
             maxRedirects: 5,
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'User-Agent': randomUA,
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
                 'Accept-Language': 'en-US,en;q=0.5',
+                'Upgrade-Insecure-Requests': '1',
+                'Sec-Fetch-Dest': 'document',
+                'Sec-Fetch-Mode': 'navigate',
+                'Sec-Fetch-Site': 'none',
+                'Sec-Fetch-User': '?1',
             },
             validateStatus: () => true, // accept all status codes
             timeout: 10000,
@@ -62,12 +75,25 @@ const scrapeNews = async (originalUrl) => {
         // Resolve Google News redirect URLs first
         const url = await resolveGoogleNewsUrl(originalUrl);
 
+        const userAgents = [
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0'
+        ];
+        const randomUA = userAgents[Math.floor(Math.random() * userAgents.length)];
+
         const config = {
             headers: {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+                'User-Agent': randomUA,
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
                 'Accept-Language': 'en-US,en;q=0.9',
                 'Referer': 'https://www.google.com/',
+                'sec-ch-ua': '"Chromium";v="122", "Not(A:Brand";v="24", "Google Chrome";v="122"',
+                'sec-ch-ua-mobile': '?0',
+                'sec-ch-ua-platform': '"Windows"',
+                'DNT': '1',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
             },
             timeout: 15000,
             maxRedirects: 5,
@@ -90,10 +116,17 @@ const scrapeNews = async (originalUrl) => {
             '[class*="article-content"] p',
             '[class*="post-content"] p',
             '[class*="entry-content"] p',
+            '[class*="story-desc"] p', // India Today
+            '[class*="_3YY9z"] p',     // Times of India (TOI)
+            '[class*="content-area"] p',
+            '.ins_storybody p',        // NDTV specific
+            '.article-body-p p',
             '.content p',
             'main p',
             '[role="main"] p',
             '.body p',
+            '#article-body p',
+            '.article-p-wrapper p',
             'p',
         ];
 
@@ -143,8 +176,9 @@ const scrapeNews = async (originalUrl) => {
             }
         }
 
-        if (!title || content.length < 150) {
-            throw new Error(`Insufficient content found at ${url} (original: ${originalUrl})`);
+        if (!title || content.length < 100) { // Reduced from 150 to 100 to catch shorter news snippets
+            console.warn(`Insufficient content (${content.length} chars) found at ${url}`);
+            throw new Error(`Insufficient content found at ${url}`);
         }
 
         return {

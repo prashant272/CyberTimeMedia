@@ -155,7 +155,7 @@ const fetchAndProcessNews = async (req, res) => {
             const items = await getLatestLinks(source.url);
 
             let newItemsCount = 0;
-            const MAX_NEW_PER_SOURCE = 2; // Only fetch 2 new items per source per run
+            const MAX_NEW_PER_SOURCE = 5; // Reduced from 10 to keep run time reasonable with higher delay
 
             for (const item of items) {
                 if (newItemsCount >= MAX_NEW_PER_SOURCE) break;
@@ -242,8 +242,8 @@ const fetchAndProcessNews = async (req, res) => {
                     stats.articles.push(finalTitle);
                     newItemsCount++;
 
-                    // Add a small delay
-                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    // Wait 5 seconds (much faster for paid/reliable models)
+                    await new Promise(resolve => setTimeout(resolve, 5000));
 
                 } catch (err) {
                     console.error(`Failed to process ${item.link}:`, err.message);

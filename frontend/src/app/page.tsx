@@ -38,10 +38,10 @@ export default function Home() {
       <LifestyleSection />
 
       <SocialShare
-        url={typeof window !== 'undefined' ? window.location.href : 'https://primetime-media-news.vercel.app/'}
-        title="TIME CYBERMEDIA News - Latest Breaking News & Updates"
-        description="Get the latest breaking news, sports updates, entertainment stories, lifestyle tips, and more. Your trusted source for news."
-        image="/og-image.jpg"
+        url={typeof window !== 'undefined' ? window.location.href : 'https://www.timecybermedia.com'}
+        title="Time Cyber Media - Latest Breaking News, Tech & Global Excellence Awards"
+        description="Stay updated with Time Cyber Media (Time Media / Cyber Media) for real-time news, political analysis, business insights, and global excellence awards."
+        image="/logo.png"
         isArticle={false}
       />
     </>

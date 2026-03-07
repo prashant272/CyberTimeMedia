@@ -19,17 +19,17 @@ export default function ArticleHeader({ article }: ArticleHeaderProps) {
   const formattedDate = formatDateTime(article.date);
 
   return (
-    <div className="mb-10 lg:mb-12">
-      <div className="mb-6 flex gap-3 items-center">
+    <div className="mb-8 md:mb-12">
+      <div className="mb-4 md:mb-6 flex gap-3 items-center">
         <div className="w-12 h-1 bg-[#dc2626] rounded-full"></div>
         <span className="text-[#dc2626] text-sm font-bold tracking-[0.2em] font-['Inter',sans-serif] uppercase">Report</span>
       </div>
 
-      <h1 className="font-['Lora',serif] text-[46px] md:text-[36px] sm:text-[30px] font-extrabold leading-[1.15] text-gray-900 mb-6 tracking-tight">
+      <h1 className="font-['Lora',serif] text-[28px] sm:text-[36px] md:text-[42px] lg:text-[46px] font-extrabold leading-[1.15] text-gray-900 mb-6 tracking-tight">
         {article.title}
       </h1>
 
-      <p className="font-['Lora',serif] text-[22px] md:text-[20px] sm:text-[18px] leading-[1.6] text-gray-600 mb-8 font-medium italic border-l-4 border-[#dc2626] pl-6 ml-1">
+      <p className="font-['Lora',serif] text-[18px] sm:text-[20px] md:text-[22px] leading-[1.6] text-gray-600 mb-8 font-medium italic border-l-4 border-[#dc2626] pl-5 sm:pl-6 ml-1">
         {article.subtitle}
       </p>
 

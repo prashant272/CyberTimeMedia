@@ -34,7 +34,6 @@ interface SignUpFormData {
   password: string;
   role: Role;
   profilePicture?: string;
-  secretKey: string;
 }
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,10 +65,8 @@ export const SignUp: React.FC<AuthChildProps> = ({ setMode }) => {
     email: "",
     password: "",
     role: "USER",
-    secretKey: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [showSecretKey, setShowSecretKey] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
@@ -87,8 +84,7 @@ export const SignUp: React.FC<AuthChildProps> = ({ setMode }) => {
   const isFormValid =
     formData.name.trim() &&
     isValid.email &&
-    isValid.password &&
-    formData.secretKey.trim();
+    isValid.password;
 
   const handleChange = useCallback(
     (field: keyof SignUpFormData) =>
@@ -144,7 +140,6 @@ export const SignUp: React.FC<AuthChildProps> = ({ setMode }) => {
           password: formData.password,
           role: formData.role,
           ProfilePicture: formData.profilePicture,
-          secretKey: formData.secretKey, // Always send secret key
         };
 
         const signupRes: SignUpResponse = await UserSignUp(payload);
@@ -158,11 +153,6 @@ export const SignUp: React.FC<AuthChildProps> = ({ setMode }) => {
           setTimeout(() => setMode("signin"), 1500);
         } else if (signupRes.status === 409) {
           toast.error(signupRes.data?.msg || "User already exists", {
-            position: "top-center",
-            transition: Bounce,
-          });
-        } else if (signupRes.status === 401) {
-          toast.error(signupRes.data?.msg || "Invalid secret key", {
             position: "top-center",
             transition: Bounce,
           });
@@ -260,25 +250,6 @@ export const SignUp: React.FC<AuthChildProps> = ({ setMode }) => {
             </button>
           </div>
 
-          {/* Secret Key Input - Required for ALL roles */}
-          <div className="relative">
-            <Key className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-            <input
-              type={showSecretKey ? "text" : "password"}
-              placeholder="Secret Key (Required)"
-              value={formData.secretKey}
-              onChange={handleChange("secretKey")}
-              className="w-full p-[0.625rem_1rem_0.625rem_2.25rem] bg-white/8 border border-white/15 rounded-xl text-white text-[0.875rem] transition-all duration-200 placeholder:text-slate-400 focus:outline-none focus:border-teal-400 focus:ring-3 focus:ring-teal-400/40 disabled:opacity-60 disabled:cursor-not-allowed"
-              disabled={loading}
-            />
-            <button
-              type="button"
-              onClick={() => setShowSecretKey((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 bg-none border-none text-slate-400 cursor-pointer p-0 hover:text-teal-400"
-            >
-              {showSecretKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-            </button>
-          </div>
 
           <label className="flex items-center justify-center w-full h-12 border-2 border-dashed border-white/30 rounded-xl bg-white/5 text-slate-400 text-[0.75rem] cursor-pointer transition-all duration-200 hover:border-teal-400 hover:bg-teal-400/10 hover:text-teal-400">
             <input

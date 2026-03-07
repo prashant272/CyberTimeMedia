@@ -77,18 +77,17 @@ const Footer: React.FC = () => {
             <div className="mb-[1.2rem]">
               <Image
                 src="/logo.png"
-                alt="TIME CYBERMEDIA News"
-                className="w-16 h-16 rounded-xl object-contain shadow-[0_8px_32px_rgba(0,0,0,0.25)] transition-all duration-400 hover:scale-[1.06] hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
-                width={64}
-                height={64}
+                alt="Time Cyber Media News"
+                className="w-20 h-20 rounded-xl object-contain shadow-[0_8px_32px_rgba(0,0,0,0.25)] transition-all duration-400 hover:scale-[1.06] hover:shadow-[0_12px_40px_rgba(0,0,0,0.35)]"
+                width={80}
+                height={80}
                 priority
               />
-              <h3 className="font-['Lora',serif] text-[1.65rem] font-bold text-[var(--heading-color)] mt-2 mb-1 tracking-tight transition-colors duration-300">TIME CYBERMEDIA News</h3>
+              <h3 className="font-['Lora',serif] text-[1.65rem] font-bold text-[var(--heading-color)] mt-2 mb-1 tracking-tight transition-colors duration-300">Time Cyber Media</h3>
               <p className="font-['Lora',serif] text-base text-[var(--primary)] italic font-medium m-0 transition-colors duration-300">Truth in Every Story</p>
             </div>
             <p className="font-['Inter',sans-serif] text-[0.97rem] leading-[1.75] text-[var(--text-color)] m-0 transition-colors duration-300">
-              Your trusted source for breaking news, analysis, and in-depth coverage
-              of events shaping India and the world. Stay informed, stay ahead.
+              Your trusted source for breaking news, global awards coverage, and in-depth analysis.
             </p>
             <div className="flex flex-col gap-4 mt-[0.6rem]">
               <a href={`mailto:${contactInfo.email}`} className="flex items-center gap-4 text-[0.97rem] text-[var(--text-color)] no-underline transition-all duration-300 hover:text-[var(--heading-color)] hover:translate-x-1.5 group">
@@ -168,7 +167,7 @@ const Footer: React.FC = () => {
         <div className="py-[2.2rem] border-t border-[var(--border)] bg-[var(--nav-hover-bg)] transition-all duration-400">
           <div className="flex justify-center items-center text-center">
             <p className="font-['Inter',sans-serif] text-[0.95rem] font-medium text-[var(--muted-foreground)] m-0 tracking-[0.02em] transition-colors duration-300">
-              Â© {year} TIME CYBERMEDIA Pvt.Ltd. All rights reserved.
+              © {year} Time Cyber Media Pvt. Ltd. All rights reserved.
             </p>
           </div>
         </div>

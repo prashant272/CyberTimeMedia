@@ -153,14 +153,14 @@ const Navbar: React.FC = () => {
           >
             <div className="bg-white/95 backdrop-blur-md border border-gray-200 shadow-2xl rounded-full px-4 md:px-10 py-1.5 md:py-2 flex items-center justify-between gap-4 md:gap-8">
               <Link href="/" className="flex items-center select-none shrink-0 relative" onClick={() => setShowPill(false)}>
-                <div className="relative w-20 h-20 md:w-32 md:h-32 -my-5 md:-my-10">
+                <div className="relative w-24 h-24 md:w-36 md:h-36 -my-6 md:-my-12">
                   <Image
                     src="/logo.png"
-                    alt="Logo"
+                    alt="Time Cyber Media"
                     fill
                     className="object-contain"
                     priority
-                    sizes="(max-width: 768px) 80px, (max-width: 1024px) 120px, 160px"
+                    sizes="(max-width: 768px) 96px, (max-width: 1024px) 144px, 180px"
                   />
                 </div>
               </Link>
@@ -319,21 +319,21 @@ const Navbar: React.FC = () => {
           <div className="flex items-center justify-between">
             {/* Logo */}
             <Link href="/" className="flex items-center select-none relative z-10">
-              <div className="relative w-20 h-20 md:w-40 md:h-40 -my-6 md:-my-10">
+              <div className="relative w-24 h-24 md:w-44 md:h-44 -my-7 md:-my-12">
                 <Image
                   src="/logo.png"
-                  alt="Logo"
+                  alt="Time Cyber Media Logo"
                   fill
                   className="object-contain"
                   priority
-                  sizes="(max-width: 768px) 80px, (max-width: 1024px) 120px, 160px"
+                  sizes="(max-width: 768px) 96px, (max-width: 1024px) 176px, 200px"
                 />
               </div>
             </Link>
 
             {/* Live Score */}
             <div className="hidden lg:block ml-4">
-              <LiveScoreButton API_BASE={(newsContext as any)?.API_BASE || "https://api.primetimemedia.in"} />
+              <LiveScoreButton API_BASE={(newsContext as any)?.API_BASE || "https://api.timecybermedia.com"} />
             </div>
 
             {/* Navigation */}
@@ -418,7 +418,7 @@ const Navbar: React.FC = () => {
         <div className={`absolute left-0 top-0 bottom-0 w-[80%] max-w-[320px] bg-white shadow-2xl transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}>
           <div className="flex items-center justify-between p-5 border-b border-gray-200">
             <div className="flex items-center">
-              <Image src="/logo.png" alt="Logo" width={120} height={120} className="w-20 h-20 object-contain" />
+              <Image src="/logo.png" alt="Logo" width={160} height={160} className="w-24 h-24 object-contain" />
             </div>
             <button onClick={() => setIsMobileMenuOpen(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
               <X size={26} className="text-black" />

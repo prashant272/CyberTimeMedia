@@ -193,7 +193,7 @@ export default function WorldSubPage({ category, subCategory }: WorldSubPageProp
             </div>
 
             <SocialShare
-                url={currentUrl || `https://www.primetimemedia.in/Pages/${category.toLowerCase()}/${subCategory.toLowerCase()}`}
+                url={currentUrl || `https://www.timecybermedia.com/Pages/${category.toLowerCase()}/${subCategory.toLowerCase()}`}
                 title={`${subPageTitle} - ${pageTitle} | Latest News`}
                 description={`Explore the latest ${subPageTitle} news from ${pageTitle} section.`}
                 image={subFilteredNews[0]?.image || ''}

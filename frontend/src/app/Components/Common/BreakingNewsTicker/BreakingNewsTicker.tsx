@@ -20,7 +20,7 @@ const BreakingNewsTicker: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [loading, setLoading] = useState(true);
 
-    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.primetimemedia.in";
+    const API_BASE = process.env.NEXT_PUBLIC_API_URL || "https://api.timecybermedia.com";
 
     useEffect(() => {
         const fetchNews = async () => {

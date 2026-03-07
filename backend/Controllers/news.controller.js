@@ -44,7 +44,7 @@ async function triggerFacebookPost(newsItem) {
       return;
     }
 
-    const articleUrl = `https://www.primetimemedia.in/Pages/${newsItem.category}/${newsItem.subCategory || newsItem.category}/${newsItem.slug}`;
+    const articleUrl = `https://www.timecybermedia.com/Pages/${newsItem.category}/${newsItem.subCategory || newsItem.category}/${newsItem.slug}`;
     const message = `ðŸ“° ${newsItem.title}\n\n${newsItem.summary || ""}\n\nRead more ðŸ‘‡`;
 
     const result = await facebookService.postToPage(pageId, pageAccessToken, message, articleUrl);
@@ -91,7 +91,7 @@ exports.AddNews = async (req, res) => {
       } else {
         try {
           const uploadResponse = await cloudinary.uploader.upload(image, {
-            folder: "primetime_news"
+            folder: "timecyber_news"
           });
           imageUrl = uploadResponse.secure_url;
         } catch (uploadError) {
@@ -104,7 +104,7 @@ exports.AddNews = async (req, res) => {
       title, slug, category: finalCategory, subCategory: subCategory || null,
       summary: summary || null, content, image: imageUrl, tags,
       targetLink: targetLink || null, nominationLink: nominationLink || null,
-      author: author || "TIME CYBERMEDIA News",
+      author: author || "Time Cyber Media",
       authorId: authorId || null,
       status: status || "draft",
       publishedAt: status === "published" ? new Date() : null
@@ -292,7 +292,7 @@ exports.updateNewsBySlug = async (req, res) => {
     let imageUrl = item.image;
     if (updateData.image && updateData.image !== imageUrl) {
       if (!updateData.image.startsWith("http")) {
-        const uploadResponse = await cloudinary.uploader.upload(updateData.image, { folder: "primetime_news" });
+        const uploadResponse = await cloudinary.uploader.upload(updateData.image, { folder: "timecyber_news" });
         imageUrl = uploadResponse.secure_url;
       }
       updateData.image = imageUrl;
@@ -456,29 +456,29 @@ exports.searchNews = async (req, res) => {
   try {
     const { q, page = 1, limit = 10 } = req.query;
     if (!q) return res.status(400).json({ success: false, msg: "Search query required" });
-    
+
     const pageNum = parseInt(page);
     const limitNum = parseInt(limit);
     const skip = (pageNum - 1) * limitNum;
-    
+
     const query = { $text: { $search: q }, status: 'published' };
-    
+
     const results = await NewsArticle.find(query, { score: { $meta: "textScore" } })
       .sort({ score: { $meta: "textScore" }, publishedAt: -1 })
       .skip(skip)
       .limit(limitNum)
       .lean();
-      
+
     const total = await NewsArticle.countDocuments(query);
-    
+
     res.status(200).json({
       success: true,
       news: results,
-      pagination: { 
-        total, 
-        page: pageNum, 
+      pagination: {
+        total,
+        page: pageNum,
         limit: limitNum,
-        totalPages: Math.ceil(total / limitNum) 
+        totalPages: Math.ceil(total / limitNum)
       },
       count: results.length,
       msg: "Search completed"

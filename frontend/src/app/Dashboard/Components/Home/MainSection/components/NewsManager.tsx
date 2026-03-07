@@ -191,7 +191,7 @@ const NewsManager: FC<NewsManagerProps> = ({
             return;
         }
         try {
-            const authorName = userAuthData?.name || "TIME CYBERMEDIA News";
+            const authorName = userAuthData?.name || "Time Cyber Media";
             const currentUserId = userAuthData?.userId || userAuthData?._id || userAuthData?.id;
 
             await addNews({
@@ -229,7 +229,7 @@ const NewsManager: FC<NewsManagerProps> = ({
     const handleUpdate = useCallback(async () => {
         if (!canUpdate || !editingSlug) return;
         try {
-            const authorName = userAuthData?.name || "TIME CYBERMEDIA News";
+            const authorName = userAuthData?.name || "Time Cyber Media";
             const currentUserId = userAuthData?.userId || userAuthData?._id || userAuthData?.id;
 
             await updateNews({
@@ -315,11 +315,11 @@ const NewsManager: FC<NewsManagerProps> = ({
 
     const getShareLink = (item: Partial<NewsItem>, platform: 'facebook' | 'whatsapp') => {
         if (!item.slug) return "#";
-        const siteUrl = "https://www.primetimemedia.in";
+        const siteUrl = "https://www.timecybermedia.com";
         const sectionSlug = selectedCategory.toLowerCase();
         const categorySlug = (item.category || selectedCategory).toLowerCase().replace(/\s+/g, '-');
         const fullUrl = `${siteUrl}/Pages/${sectionSlug}/${categorySlug}/${item.slug}`;
-        const shareText = `${item.title} | View more news on TIME CYBERMEDIA Media:`;
+        const shareText = `${item.title} | View more news on Time Cyber Media:`;
 
         if (platform === 'facebook') {
             return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(fullUrl)}`;

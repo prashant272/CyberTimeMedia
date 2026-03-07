@@ -10,28 +10,9 @@ cloudinary.config({
   api_secret: process.env.API_SECRET,
 });
 
-const SIGNUP_SECRET_KEY = process.env.SIGNUP_SECRET_KEY;
-const SIGNIN_SECRET_KEY = process.env.SIGNIN_SECRET_KEY;
-
-
 exports.UserSignUp = async (req, res) => {
   try {
-    const { email, password, role, secretKey } = req.body;
-
-
-    if (!SIGNUP_SECRET_KEY) {
-      return res.status(500).json({
-        success: false,
-        msg: "Server configuration error: Secret key not set"
-      });
-    }
-
-    if (!secretKey || secretKey !== SIGNUP_SECRET_KEY) {
-      return res.status(401).json({
-        success: false,
-        msg: "Invalid secret key"
-      });
-    }
+    const { email, password, role } = req.body;
 
     const checkUser = await User.findOne({ email: email });
     if (checkUser) {
@@ -82,8 +63,7 @@ exports.UserSignUp = async (req, res) => {
 
 exports.UserSignIn = async (req, res) => {
   try {
-    const { email, password, role, secretKey } = req.body;
-
+    const { email, password, role } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
@@ -95,21 +75,6 @@ exports.UserSignIn = async (req, res) => {
     // Normalize role to uppercase to match database
     const userRole = role ? role.toUpperCase() : null;
 
-    if (userRole === "SUPER_ADMIN") {
-      if (!SIGNIN_SECRET_KEY) {
-        return res.status(500).json({
-          success: false,
-          msg: "Server configuration error: Secret key not set"
-        });
-      }
-
-      if (!secretKey || secretKey !== SIGNIN_SECRET_KEY) {
-        return res.status(401).json({
-          success: false,
-          msg: "Invalid secret key for Super Admin"
-        });
-      }
-    }
 
     const query = { email: email };
     if (userRole && userRole !== "SUPER_ADMIN") {

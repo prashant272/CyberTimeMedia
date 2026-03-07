@@ -22,8 +22,8 @@ const app = express()
 connectdb()
 
 const allowedOrigins = [
-    "https://www.primetimemedia.in",
-    "https://primetimemedia.in",
+    "https://www.timecybermedia.com",
+    "https://timecybermedia.com",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     "http://10.40.0.231:3000",
