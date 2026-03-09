@@ -73,14 +73,30 @@ exports.scrapeBreakingNews = async (req, res) => {
 exports.getBreakingNews = async (req, res) => {
     try {
         const { all } = req.query;
+        const now = new Date();
+
+        // Calculate start of today in IST (UTC + 5:30)
+        const istOffset = 5.5 * 60 * 60 * 1000;
+        const istNow = new Date(now.getTime() + istOffset);
+        const startOfTodayIST = new Date(Date.UTC(istNow.getUTCFullYear(), istNow.getUTCMonth(), istNow.getUTCDate(), 0, 0, 0, 0) - istOffset);
+        const endOfTodayIST = new Date(startOfTodayIST.getTime() + 24 * 60 * 60 * 1000 - 1);
+
         let query = {
             isActive: true,
-            scheduledAt: { $lte: new Date() } // Only show released news
+            scheduledAt: {
+                $lte: now,
+                $gte: startOfTodayIST
+            } // Only show released news for today IST
         };
 
-        // If all=true, show everything including future scheduled and inactive (for admin)
+        // If all=true, show today's news including future scheduled and inactive (for admin)
         if (all === 'true') {
-            query = {};
+            query = {
+                scheduledAt: {
+                    $gte: startOfTodayIST,
+                    $lte: endOfTodayIST
+                }
+            };
         }
 
         const news = await BreakingNews.find(query).sort({ scheduledAt: -1, createdAt: -1 });

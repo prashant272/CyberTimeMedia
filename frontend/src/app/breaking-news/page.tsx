@@ -11,6 +11,7 @@ interface BreakingNewsItem {
     link?: string;
     source?: string;
     createdAt: string;
+    scheduledAt?: string;
 }
 
 const BreakingNewsPage = () => {
@@ -54,9 +55,9 @@ const BreakingNewsPage = () => {
         }
     };
 
-    const formatTime = (dateString: string) => {
+    const formatDateTime = (dateString: string) => {
         const date = new Date(dateString);
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        return date.toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
     };
 
     const formatDate = (dateString: string) => {
@@ -111,8 +112,8 @@ const BreakingNewsPage = () => {
                     news.map((item, index) => (
                         <div key={item._id} className={`group flex gap-8 items-center py-8 border-b border-gray-100 bg-none shadow-none rounded-none border-l-0 transition-colors duration-200 last:border-b-0 hover:border-gray-100 md:gap-2.5 md:flex-wrap md:py-5 ${index === 0 ? 'flex-col items-start pb-10 gap-4' : ''}`}>
                             {index !== 0 && (
-                                <div className="min-w-[100px] border-r-0 pr-0 block md:order-1">
-                                    <span className="text-[1.25rem] font-bold text-gray-900">{formatTime(item.createdAt)}</span>
+                                <div className="min-w-[140px] border-r-0 pr-0 block md:order-1">
+                                    <span className="text-[1.1rem] font-bold text-gray-900">[{formatDateTime(item.scheduledAt || item.createdAt)}]</span>
                                 </div>
                             )}
                             <div className={`flex-1 md:order-3 md:w-full md:flex-none ${index === 0 ? 'order-1' : ''}`}>

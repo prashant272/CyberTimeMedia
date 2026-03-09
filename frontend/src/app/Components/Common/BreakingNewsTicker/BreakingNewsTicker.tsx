@@ -11,6 +11,7 @@ interface BreakingNewsItem {
     link?: string;
     source?: string;
     createdAt: string;
+    scheduledAt?: string;
 }
 
 const BreakingNewsTicker: React.FC = () => {
@@ -102,6 +103,11 @@ const BreakingNewsTicker: React.FC = () => {
                             className="text-xs sm:text-[0.95rem] font-medium text-white whitespace-nowrap block w-full text-left overflow-hidden text-ellipsis pr-6 sm:pr-10 font-['Georgia','Times_New_Roman',serif] italic tracking-[0.2px] sm:tracking-[0.3px]"
                         >
                             {currentItem.isLive && <span className="text-[#f8f8f6] font-black mr-1 sm:mr-2">[LIVE]</span>}
+                            {currentItem.scheduledAt && (
+                                <span className="text-[#f8f8f6] font-bold mr-2 opacity-90">
+                                    [{new Date(currentItem.scheduledAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false })}]
+                                </span>
+                            )}
                             {currentItem.title}
                         </motion.div>
                     </AnimatePresence>

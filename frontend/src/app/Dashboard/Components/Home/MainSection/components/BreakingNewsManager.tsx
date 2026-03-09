@@ -158,7 +158,7 @@ const BreakingNewsManager: React.FC = () => {
 
             <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white">Existing Headlines ({news.length})</h3>
+                    <h2 className="text-xl font-bold bg-gradient-to-r from-red-600 to-red-400 bg-clip-text text-transparent mb-4">Today's Headlines ({news.length})</h2>
                 </div>
 
                 <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -194,7 +194,7 @@ const BreakingNewsManager: React.FC = () => {
                                             <td className="px-6 py-4 text-sm text-gray-600 dark:text-gray-400">{item.source || "Global"}</td>
                                             <td className="px-6 py-4">
                                                 <div className="text-sm text-gray-600 dark:text-gray-400">
-                                                    {new Date(item.scheduledAt || item.createdAt).toLocaleString()}
+                                                    <span>{new Date(item.scheduledAt || item.createdAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}</span>
                                                 </div>
                                                 {new Date(item.scheduledAt || item.createdAt) > new Date() && (
                                                     <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-400 uppercase mt-1">
