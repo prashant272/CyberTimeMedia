@@ -97,9 +97,9 @@ const LatestNews: React.FC = () => {
   }
 
   return (
-    <section className="bg-white py-20 px-4 md:px-8 lg:px-12 relative overflow-hidden">
+    <section className="bg-white py-12 px-4 md:px-8 lg:px-12 relative overflow-hidden">
       <div className="max-w-[1440px] mx-auto relative z-10">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
           <div className="text-left">
             <span className="text-[#dc2626] font-black text-[12px] uppercase tracking-[0.3em] mb-3 block">Real-time Feed</span>
             <h2 className="font-['Lora',serif] font-bold text-[clamp(2rem,5vw,3.2rem)] text-[#0f172a] mb-4 tracking-tighter leading-tight">Latest News</h2>
@@ -115,7 +115,7 @@ const LatestNews: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {displayNews.map((item, idx) => (
             <motion.div
               key={item.id}
@@ -133,7 +133,7 @@ const LatestNews: React.FC = () => {
                 }}
               >
                 {/* Image Holder */}
-                <div className="relative aspect-[16/10] rounded-[24px] overflow-hidden mb-6 bg-gray-50 border border-gray-50">
+                <div className="relative aspect-[16/10] rounded-[24px] overflow-hidden mb-4 bg-gray-50 border border-gray-50">
                   <img
                     src={item.image}
                     alt={item.title}
@@ -177,7 +177,7 @@ const LatestNews: React.FC = () => {
           ))}
         </div>
 
-        <div className="mt-20 flex justify-center">
+        <div className="mt-10 flex justify-center">
           <Link
             href="/Pages/all"
             className="inline-flex items-center gap-4 px-12 py-5 bg-[#dc2626] text-white rounded-full font-black text-[14px] uppercase tracking-[0.2em] shadow-[0_20px_40px_rgba(220,38,38,0.25)] hover:bg-[#b91c1c] hover:-translate-y-1 hover:shadow-[0_25px_50px_rgba(220,38,38,0.35)] transition-all duration-500 group"

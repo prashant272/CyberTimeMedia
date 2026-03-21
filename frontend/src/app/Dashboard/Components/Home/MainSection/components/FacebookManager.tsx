@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback, FC } from "react";
+import React, { useState, useEffect, useCallback, useRef, FC } from "react";
+import { useSearchParams } from "next/navigation";
 import { FaFacebook } from "react-icons/fa";
 import { API } from "@/Utils/Utils";
 
@@ -10,10 +11,12 @@ const FacebookManager: FC<FacebookManagerProps> = ({ showNotification }) => {
     const [fbStatus, setFbStatus] = useState<any>(null);
     const [fbPages, setFbPages] = useState<any[]>([]);
     const [fbLoading, setFbLoading] = useState(false);
+    const searchParams = useSearchParams();
+    const fbCode = searchParams.get("code");
 
     const fetchFacebookStatus = useCallback(async () => {
         try {
-            const res = await API.get('/fb/global-status');
+            const res = await API.get('/fb_api/global-status');
             setFbStatus(res.data);
         } catch (err) {
             console.error("Fetch FB status error:", err);
@@ -24,10 +27,42 @@ const FacebookManager: FC<FacebookManagerProps> = ({ showNotification }) => {
         fetchFacebookStatus();
     }, [fetchFacebookStatus]);
 
+    const processedCodes = useRef<Set<string>>(new Set());
+
+    // Handle OAuth callback "code" if present in URL
+    useEffect(() => {
+        const handleCallback = async (code: string) => {
+            if (processedCodes.current.has(code)) return;
+            processedCodes.current.add(code);
+            
+            setFbLoading(true);
+            try {
+                const res = await API.get(`/fb_api/callback?code=${code}`);
+                if (res.data.success) {
+                    setFbPages(res.data.pages);
+                    showNotification("Facebook authorized! Select a page below.", "success");
+                    // Optionally clear the code from URL without refreshing
+                    window.history.replaceState({}, '', window.location.pathname + (window.location.search.replace(/[?&]code=[^&]+/, '').replace(/^&/, '?')));
+                }
+            } catch (err: any) {
+                console.error("FB Callback exchange error:", err);
+                const msg = err.response?.data?.msg || err.message || "Facebook callback failed";
+                showNotification(msg, "error");
+            } finally {
+                setFbLoading(false);
+            }
+        };
+
+        if (fbCode) {
+            handleCallback(fbCode);
+        }
+    }, [fbCode, showNotification]);
+
     const handleFacebookConnect = async () => {
         setFbLoading(true);
         try {
-            const res = await API.get('/fb/auth');
+            const res = await API.get('/fb_api/auth');
+            console.log("Facebook Auth URL from backend:", res.data.url);
             if (res.data.url) {
                 window.location.href = res.data.url;
             }
@@ -41,7 +76,7 @@ const FacebookManager: FC<FacebookManagerProps> = ({ showNotification }) => {
     const handleDisconnectFacebook = async () => {
         if (!confirm("Disconnect Facebook? Auto-posting will stop.")) return;
         try {
-            await API.delete('/fb/disconnect');
+            await API.delete('/fb_api/disconnect');
             showNotification("Facebook disconnected", "success");
             fetchFacebookStatus();
         } catch (err: any) {
@@ -51,7 +86,7 @@ const FacebookManager: FC<FacebookManagerProps> = ({ showNotification }) => {
 
     const handleSaveFacebookPage = async (pageId: string, pageName: string, accessToken: string) => {
         try {
-            await API.post('/fb/save-global-page', { pageId, pageName, pageAccessToken: accessToken });
+            await API.post('/fb_api/save-global-page', { pageId, pageName, pageAccessToken: accessToken });
             showNotification("Facebook page connected!", "success");
             fetchFacebookStatus();
             setFbPages([]);
@@ -63,7 +98,7 @@ const FacebookManager: FC<FacebookManagerProps> = ({ showNotification }) => {
     const handleFacebookTestPost = async () => {
         setFbLoading(true);
         try {
-            const res = await API.post('/fb/test-post');
+            const res = await API.post('/fb_api/test-post');
             if (res.data.success) {
                 showNotification("Success! Check your FB page.", "success");
             }

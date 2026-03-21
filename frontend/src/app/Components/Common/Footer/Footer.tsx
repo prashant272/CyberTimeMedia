@@ -70,9 +70,9 @@ const Footer: React.FC = () => {
   }
 
   return (
-    <footer id="footer" className="bg-[var(--background)] text-[var(--text-color)] pt-20 relative overflow-hidden transition-colors duration-400 after:content-[''] after:absolute after:top-0 after:left-1/2 after:-translate-x-1/2 after:w-px after:h-full after:bg-linear-to-b after:from-transparent after:via-[var(--border)] after:to-transparent after:pointer-events-none">
+    <footer id="footer" className="bg-[var(--background)] text-[var(--text-color)] pt-12 relative overflow-hidden transition-colors duration-400 after:content-[''] after:absolute after:top-0 after:left-1/2 after:-translate-x-1/2 after:w-px after:h-full after:bg-linear-to-b after:from-transparent after:via-[var(--border)] after:to-transparent after:pointer-events-none">
       <div className="max-w-[1400px] mx-auto px-8 relative z-1 md:px-6 sm:px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr] xl:grid-cols-[1.5fr_1fr_1fr] gap-14 lg:gap-16 xl:gap-24 mb-[4.5rem] pb-[4.5rem] border-b border-[var(--border)] transition-colors duration-400">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[2fr_1fr_1fr] xl:grid-cols-[1.5fr_1fr_1fr] gap-8 lg:gap-10 mb-10 pb-10 border-b border-[var(--border)] transition-colors duration-400">
           <div className="flex flex-col gap-[1.4rem]">
             <div className="mb-[1.2rem]">
               <Image
@@ -143,7 +143,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="my-[3.5rem] lg:my-[4.5rem] text-center">
+        <div className="my-10 text-center">
           <h3 className="font-['Lora',serif] text-[1.6rem] font-bold mb-[1.6rem] text-[var(--heading-color)] tracking-tight transition-colors duration-300">Follow Us</h3>
           <div className="flex justify-center gap-[1.2rem] flex-wrap">
             {socialLinks.map((social, index) => {

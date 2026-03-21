@@ -115,11 +115,11 @@ const Entertainment: React.FC = () => {
   if (!entertainmentNews?.length) return null;
 
   return (
-    <section className="bg-white py-20 px-4 md:px-8 lg:px-12 relative overflow-hidden">
+    <section className="bg-white py-12 px-4 md:px-8 lg:px-12 relative overflow-hidden">
       <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-red-50/30 blur-[120px] rounded-full -translate-y-1/2 translate-x-1/3 pointer-events-none" />
 
       <div className="max-w-[1440px] mx-auto relative z-10">
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-16 gap-8">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between mb-8 gap-8">
           <div className="text-left">
             <div className="flex items-center gap-3 mb-4">
               <span className="w-8 h-[2px] bg-[#dc2626]"></span>
@@ -146,9 +146,9 @@ const Entertainment: React.FC = () => {
           </nav>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Main Featured Articles - Left Side (2 stacked banners) */}
-          <div className="lg:col-span-6 xl:col-span-7 flex flex-col gap-8">
+          <div className="lg:col-span-6 xl:col-span-7 flex flex-col gap-6">
             {entertainmentArticles.slice(0, 2).map((article, idx) => (
               <motion.div
                 key={article.id}
@@ -197,7 +197,7 @@ const Entertainment: React.FC = () => {
           </div>
 
           {/* Regular List Articles - Right Side */}
-          <div className="lg:col-span-6 xl:col-span-5 flex flex-col gap-6">
+          <div className="lg:col-span-6 xl:col-span-5 flex flex-col gap-4">
             <AnimatePresence mode="popLayout">
               {entertainmentArticles.slice(2).map((article, idx) => (
                 <motion.article
@@ -206,7 +206,7 @@ const Entertainment: React.FC = () => {
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: idx * 0.1 }}
-                  className="group relative grid grid-cols-[1fr_180px] sm:grid-cols-[1fr_140px] gap-6 p-4 bg-white rounded-[32px] border border-gray-100 transition-all duration-500 cursor-pointer hover:border-[#dc2626]/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] active:scale-[0.98]"
+                  className="group relative grid grid-cols-[1fr_180px] sm:grid-cols-[1fr_140px] gap-4 p-4 bg-white rounded-[32px] border border-gray-100 transition-all duration-500 cursor-pointer hover:border-[#dc2626]/20 hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] active:scale-[0.98]"
                   onClick={() => handleArticleClick(article.slug, article.category)}
                 >
                   <div className="flex flex-col justify-center px-2">
@@ -240,7 +240,7 @@ const Entertainment: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex justify-center mt-20">
+        <div className="flex justify-center mt-10">
           <button
             className="group relative inline-flex items-center gap-4 px-12 py-5 bg-[#0f172a] rounded-full font-black text-[14px] uppercase tracking-[0.2em] text-white transition-all duration-500 shadow-xl hover:bg-[#dc2626] hover:shadow-[#dc2626]/40 hover:-translate-y-1 active:scale-95"
             onClick={handleReadMoreClick}

@@ -131,14 +131,14 @@ const NewsSection: React.FC = () => {
   const regularArticles = liveNews.slice(1);
 
   return (
-    <section className="bg-white py-24 px-4 md:px-8 lg:px-12 relative overflow-hidden">
+    <section className="bg-white py-12 px-4 md:px-8 lg:px-12 relative overflow-hidden">
       {/* Decorative Branding Text */}
       <div className="absolute top-0 left-12 h-full flex flex-col justify-center pointer-events-none opacity-[0.02]">
         <span className="text-[200px] font-black uppercase rotate-90 origin-left whitespace-nowrap">Trending Pulse</span>
       </div>
 
       <div className="max-w-[1440px] mx-auto relative z-10">
-        <div className="flex items-center gap-4 mb-16">
+        <div className="flex items-center gap-4 mb-8">
           <div className="w-12 h-12 rounded-2xl bg-[#dc2626] flex items-center justify-center shadow-[0_10px_20px_rgba(220,38,38,0.2)]">
             <Star className="text-white" size={24} fill="white" />
           </div>
@@ -150,7 +150,7 @@ const NewsSection: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Featured Hero Article */}
           <motion.article
             initial={{ opacity: 0, y: 30 }}
@@ -176,7 +176,7 @@ const NewsSection: React.FC = () => {
               </div>
             </div>
 
-            <div className="p-12 md:p-10 flex flex-col justify-center bg-white">
+            <div className="p-8 md:p-6 flex flex-col justify-center bg-white">
               <div className="flex items-center gap-4 mb-8">
                 <span className="px-4 py-1.5 bg-red-50 text-[#dc2626] rounded-xl font-black text-[10px] uppercase tracking-wider">
                   {featuredArticle.category}
@@ -189,11 +189,11 @@ const NewsSection: React.FC = () => {
                 )}
               </div>
 
-              <h1 className="font-['Lora',serif] font-bold text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] text-[#0f172a] mb-8 tracking-tighter group-hover:text-[#dc2626] transition-colors duration-300">
+              <h1 className="font-['Lora',serif] font-bold text-[clamp(2rem,4vw,3.5rem)] leading-[1.05] text-[#0f172a] mb-4 tracking-tighter group-hover:text-[#dc2626] transition-colors duration-300">
                 {featuredArticle.title}
               </h1>
 
-              <p className="font-['Inter',sans-serif] text-[18px] md:text-base leading-relaxed text-gray-500 mb-10 line-clamp-3">
+              <p className="font-['Inter',sans-serif] text-[18px] md:text-base leading-relaxed text-gray-500 mb-6 line-clamp-3">
                 {featuredArticle.description}
               </p>
 
@@ -220,7 +220,7 @@ const NewsSection: React.FC = () => {
           </motion.article>
 
           {/* Regular Article Grid */}
-          <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-6">
+          <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
             {regularArticles.map((item, idx) => (
               <motion.article
                 key={item.id}
@@ -232,7 +232,7 @@ const NewsSection: React.FC = () => {
                 onClick={() => handleCardClick(item)}
               >
                 <div className="bg-white rounded-[40px] p-2 border border-gray-200 transition-all duration-500 hover:shadow-[0_30px_60px_rgba(0,0,0,0.06)] hover:border-[#dc2626]/20 h-full flex flex-col">
-                  <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden mb-6 bg-gray-50 border border-gray-50">
+                  <div className="relative aspect-[4/3] rounded-[32px] overflow-hidden mb-4 bg-gray-50 border border-gray-50">
                     <img
                       src={item.image}
                       alt={item.title}

@@ -66,8 +66,11 @@ export default function NewsAdminPage() {
   useEffect(() => {
     if (validSection) {
       setActiveSection(validSection);
+    } else if (searchParams.get('code')) {
+      // If we got a Facebook auth code, jump to settings
+      setActiveSection('facebook_settings');
     }
-  }, [validSection]);
+  }, [validSection, searchParams]);
 
   const handleLogout = () => {
     userCtx?.logout();

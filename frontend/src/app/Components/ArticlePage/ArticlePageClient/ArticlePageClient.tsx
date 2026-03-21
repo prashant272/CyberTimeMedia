@@ -130,8 +130,8 @@ export default function ArticlePageClient({
           title={article.title}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-8 mt-5 lg:gap-10">
-          <div className="bg-white p-5 sm:p-8 md:p-10 rounded-[24px] md:rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 transition-all duration-300 cubic-bezier(0.4,0,0.2,1)">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_350px] gap-6 mt-5 lg:gap-8">
+          <div className="bg-white p-5 sm:p-6 md:p-8 rounded-[24px] md:rounded-[32px] shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-gray-100 transition-all duration-300 cubic-bezier(0.4,0,0.2,1)">
             <ArticleHeader article={article} />
             <ArticleContent content={article.content} summary={article.subtitle} />
             <RelatedArticles articles={relatedArticles} />
@@ -140,7 +140,7 @@ export default function ArticlePageClient({
             )}
 
             {(article.category?.toUpperCase() === "AWARDS" || section?.toUpperCase() === "AWARDS") && (
-              <div className="flex flex-wrap gap-4 my-8 p-6 bg-gray-50 rounded-2xl border border-gray-100 sm:flex-col sm:p-4">
+              <div className="flex flex-wrap gap-4 my-6 p-6 bg-gray-50 rounded-2xl border border-gray-100 sm:flex-col sm:p-4">
                 {article.targetLink && (
                   <a
                     href={article.targetLink.startsWith('http') ? article.targetLink : `https://${article.targetLink}`}
@@ -177,7 +177,7 @@ export default function ArticlePageClient({
                 image={article.image}
                 isArticle={true}
               />
-              <div className="my-8 p-6 bg-gray-50 rounded-[24px] border border-gray-100 shadow-sm transition-all duration-300 hover:border-[#dc2626] hover:shadow-md">
+              <div className="my-6 p-6 bg-gray-50 rounded-[24px] border border-gray-100 shadow-sm transition-all duration-300 hover:border-[#dc2626] hover:shadow-md">
                 {article.authorId ? (
                   <div className="flex items-center gap-6 sm:flex-col sm:text-center sm:gap-4">
                     <div className="flex-shrink-0 w-[90px] h-[90px] sm:w-20 sm:h-20 rounded-full overflow-hidden border-3 border-white shadow-md">

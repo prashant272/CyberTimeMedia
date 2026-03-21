@@ -32,7 +32,7 @@ export default function MoreFromSection({
 
   if (isLoading) {
     return (
-      <div className="bg-[var(--background)] py-16 px-8 relative overflow-hidden transition-colors duration-300">
+      <div className="bg-[var(--background)] py-12 px-8 relative overflow-hidden transition-colors duration-300">
         <div className={`grid gap-6 relative z-[1] max-w-[1400px] mx-auto animate-pulse ${columns === 2 ? 'grid-cols-1 md:grid-cols-2' : columns === 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' : 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'}`}>
           {Array(columns * 2).fill(0).map((_, i) => (
             <div key={i} className={`flex flex-col gap-4 p-4 border border-[var(--card-border)] rounded-xl`}>
@@ -50,15 +50,15 @@ export default function MoreFromSection({
   }
 
   return (
-    <div className="bg-[var(--background)] py-16 px-8 relative overflow-hidden transition-colors duration-300 after:absolute after:inset-0 after:bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,var(--border)_2px,var(--border)_4px)] after:opacity-30 after:pointer-events-none">
-      <div className="text-center mb-12 relative z-[1]">
+    <div className="bg-[var(--background)] py-12 px-8 relative overflow-hidden transition-colors duration-300 after:absolute after:inset-0 after:bg-[repeating-linear-gradient(0deg,transparent,transparent_2px,var(--border)_2px,var(--border)_4px)] after:opacity-30 after:pointer-events-none">
+      <div className="text-center mb-8 relative z-[1]">
         <h2 className="font-['Lora',serif] text-[clamp(1.75rem,4vw,2.625rem)] font-bold text-[var(--heading-color)] m-0 mb-4 capitalize tracking-wider relative inline-block transition-colors duration-300 before:absolute before:-top-2.5 before:-left-5 before:w-2.5 before:h-2.5 before:bg-linear-to-br before:from-[var(--primary)] before:to-[var(--accent)] before:rounded-full before:shadow-[0_0_20px_var(--primary)] before:animate-pulse after:absolute after:-top-2.5 after:-right-5 after:w-2.5 after:h-2.5 after:bg-linear-to-br after:from-[var(--accent)] after:to-[var(--primary)] after:rounded-full after:shadow-[0_0_20px_var(--accent)] after:animate-pulse after:delay-1000">
           {sectionTitle}
         </h2>
         <div className="w-[120px] h-1 bg-linear-to-r from-transparent via-[var(--primary)] to-transparent mx-auto rounded-sm shadow-[0_0_15px_var(--primary)]"></div>
       </div>
 
-      <div className={`grid gap-8 relative z-[1] max-w-[1400px] mx-auto ${columns === 2 ? 'grid-cols-1 md:grid-cols-2' : columns === 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' : 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'}`}>
+      <div className={`grid gap-6 relative z-[1] max-w-[1400px] mx-auto ${columns === 2 ? 'grid-cols-1 md:grid-cols-2' : columns === 4 ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4' : 'grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'}`}>
         {items.map((item, index) => {
           const href = item.slug ? item.href : '#';
 
