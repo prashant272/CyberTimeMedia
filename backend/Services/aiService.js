@@ -1,27 +1,15 @@
-const OpenAI = require("openai");
+const { GoogleGenAI } = require("@google/genai");
 
-const client = new OpenAI({
-    baseURL: "https://openrouter.ai/api/v1",
-    apiKey: process.env.OPENROUTER_API_KEY,
-    defaultHeaders: {
-        "HTTP-Referer": "https://www.timecybermedia.com", // Optional, for OpenRouter rankings
-        "X-Title": "Time Cyber Media", // Optional, for OpenRouter rankings
-    }
+// Initialize the Gemini SDK (new @google/genai package)
+const ai = new GoogleGenAI({
+    apiKey: process.env.GEMINI_API_KEY
 });
 
 const generateArticle = async (facts) => {
     try {
-        const response = await client.chat.completions.create({
-            model: "google/gemini-2.0-flash-001",
-            messages: [
-                {
-                    role: "system",
-                    content: "You are an SEO-focused news writer who writes in simple, clear English. Output ONLY valid JSON. Never use markdown inside the JSON values — use only HTML tags for formatting.",
-                },
-                {
-                    role: "user",
-                    content: `
+        const prompt = `
 You are an expert news writer. Based on the facts below, write a FULL, LONG, SEO-optimized news article in simple English.
+Output ONLY valid JSON. NEVER use markdown formatting like \`\`\`json or \`\`\` in your response.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 TITLE RULES:
@@ -78,22 +66,29 @@ OUTPUT JSON FORMAT (strictly follow this):
 FACTS TO PROCESS:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${facts}
-          `,
-                },
-            ],
-            response_format: { type: "json_object" },
-            max_tokens: 2000,
+        `;
+
+        const response = await ai.models.generateContent({
+            model: "gemini-3-flash-preview",
+            contents: prompt,
+            config: {
+                responseMimeType: "application/json",
+            }
         });
 
-        const content = response.choices[0].message.content;
-        return JSON.parse(content);
+        let text = response.text;
+
+        // Remove potential markdown code blocks if AI ignores the instruction
+        text = text.replace(/```json/g, "").replace(/```/g, "").trim();
+
+        return JSON.parse(text);
     } catch (error) {
-        console.error("AI Generation Error:", error.response?.data || error.message || error);
+        console.error("Gemini-3 AI Generation Error Details:", error);
         // Fallback for non-JSON response or error
         return {
             title: "Article Generation in Progress",
-            content: "<p>The AI service is currently busy or out of credits. Please check back in a few minutes or edit the article manually.</p>",
-            summary: "Content generation failed due to API limits.",
+            content: "<p>The AI service is currently busy or experiencing an issue. Please check back in a few minutes or edit the article manually.</p>",
+            summary: "Content generation failed due to API or service error.",
             tags: ["Draft"],
             subCategory: "Queue"
         };

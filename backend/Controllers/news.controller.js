@@ -47,7 +47,7 @@ async function triggerFacebookPost(newsItem) {
     const articleUrl = `https://www.timecybermedia.com/Pages/${newsItem.category}/${newsItem.subCategory || newsItem.category}/${newsItem.slug}`;
     const message = `ðŸ“° ${newsItem.title}\n\n${newsItem.summary || ""}\n\nRead more ðŸ‘‡`;
 
-    const result = await facebookService.postToPage(pageId, pageAccessToken, message, articleUrl);
+    const result = await facebookService.postToPage(pageId, pageAccessToken, message, articleUrl, newsItem.image);
     if (result.success) {
       console.log(`[Facebook] âœ… Auto-posted: "${newsItem.title}" â†’ Post ID: ${result.postId}`);
     } else {

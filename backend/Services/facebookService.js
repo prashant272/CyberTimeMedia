@@ -6,20 +6,27 @@ const axios = require("axios");
  * @param {string} pageAccessToken - The Page Access Token.
  * @param {string} message - The message text (e.g., article title).
  * @param {string} link - The URL to share.
+ * @param {string} picture - (Optional) Absolute URL for the post thumbnail.
  */
-exports.postToPage = async (pageId, pageAccessToken, message, link) => {
+exports.postToPage = async (pageId, pageAccessToken, message, link, picture = null) => {
     try {
         if (!pageId || !pageAccessToken) {
             console.warn("Facebook auto-post skipped: Missing credentials for page", pageId);
             return { success: false, msg: "Missing credentials" };
         }
 
-        const response = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/feed`, {
+        const postData = {
             message,
             link,
             published: true,
             access_token: pageAccessToken
-        });
+        };
+
+        if (picture) {
+            postData.picture = picture;
+        }
+
+        const response = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/feed`, postData);
 
         console.log(`Successfully posted to Facebook Page ${pageId}:`, response.data.id);
         return { success: true, postId: response.data.id };

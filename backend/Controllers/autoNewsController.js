@@ -147,8 +147,13 @@ const fetchAndProcessNews = async (req, res) => {
             articles: []
         };
 
+        let totalAiHits = 0;
+        const GLOBAL_AI_LIMIT = 50;
+        let limitReached = false;
+
         // Iterate through all sources
         for (const source of newsSources) {
+            if (limitReached) break;
             console.log(`Checking Source: ${source.name}...`);
 
             // 1. Get latest links from RSS
@@ -159,6 +164,11 @@ const fetchAndProcessNews = async (req, res) => {
 
             for (const item of items) {
                 if (newItemsCount >= MAX_NEW_PER_SOURCE) break;
+                if (totalAiHits >= GLOBAL_AI_LIMIT) {
+                    console.log(`<<< GLOBAL AI LIMIT REACHED (${GLOBAL_AI_LIMIT}). STOPPING SESSION. >>>`);
+                    limitReached = true;
+                    break;
+                }
 
                 const urlHash = generateUrlHash(item.link);
                 const slug = createSlug(item.title);
@@ -195,8 +205,9 @@ const fetchAndProcessNews = async (req, res) => {
                     console.log(`Scraping: ${item.title}`);
                     const scraped = await scrapeNews(item.link);
 
-                    console.log(`Generating AI Content...`);
+                    console.log(`Generating AI Content (Hit #${totalAiHits + 1})...`);
                     const aiData = await generateArticle(scraped.facts);
+                    totalAiHits++;
 
                     // Use AI title if decent, or fallback to RSS title
                     const finalTitle = aiData.title && aiData.title.length > 10 ? aiData.title : scraped.title;
@@ -254,8 +265,9 @@ const fetchAndProcessNews = async (req, res) => {
 
         res.json({
             success: true,
-            msg: "Batch processing completed.",
-            stats
+            msg: limitReached ? `Batch completed early (Hit global limit of ${GLOBAL_AI_LIMIT}).` : "Batch processing completed.",
+            stats,
+            totalAiHits
         });
 
     } catch (error) {

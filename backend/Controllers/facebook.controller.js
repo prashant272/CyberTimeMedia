@@ -8,8 +8,9 @@ const FB_REDIRECT_URI = process.env.FB_REDIRECT_URI;
 
 // 1. Generate Facebook OAuth URL
 exports.getFacebookAuthUrl = (req, res) => {
-    const scope = ["pages_show_list", "pages_manage_posts", "pages_read_engagement"].join(",");
+    const scope = ["public_profile", "pages_show_list", "pages_manage_posts", "pages_read_engagement"].join(",");
     const url = `https://www.facebook.com/v19.0/dialog/oauth?client_id=${FB_APP_ID}&redirect_uri=${encodeURIComponent(FB_REDIRECT_URI)}&scope=${scope}&response_type=code`;
+    console.log("[DEBUG-V4] Generating URL with scopes:", scope);
     res.json({ url });
 };
 
@@ -22,15 +23,24 @@ exports.handleFacebookCallback = async (req, res) => {
             return res.status(400).json({ success: false, msg: "Authorization code is required" });
         }
 
+        console.log("[Facebook] Callback received code:", code ? "YES" : "NO");
+        console.log("[Facebook] Using redirect_uri:", FB_REDIRECT_URI);
+
         // Step A: Exchange code for Short-lived User Access Token
-        const tokenResponse = await axios.get(`https://graph.facebook.com/v19.0/oauth/access_token`, {
-            params: {
-                client_id: FB_APP_ID,
-                client_secret: FB_APP_SECRET,
-                redirect_uri: FB_REDIRECT_URI,
-                code
-            }
-        });
+        let tokenResponse;
+        try {
+            tokenResponse = await axios.get(`https://graph.facebook.com/v19.0/oauth/access_token`, {
+                params: {
+                    client_id: FB_APP_ID,
+                    client_secret: FB_APP_SECRET,
+                    redirect_uri: FB_REDIRECT_URI,
+                    code
+                }
+            });
+        } catch (err) {
+            console.error("[Facebook] Token Exchange Error:", err.response?.data || err.message);
+            throw err;
+        }
 
         const shortLivedToken = tokenResponse.data.access_token;
 
@@ -59,10 +69,15 @@ exports.handleFacebookCallback = async (req, res) => {
             pages,       // Admin picks which page to use
             longLivedToken  // Needed to get the Page Access Token
         });
-
     } catch (error) {
-        console.error("Facebook Callback Error:", error.response?.data || error.message);
-        res.status(500).json({ success: false, msg: "Facebook authentication failed", error: error.response?.data });
+        const errorData = error.response?.data || {};
+        const errorMsg = errorData.error?.message || error.message || "Facebook authentication failed";
+        console.error("Facebook Callback Error Details:", JSON.stringify(errorData, null, 2));
+        res.status(500).json({ 
+            success: false, 
+            msg: errorMsg,
+            details: errorData
+        });
     }
 };
 

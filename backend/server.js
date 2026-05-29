@@ -79,7 +79,7 @@ app.use("/api/live", LiveScoreRouter)
 
 app.use("/api/breaking-news", BreakingNewsRouter)
 app.use("/api", AutoNewsRouter)
-app.use("/fb", FacebookRouter)
+app.use("/fb_api", FacebookRouter)
 
 const { syncMatchesWithDB } = require("./Services/cricketService")
 

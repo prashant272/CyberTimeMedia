@@ -157,7 +157,7 @@ const newsSources = [
     {
         name: "Bollywood Hungama",
         url: "https://news.google.com/rss/search?q=bollywood+movies+OTT+celebrities&hl=en-IN&gl=IN&ceid=IN:en",
-        category: "entertainment",
+        category: "entertainment" ,
     },
     {
         name: "Filmfare - Bollywood",
