@@ -91,10 +91,10 @@ app.listen(process.env.PORT, () => {
 
     // Live Polling (Every 10 seconds)
     // Only fetches full scorecard for matches marked 'isLiveTracked'
-    setInterval(() => {
-        const { pollLiveScores } = require("./Services/cricketService");
-        pollLiveScores();
-    }, 10000);
+    // setInterval(() => {
+    //     const { pollLiveScores } = require("./Services/cricketService");
+    //     pollLiveScores();
+    // }, 10000);
 
     // Daily Discovery Sync (Every 24 hours)
     // Discovers new upcoming matches

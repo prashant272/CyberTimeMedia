@@ -199,18 +199,16 @@ const getLatestLinks = async (rssUrl) => {
         const feed = await parser.parseURL(rssUrl);
 
         const now = new Date();
-        // Calculate start of today in IST (UTC + 5:30)
-        const istOffset = 5.5 * 60 * 60 * 1000;
-        const istNow = new Date(now.getTime() + istOffset);
-        const startOfTodayIST = new Date(Date.UTC(istNow.getUTCFullYear(), istNow.getUTCMonth(), istNow.getUTCDate(), 0, 0, 0, 0) - istOffset);
+        // Calculate 10 hours ago
+        const tenHoursAgo = new Date(now.getTime() - 10 * 60 * 60 * 1000);
 
         const recentItems = feed.items.filter(item => {
             if (!item.pubDate) return false;
             const pubDate = new Date(item.pubDate);
-            return pubDate >= startOfTodayIST;
+            return pubDate >= tenHoursAgo;
         });
 
-        console.log(`[${feed.title}] Found ${feed.items.length} items, ${recentItems.length} are within last 24 hours.`);
+        console.log(`[${feed.title}] Found ${feed.items.length} items, ${recentItems.length} are within last 10 hours.`);
 
         return recentItems.slice(0, 10).map(item => ({
             title: item.title,

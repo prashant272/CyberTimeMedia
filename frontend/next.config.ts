@@ -10,6 +10,7 @@ const nextConfig: NextConfig = {
 
     remotePatterns: [
       { protocol: "https", hostname: "res.cloudinary.com", pathname: "/**" },
+      { protocol: "https", hostname: "pub-2343d84e533742e08719e1d3d8c0a3d6.r2.dev", pathname: "/**" },
       { protocol: "https", hostname: "th-i.thgim.com", pathname: "/**" },
       { protocol: "https", hostname: "static.toiimg.com", pathname: "/**" },
       { protocol: "https", hostname: "timesofindia.indiatimes.com", pathname: "/**" },

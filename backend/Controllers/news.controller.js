@@ -4,13 +4,7 @@ const AppConfig = require("../Models/AppConfig");
 const facebookService = require("../Services/facebookService");
 const dotenv = require("dotenv");
 dotenv.config({ path: "./Config/config.env" });
-const cloudinary = require("cloudinary").v2;
-
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
-});
+const { uploadToR2 } = require('../Utils/cloudflareR2');
 
 /**
  * Trigger Facebook auto-post when an article is published.
@@ -90,12 +84,12 @@ exports.AddNews = async (req, res) => {
         imageUrl = image;
       } else {
         try {
-          const uploadResponse = await cloudinary.uploader.upload(image, {
+          const uploadResponse = await uploadToR2(image, {
             folder: "timecyber_news"
           });
           imageUrl = uploadResponse.secure_url;
         } catch (uploadError) {
-          console.error("Cloudinary Upload Error:", uploadError);
+          console.error("R2 Upload Error:", uploadError);
         }
       }
     }
@@ -292,7 +286,7 @@ exports.updateNewsBySlug = async (req, res) => {
     let imageUrl = item.image;
     if (updateData.image && updateData.image !== imageUrl) {
       if (!updateData.image.startsWith("http")) {
-        const uploadResponse = await cloudinary.uploader.upload(updateData.image, { folder: "timecyber_news" });
+        const uploadResponse = await uploadToR2(updateData.image, { folder: "timecyber_news" });
         imageUrl = uploadResponse.secure_url;
       }
       updateData.image = imageUrl;

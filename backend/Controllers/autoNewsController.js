@@ -2,14 +2,8 @@ const { scrapeNews, getLatestLinks } = require("../Services/scraperService");
 const generateArticle = require("../Services/aiService");
 const NewsArticle = require("../Models/NewsArticle");
 const newsSources = require("../Config/newsSources");
-const cloudinary = require("cloudinary").v2;
+const { uploadToR2 } = require('../Utils/cloudflareR2');
 const crypto = require("crypto");
-
-cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.API_KEY,
-    api_secret: process.env.API_SECRET,
-});
 
 // Helper to create slug
 const createSlug = (title) => {
@@ -19,18 +13,16 @@ const createSlug = (title) => {
         .replace(/(^-|-$)+/g, "");
 };
 
-// Helper: Upload Image to Cloudinary
+// Helper: Upload Image to R2
 const uploadImage = async (imageUrl) => {
     if (!imageUrl) return null;
     try {
-        const response = await cloudinary.uploader.upload(imageUrl, {
-            folder: "auto_news",
-            fetch_format: "auto",
-            quality: "auto" // Optimize size
+        const response = await uploadToR2(imageUrl, {
+            folder: "auto_news"
         });
         return response.secure_url;
     } catch (error) {
-        console.error("Cloudinary Upload Error:", error.message);
+        console.error("R2 Upload Error:", error.message);
         return null; // Fail gracefully
     }
 };
@@ -93,9 +85,9 @@ const autoGenerateNews = async (req, res) => {
             return res.status(409).json({ success: false, msg: "News article (or source URL) already exists.", slug: slug });
         }
 
-        // Check semantic duplicate (within last 24 hours)
-        const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-        const recentArticles = await NewsArticle.find({ createdAt: { $gt: dayAgo } }).select("title").lean();
+        // Check semantic duplicate (within last 10 hours)
+        const tenHoursAgo = new Date(Date.now() - 10 * 60 * 60 * 1000);
+        const recentArticles = await NewsArticle.find({ createdAt: { $gt: tenHoursAgo } }).select("title").lean();
         const recentTitles = recentArticles.map(a => a.title);
 
         if (isSemanticDuplicate(aiData.title || scraped.title, recentTitles)) {
@@ -148,7 +140,7 @@ const fetchAndProcessNews = async (req, res) => {
         };
 
         let totalAiHits = 0;
-        const GLOBAL_AI_LIMIT = 50;
+        const GLOBAL_AI_LIMIT = 20;
         let limitReached = false;
 
         // Iterate through all sources
@@ -190,8 +182,8 @@ const fetchAndProcessNews = async (req, res) => {
                 }
 
                 // 3. Simple Semantic Deduplication (Check against what we already have in memory from recent runs/DB)
-                const dayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-                const recentArticles = await NewsArticle.find({ createdAt: { $gt: dayAgo } }).select("title").lean();
+                const tenHoursAgo = new Date(Date.now() - 10 * 60 * 60 * 1000);
+                const recentArticles = await NewsArticle.find({ createdAt: { $gt: tenHoursAgo } }).select("title").lean();
                 const recentTitles = recentArticles.map(a => a.title);
 
                 if (isSemanticDuplicate(item.title, recentTitles)) {

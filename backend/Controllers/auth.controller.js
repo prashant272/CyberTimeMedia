@@ -2,13 +2,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../Models/user.model');
 const permissionsByRole = require('../Config/permissions.js');
-const cloudinary = require("cloudinary").v2;
-
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
-});
+const { uploadToR2 } = require('../Utils/cloudflareR2');
 
 exports.UserSignUp = async (req, res) => {
   try {
@@ -180,12 +174,12 @@ exports.CreateUserByAdmin = async (req, res) => {
         profilePicUrl = ProfilePicture;
       } else {
         try {
-          const uploadResponse = await cloudinary.uploader.upload(ProfilePicture, {
+          const uploadResponse = await uploadToR2(ProfilePicture, {
             folder: "profile_pictures"
           });
           profilePicUrl = uploadResponse.secure_url;
         } catch (uploadError) {
-          console.error("Cloudinary Profile Pic Upload Error:", uploadError);
+          console.error("R2 Profile Pic Upload Error:", uploadError);
         }
       }
     }
@@ -226,12 +220,12 @@ exports.UpdateUser = async (req, res) => {
         updateData.ProfilePicture = ProfilePicture;
       } else {
         try {
-          const uploadResponse = await cloudinary.uploader.upload(ProfilePicture, {
+          const uploadResponse = await uploadToR2(ProfilePicture, {
             folder: "profile_pictures"
           });
           updateData.ProfilePicture = uploadResponse.secure_url;
         } catch (uploadError) {
-          console.error("Cloudinary Update Profile Pic Error:", uploadError);
+          console.error("R2 Update Profile Pic Error:", uploadError);
         }
       }
     }

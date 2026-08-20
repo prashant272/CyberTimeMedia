@@ -1,11 +1,5 @@
-const cloudinary = require('cloudinary').v2;
+const { uploadToR2, deleteFromR2 } = require('../Utils/cloudflareR2');
 const Ad = require('../Models/advertisement.model');
-
-cloudinary.config({
-  cloud_name: process.env.CLOUD_NAME,
-  api_key: process.env.API_KEY,
-  api_secret: process.env.API_SECRET,
-});
 
 exports.AddAd = async (req, res) => {
   try {
@@ -26,7 +20,7 @@ exports.AddAd = async (req, res) => {
     if (headerImageUrl && headerImageUrl.startsWith('data:image')) {
       uploadPromises.push((async () => {
         try {
-          const res = await cloudinary.uploader.upload(headerImageUrl, { folder: 'ads', resource_type: 'auto' });
+          const res = await uploadToR2(headerImageUrl, { folder: 'ads' });
           uploadedHeaderUrl = res.secure_url;
         } catch (err) { console.error("Header Ad Upload Error:", err); }
       })());
@@ -35,7 +29,7 @@ exports.AddAd = async (req, res) => {
     if (sidebarImageUrl && sidebarImageUrl.startsWith('data:image')) {
       uploadPromises.push((async () => {
         try {
-          const res = await cloudinary.uploader.upload(sidebarImageUrl, { folder: 'ads', resource_type: 'auto' });
+          const res = await uploadToR2(sidebarImageUrl, { folder: 'ads' });
           uploadedSidebarUrl = res.secure_url;
         } catch (err) { console.error("Sidebar Ad Upload Error:", err); }
       })());
@@ -50,17 +44,14 @@ exports.AddAd = async (req, res) => {
     if (!finalHeaderUrl && !finalSidebarUrl && imageUrl) {
       if (imageUrl.startsWith('data:image')) {
         try {
-          const uploadResponse = await cloudinary.uploader.upload(imageUrl, {
-            folder: 'ads',
-            resource_type: 'auto',
-          });
+          const uploadResponse = await uploadToR2(imageUrl, { folder: 'ads' });
           if (placement === 'sidebar') {
             finalSidebarUrl = uploadResponse.secure_url;
           } else {
             finalHeaderUrl = uploadResponse.secure_url;
           }
         } catch (uploadError) {
-          console.error("Legacy Ad Cloudinary Upload Error:", uploadError);
+          console.error("Legacy Ad R2 Upload Error:", uploadError);
         }
       } else {
         if (placement === 'sidebar') finalSidebarUrl = imageUrl;
@@ -114,11 +105,11 @@ exports.UpdateAd = async (req, res) => {
         if (existingAd.headerImageUrl) {
           try {
             const publicId = existingAd.headerImageUrl.split('/').pop().split('.')[0];
-            await cloudinary.uploader.destroy(`ads/${publicId}`);
+            await deleteFromR2(`ads/${publicId}`);
           } catch (err) { }
         }
         try {
-          const res = await cloudinary.uploader.upload(headerImageUrl, { folder: 'ads', resource_type: 'auto' });
+          const res = await uploadToR2(headerImageUrl, { folder: 'ads' });
           existingAd.headerImageUrl = res.secure_url;
         } catch (err) { console.error("Update Header Ad Upload Error:", err); }
       })());
@@ -134,11 +125,11 @@ exports.UpdateAd = async (req, res) => {
         if (existingAd.sidebarImageUrl) {
           try {
             const publicId = existingAd.sidebarImageUrl.split('/').pop().split('.')[0];
-            await cloudinary.uploader.destroy(`ads/${publicId}`);
+            await deleteFromR2(`ads/${publicId}`);
           } catch (err) { }
         }
         try {
-          const res = await cloudinary.uploader.upload(sidebarImageUrl, { folder: 'ads', resource_type: 'auto' });
+          const res = await uploadToR2(sidebarImageUrl, { folder: 'ads' });
           existingAd.sidebarImageUrl = res.secure_url;
         } catch (err) { console.error("Update Sidebar Ad Upload Error:", err); }
       })());
@@ -173,7 +164,7 @@ exports.DeleteAd = async (req, res) => {
       const publicId = urlParts[urlParts.length - 1].split('.')[0];
       // Do not await, let it happen in background for faster response if desired, 
       // but here we wait for consistency unless it's a bottleneck.
-      try { await cloudinary.uploader.destroy(`ads/${publicId}`); } catch (err) { }
+      try { await deleteFromR2(`ads/${publicId}`); } catch (err) { }
     }
 
     await Ad.findByIdAndDelete(id);
