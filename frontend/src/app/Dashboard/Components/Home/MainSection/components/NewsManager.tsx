@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useCallback, ChangeEvent, FC, useMemo } from "react";
+import React, { useState, useEffect, useCallback, ChangeEvent, FC, useMemo } from "react";
 import { FaFacebook, FaWhatsapp, FaShareAlt } from "react-icons/fa";
 import { Edit2, Trash2, Star, TrendingUp, EyeOff, Calendar, Tag, Eye, Newspaper } from "lucide-react";
 import {
@@ -61,7 +61,7 @@ const NewsManager: FC<NewsManagerProps> = ({
     );
 
     const { mutate: addNews, loading: addLoading } = useAddNews();
-    const { mutate: updateNews } = useUpdateNews(selectedCategory);
+    const { mutate: updateNews, loading: updateLoading } = useUpdateNews(selectedCategory);
     const { mutate: deleteNews } = useDeleteNews(selectedCategory);
     const { mutate: setFlags, loading: flagsLoading } = useSetNewsFlags(selectedCategory);
 
@@ -75,6 +75,8 @@ const NewsManager: FC<NewsManagerProps> = ({
         status: "draft",
         targetLink: "",
         nominationLink: "",
+        isLatest: false,
+        isTrending: false,
     });
 
     const [tagsInput, setTagsInput] = useState("");
@@ -95,6 +97,8 @@ const NewsManager: FC<NewsManagerProps> = ({
             status: "draft",
             targetLink: "",
             nominationLink: "",
+            isLatest: false,
+            isTrending: false,
         });
         setImagePreview(null);
         setShowImage(false);
@@ -110,7 +114,9 @@ const NewsManager: FC<NewsManagerProps> = ({
             setFormState({
                 ...initialDraft,
                 status: initialDraft.status || 'draft',
-                category: matchedCat.charAt(0).toUpperCase() + matchedCat.slice(1)
+                category: matchedCat.charAt(0).toUpperCase() + matchedCat.slice(1),
+                isLatest: initialDraft.isLatest || false,
+                isTrending: initialDraft.isTrending || false,
             });
             setEditingSlug(initialDraft.slug);
             setTagsInput(initialDraft.tags?.join(", ") || "");
@@ -133,9 +139,9 @@ const NewsManager: FC<NewsManagerProps> = ({
             (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
                 const value = e.target.value;
                 setFormState((prev) => {
-                    const updated = { ...prev, [field]: value };
+                    const updated = { ...prev, [field]: e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : value };
                     if (field === "title" && !editingSlug) {
-                        updated.slug = generateSlug(value);
+                        updated.slug = generateSlug(value as string);
                     }
                     return updated;
                 });
@@ -452,6 +458,26 @@ const NewsManager: FC<NewsManagerProps> = ({
                                     <option value="archived">Archived</option>
                                 </select>
                             </div>
+                            <div className="space-y-2 col-span-1 md:col-span-2 lg:col-span-3 flex gap-4">
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        checked={formState.isLatest || false}
+                                        onChange={(e) => setFormState(prev => ({...prev, isLatest: e.target.checked}))}
+                                    />
+                                    <span className="text-sm font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1"><Star size={16} className="text-yellow-500"/> Latest News</span>
+                                </label>
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                    <input 
+                                        type="checkbox" 
+                                        className="w-5 h-5 rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                                        checked={formState.isTrending || false}
+                                        onChange={(e) => setFormState(prev => ({...prev, isTrending: e.target.checked}))}
+                                    />
+                                    <span className="text-sm font-bold text-gray-700 dark:text-gray-300 flex items-center gap-1"><TrendingUp size={16} className="text-orange-500"/> Trending News</span>
+                                </label>
+                            </div>
                             <div className="md:col-span-2 lg:col-span-1 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden group hover:border-blue-500/50 transition-colors">
                                 <input
                                     id="file-upload"
@@ -535,8 +561,14 @@ const NewsManager: FC<NewsManagerProps> = ({
                         <div className="mt-10 flex flex-wrap gap-4 border-t border-gray-100 dark:border-gray-700 pt-8">
                             {isEditing ? (
                                 <>
-                                    <button onClick={handleUpdate} className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all flex-1 md:flex-none">
-                                        Update Article
+                                    <button 
+                                        onClick={handleUpdate} 
+                                        disabled={!canUpdate || updateLoading}
+                                        className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-500/20 transition-all flex-1 md:flex-none disabled:opacity-50 flex justify-center items-center gap-2"
+                                    >
+                                        {updateLoading ? (
+                                            <><span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> Updating...</>
+                                        ) : "Update Article"}
                                     </button>
                                     <button onClick={resetForm} className="px-8 py-3 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 font-bold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-all flex-1 md:flex-none">
                                         Cancel
