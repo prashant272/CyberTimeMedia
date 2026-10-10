@@ -109,6 +109,7 @@ const Navbar: React.FC = () => {
         { label: "International Healthcare Awards", href: "https://internationalhealthcareaward.com/" },
         { label: "International Education Awards", href: "https://internationaleducationaward.com/" },
         { label: "Icon Of The Year Awards", href: "https://iconoftheyearawards.com/" },
+        { label: "Women Icon Of The Year", href: "https://www.iconoftheyearawards.com/" },
         { label: "Awards News", href: "/Pages/awards" },
       ]
     },
