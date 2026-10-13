@@ -20,7 +20,11 @@ exports.uploadToR2 = async (fileData, options = {}) => {
   try {
     let buffer, contentType, extension = "png";
 
-    if (fileData.startsWith("data:image")) {
+    if (Buffer.isBuffer(fileData)) {
+      buffer = fileData;
+      contentType = options.contentType || "image/jpeg";
+      extension = options.extension || "jpg";
+    } else if (typeof fileData === "string" && fileData.startsWith("data:image")) {
       // Parse base64
       const matches = fileData.match(/^data:image\/([A-Za-z-+\/]+);base64,(.+)$/);
       if (!matches || matches.length !== 3) {
@@ -29,7 +33,7 @@ exports.uploadToR2 = async (fileData, options = {}) => {
       extension = matches[1];
       contentType = `image/${extension}`;
       buffer = Buffer.from(matches[2], "base64");
-    } else if (fileData.startsWith("http")) {
+    } else if (typeof fileData === "string" && fileData.startsWith("http")) {
       // Fetch image from URL
       let fetchFn = global.fetch;
       if (!fetchFn) {
@@ -46,7 +50,7 @@ exports.uploadToR2 = async (fileData, options = {}) => {
         extension = contentType.split('/')[1] || 'jpg';
       }
     } else {
-      throw new Error("Unsupported file data format. Only base64 and URLs are supported.");
+      throw new Error("Unsupported file data format. Only buffers, base64 and URLs are supported.");
     }
 
     const folder = options.folder ? `${options.folder}/` : "";

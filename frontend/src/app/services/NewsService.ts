@@ -9,7 +9,8 @@ export interface NewsItem {
     content: string;
     image?: string;
     tags: string[];
-    status: "draft" | "published" | "archived";
+    status: "draft" | "published" | "archived" | "scheduled";
+    scheduledAt?: string;
     publishedAt?: string;
     createdAt?: string;
     date?: string;

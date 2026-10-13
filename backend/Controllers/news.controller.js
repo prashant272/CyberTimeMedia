@@ -2,6 +2,7 @@ const NewsArticle = require("../Models/NewsArticle");
 const User = require("../Models/user.model");
 const AppConfig = require("../Models/AppConfig");
 const facebookService = require("../Services/facebookService");
+const imageService = require("../Services/imageService");
 const dotenv = require("dotenv");
 dotenv.config({ path: "./Config/config.env" });
 const { uploadToR2 } = require('../Utils/cloudflareR2');
@@ -58,7 +59,7 @@ exports.AddNews = async (req, res) => {
     const {
       title, slug, category, subCategory, summary, content,
       image, tags = [], section, targetLink, nominationLink,
-      author, status, authorId
+      author, status, authorId, scheduledAt
     } = req.body;
 
     const finalCategory = (category || section)?.toLowerCase();
@@ -94,20 +95,63 @@ exports.AddNews = async (req, res) => {
       }
     }
 
+    // Apply branding (Newsroom Title Overlay & Logo) whenever image and title are provided
+    if (imageUrl && title) {
+      const isAlreadyBranded = typeof imageUrl === "string" && (imageUrl.includes("timecyber_news/branded") || imageUrl.includes("branded_"));
+      if (!isAlreadyBranded) {
+        try {
+          const brandedBuffer = await imageService.brandImageWithTitle(imageUrl, title, {
+            category: finalCategory
+          });
+          if (brandedBuffer) {
+            const uploadBranded = await uploadToR2(brandedBuffer, {
+              folder: "timecyber_news/branded",
+              contentType: "image/jpeg",
+              extension: "jpg"
+            });
+            if (uploadBranded?.secure_url) {
+              imageUrl = uploadBranded.secure_url;
+            }
+          }
+        } catch (brandErr) {
+          console.error("[Image Branding Error in AddNews]:", brandErr.message);
+        }
+      }
+    }
+
+    let articleStatus = status || "draft";
+    let parsedScheduledAt = null;
+
+    if (articleStatus === "scheduled") {
+      if (scheduledAt) {
+        parsedScheduledAt = new Date(scheduledAt);
+        // If scheduled time has already passed, publish immediately!
+        if (parsedScheduledAt <= new Date()) {
+          articleStatus = "published";
+        }
+      } else {
+        articleStatus = "draft";
+      }
+    }
+
+    const isPublished = articleStatus === "published";
+
     const newItem = new NewsArticle({
       title, slug, category: finalCategory, subCategory: subCategory || null,
       summary: summary || null, content, image: imageUrl, tags,
       targetLink: targetLink || null, nominationLink: nominationLink || null,
       author: author || "Time Cyber Media",
       authorId: authorId || null,
-      status: status || "draft",
-      publishedAt: status === "published" ? new Date() : null
+      status: articleStatus,
+      scheduledAt: parsedScheduledAt,
+      isHidden: articleStatus === "scheduled" ? true : false,
+      publishedAt: isPublished ? new Date() : null
     });
 
     await newItem.save();
 
-    // Trigger Facebook auto-post
-    if (status === "published") {
+    // Trigger Facebook auto-post if published
+    if (isPublished) {
       triggerFacebookPost(newItem);
     }
 
@@ -292,19 +336,63 @@ exports.updateNewsBySlug = async (req, res) => {
       updateData.image = imageUrl;
     }
 
-    // Set publishedAt if status is changing to published and it wasn't published before
-    if (updateData.status === "published" && item.status !== "published" && !item.publishedAt) {
-      updateData.publishedAt = new Date();
-    }
-
-    // Automatically show news when published
-    if (updateData.status === "published") {
+    // Handle status transitions and scheduling
+    if (updateData.status === "scheduled") {
+      if (updateData.scheduledAt) {
+        updateData.scheduledAt = new Date(updateData.scheduledAt);
+        // If scheduled time has already passed, publish immediately
+        if (updateData.scheduledAt <= new Date()) {
+          updateData.status = "published";
+          updateData.publishedAt = new Date();
+          updateData.isHidden = false;
+        } else {
+          updateData.isHidden = true;
+        }
+      } else {
+        updateData.status = "draft";
+      }
+    } else if (updateData.status === "published") {
+      if (item.status !== "published" && !item.publishedAt) {
+        updateData.publishedAt = new Date();
+      }
       updateData.isHidden = false;
+      updateData.scheduledAt = null;
+    } else if (updateData.status === "draft" || updateData.status === "archived") {
+      updateData.scheduledAt = null;
     }
 
     // Normalize category if provided
     if (updateData.category) {
       updateData.category = updateData.category.toLowerCase();
+    }
+
+    // Apply branding (Newsroom Title Overlay & Logo) whenever an image exists and is not yet branded
+    if (imageUrl) {
+      const isAlreadyBranded = typeof imageUrl === "string" && (imageUrl.includes("timecyber_news/branded") || imageUrl.includes("branded_"));
+      const isNewImage = updateData.image && updateData.image !== item.image;
+
+      if (!isAlreadyBranded || isNewImage) {
+        try {
+          const titleToUse = updateData.title || item.title;
+          const categoryToUse = (updateData.category || item.category)?.toLowerCase();
+          const brandedBuffer = await imageService.brandImageWithTitle(imageUrl, titleToUse, {
+            category: categoryToUse
+          });
+          if (brandedBuffer) {
+            const uploadBranded = await uploadToR2(brandedBuffer, {
+              folder: "timecyber_news/branded",
+              contentType: "image/jpeg",
+              extension: "jpg"
+            });
+            if (uploadBranded?.secure_url) {
+              imageUrl = uploadBranded.secure_url;
+              updateData.image = imageUrl;
+            }
+          }
+        } catch (brandErr) {
+          console.error("[Image Branding Error in updateNewsBySlug]:", brandErr.message);
+        }
+      }
     }
 
     const updatedItem = await NewsArticle.findOneAndUpdate({ slug }, { ...updateData }, { new: true });
@@ -480,6 +568,65 @@ exports.searchNews = async (req, res) => {
   } catch (error) {
     console.error("Search Error:", error);
     res.status(500).json({ success: false, msg: error.message });
+  }
+};
+
+/**
+ * Direct Image Branding Endpoint (Used for live preview & instant branding in Admin Panel)
+ */
+exports.brandUploadedImage = async (req, res) => {
+  try {
+    const { image, title, category } = req.body;
+    if (!image) {
+      return res.status(400).json({ success: false, msg: "Image is required" });
+    }
+
+    const titleToUse = title && title.trim() ? title.trim() : "Breaking News";
+    const brandedBuffer = await imageService.brandImageWithTitle(image, titleToUse, {
+      category: category || "india"
+    });
+
+    if (!brandedBuffer) {
+      return res.status(500).json({ success: false, msg: "Failed to generate branded image" });
+    }
+
+    const uploadRes = await uploadToR2(brandedBuffer, {
+      folder: "timecyber_news/branded",
+      contentType: "image/jpeg",
+      extension: "jpg"
+    });
+
+    return res.json({
+      success: true,
+      imageUrl: uploadRes.secure_url
+    });
+  } catch (error) {
+    console.error("Brand Image Error:", error);
+    return res.status(500).json({ success: false, msg: error.message });
+  }
+};
+
+/**
+ * Instantly publishes a scheduled or draft article without waiting
+ */
+exports.publishArticleNow = async (req, res) => {
+  try {
+    const { slug } = req.params;
+    const article = await NewsArticle.findOne({ slug });
+    if (!article) return res.status(404).json({ success: false, msg: "News not found" });
+
+    article.status = "published";
+    article.publishedAt = new Date();
+    article.isHidden = false;
+    article.scheduledAt = null;
+    await article.save();
+
+    triggerFacebookPost(article);
+
+    return res.status(200).json({ success: true, news: article, msg: "Article published immediately!" });
+  } catch (error) {
+    console.error("Publish Article Now Error:", error);
+    res.status(500).json({ success: false, msg: "Error publishing article" });
   }
 };
 

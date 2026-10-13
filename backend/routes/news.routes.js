@@ -1,8 +1,10 @@
 const express = require('express')
-const { AddNews, getAllNews, getNewsBySlug, updateNewsBySlug, deleteNewsBySlug, getSectionNews, setNewsFlags, GetAnalytics, streamNews, getEmployeeReport, searchNews } = require('../Controllers/news.controller')
+const { AddNews, getAllNews, getNewsBySlug, updateNewsBySlug, deleteNewsBySlug, getSectionNews, setNewsFlags, GetAnalytics, streamNews, getEmployeeReport, searchNews, brandUploadedImage, publishArticleNow } = require('../Controllers/news.controller')
 
 const NewsRouter = express.Router()
 
+NewsRouter.post("/brand-image", brandUploadedImage)
+NewsRouter.put("/publish-now/:slug", publishArticleNow)
 NewsRouter.post("/addnews", AddNews)
 NewsRouter.get("/getallnews", getAllNews)
 NewsRouter.get("/search", searchNews)

@@ -3,6 +3,7 @@ const generateArticle = require("../Services/aiService");
 const NewsArticle = require("../Models/NewsArticle");
 const newsSources = require("../Config/newsSources");
 const { uploadToR2 } = require('../Utils/cloudflareR2');
+const imageService = require('../Services/imageService');
 const crypto = require("crypto");
 
 // Helper to create slug
@@ -13,12 +14,26 @@ const createSlug = (title) => {
         .replace(/(^-|-$)+/g, "");
 };
 
-// Helper: Upload Image to R2
-const uploadImage = async (imageUrl) => {
+// Helper: Upload and Brand Image to R2
+const uploadImage = async (imageUrl, title = null, category = "india") => {
     if (!imageUrl) return null;
     try {
-        const response = await uploadToR2(imageUrl, {
-            folder: "auto_news"
+        let bufferToUpload = null;
+        if (title) {
+            try {
+                bufferToUpload = await imageService.brandImageWithTitle(imageUrl, title, {
+                    category: category
+                });
+            } catch (brandErr) {
+                console.warn("[Auto-News Branding Error, falling back to raw image]:", brandErr.message);
+            }
+        }
+
+        const dataToUpload = bufferToUpload || imageUrl;
+        const response = await uploadToR2(dataToUpload, {
+            folder: bufferToUpload ? "timecyber_news/branded" : "auto_news",
+            contentType: bufferToUpload ? "image/jpeg" : undefined,
+            extension: bufferToUpload ? "jpg" : undefined
         });
         return response.secure_url;
     } catch (error) {
@@ -94,10 +109,10 @@ const autoGenerateNews = async (req, res) => {
             return res.status(409).json({ success: false, msg: "A very similar news article was already posted recently." });
         }
 
-        // Upload Image
+        // Upload and Brand Image
         let finalImage = null;
         if (scraped.image) {
-            finalImage = await uploadImage(scraped.image);
+            finalImage = await uploadImage(scraped.image, aiData.title || scraped.title, category);
         }
 
         const newPost = new NewsArticle({
@@ -213,10 +228,10 @@ const fetchAndProcessNews = async (req, res) => {
                         continue;
                     }
 
-                    // Upload Image if exists
+                    // Upload and Brand Image if exists
                     let finalImage = null;
                     if (scraped.image) {
-                        finalImage = await uploadImage(scraped.image);
+                        finalImage = await uploadImage(scraped.image, finalTitle, category);
                     }
 
                     const newPost = new NewsArticle({

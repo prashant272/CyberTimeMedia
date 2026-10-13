@@ -82,9 +82,13 @@ app.use("/api", AutoNewsRouter)
 app.use("/fb_api", FacebookRouter)
 
 const { syncMatchesWithDB } = require("./Services/cricketService")
+const { initScheduler } = require("./Services/schedulerService")
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on port ${process.env.PORT}`);
+
+    // Start news auto-publishing scheduler
+    initScheduler();
 
     // Initial full sync on startup
     syncMatchesWithDB(true);

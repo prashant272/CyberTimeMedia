@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useCallback, ChangeEvent, FC, useMemo } from "react";
+import React, { useState, useEffect, useCallback, ChangeEvent, FC, useMemo, useRef } from "react";
 import { FaFacebook, FaWhatsapp, FaShareAlt } from "react-icons/fa";
-import { Edit2, Trash2, Star, TrendingUp, EyeOff, Calendar, Tag, Eye, Newspaper } from "lucide-react";
+import { Edit2, Trash2, Star, TrendingUp, EyeOff, Calendar, Tag, Eye, Newspaper, Clock, Send } from "lucide-react";
 import {
     NewsItem,
     useNewsBySection,
@@ -9,7 +9,7 @@ import {
     useDeleteNews,
     useSetNewsFlags
 } from "@/app/hooks/NewsApi";
-import { compressImage } from "@/Utils/Utils";
+import { compressImage, API } from "@/Utils/Utils";
 
 const CATEGORIES = [
     { id: 'home', label: 'Home' },
@@ -73,6 +73,7 @@ const NewsManager: FC<NewsManagerProps> = ({
         content: "",
         tags: [],
         status: "draft",
+        scheduledAt: "",
         targetLink: "",
         nominationLink: "",
         isLatest: false,
@@ -83,9 +84,11 @@ const NewsManager: FC<NewsManagerProps> = ({
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [showImage, setShowImage] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [filterStatus, setFilterStatus] = useState<"all" | "draft" | "published" | "archived">("all");
+    const [filterStatus, setFilterStatus] = useState<"all" | "draft" | "published" | "archived" | "scheduled">("all");
     const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
     const [sortBy, setSortBy] = useState<"newest" | "oldest" | "title">("newest");
+    const [isBranding, setIsBranding] = useState(false);
+    const rawImageRef = useRef<string | null>(null);
 
     const resetForm = useCallback(() => {
         setFormState({
@@ -95,6 +98,7 @@ const NewsManager: FC<NewsManagerProps> = ({
             content: "",
             tags: [],
             status: "draft",
+            scheduledAt: "",
             targetLink: "",
             nominationLink: "",
             isLatest: false,
@@ -104,6 +108,7 @@ const NewsManager: FC<NewsManagerProps> = ({
         setShowImage(false);
         setEditingSlug(null);
         setTagsInput("");
+        rawImageRef.current = null;
     }, [selectedCategory]);
 
     useEffect(() => {
@@ -114,6 +119,7 @@ const NewsManager: FC<NewsManagerProps> = ({
             setFormState({
                 ...initialDraft,
                 status: initialDraft.status || 'draft',
+                scheduledAt: initialDraft.scheduledAt || '',
                 category: matchedCat.charAt(0).toUpperCase() + matchedCat.slice(1),
                 isLatest: initialDraft.isLatest || false,
                 isTrending: initialDraft.isTrending || false,
@@ -156,6 +162,42 @@ const NewsManager: FC<NewsManagerProps> = ({
         setFormState((prev) => ({ ...prev, tags }));
     }, []);
 
+    const handleApplyBranding = useCallback(
+        async (customRawImage?: string) => {
+            const imageToBrand = customRawImage || rawImageRef.current || formState.image;
+            if (!imageToBrand) {
+                showNotification("Please upload an image first", "error");
+                return;
+            }
+            if (!formState.title || !formState.title.trim()) {
+                showNotification("Please enter Title first to brand the image", "error");
+                return;
+            }
+            setIsBranding(true);
+            try {
+                const res = await API.post('/news/brand-image', {
+                    image: imageToBrand,
+                    title: formState.title.trim(),
+                    category: selectedCategory
+                });
+                if (res.data?.success && res.data?.imageUrl) {
+                    setFormState(prev => ({ ...prev, image: res.data.imageUrl }));
+                    setImagePreview(res.data.imageUrl);
+                    setShowImage(true);
+                    showNotification("Image branded with Title & Logo successfully!", "success");
+                } else {
+                    showNotification(res.data?.msg || "Failed to brand image", "error");
+                }
+            } catch (err: any) {
+                console.error("Branding error:", err);
+                showNotification(err.response?.data?.msg || "Failed to brand image", "error");
+            } finally {
+                setIsBranding(false);
+            }
+        },
+        [formState.image, formState.title, selectedCategory, showNotification]
+    );
+
     const handleImageChange = useCallback(
         (e: ChangeEvent<HTMLInputElement>) => {
             const file = e.target.files?.[0];
@@ -176,15 +218,21 @@ const NewsManager: FC<NewsManagerProps> = ({
 
                 // Compress image before setting to state
                 const optimizedDataUrl = await compressImage(dataUrl, 1200, 0.6) as string;
+                rawImageRef.current = optimizedDataUrl;
 
                 setFormState((prev) => ({ ...prev, image: optimizedDataUrl }));
                 setImagePreview(optimizedDataUrl);
                 setShowImage(true);
+
+                // Auto-apply branding if Title is already entered
+                if (formState.title && formState.title.trim()) {
+                    handleApplyBranding(optimizedDataUrl);
+                }
             };
             reader.readAsDataURL(file);
             e.target.value = "";
         },
-        [showNotification]
+        [formState.title, handleApplyBranding, showNotification]
     );
 
     const handleAdd = useCallback(async () => {
@@ -194,6 +242,10 @@ const NewsManager: FC<NewsManagerProps> = ({
         }
         if (!formState.title || !formState.slug || !formState.content) {
             showNotification("Title, Slug and Content are required", "error");
+            return;
+        }
+        if (formState.status === "scheduled" && !formState.scheduledAt) {
+            showNotification("Please select scheduled publish date & time", "error");
             return;
         }
         try {
@@ -206,9 +258,15 @@ const NewsManager: FC<NewsManagerProps> = ({
                 author: authorName,
                 authorId: currentUserId || null,
                 tags: tagsInput.split(",").map(t => t.trim()).filter(Boolean),
-                publishedAt: new Date().toISOString(),
+                publishedAt: formState.status === "published" ? new Date().toISOString() : null,
+                scheduledAt: formState.status === "scheduled" ? formState.scheduledAt : null,
             } as NewsItem & { section: string });
-            showNotification(`Article created by ${authorName}`, "success");
+            showNotification(
+                formState.status === "scheduled"
+                    ? `Article scheduled for ${new Date(formState.scheduledAt!).toLocaleString()}`
+                    : `Article created by ${authorName}`,
+                "success"
+            );
             resetForm();
             refetch();
         } catch (err: any) {
@@ -234,6 +292,10 @@ const NewsManager: FC<NewsManagerProps> = ({
 
     const handleUpdate = useCallback(async () => {
         if (!canUpdate || !editingSlug) return;
+        if (formState.status === "scheduled" && !formState.scheduledAt) {
+            showNotification("Please select scheduled publish date & time", "error");
+            return;
+        }
         try {
             const authorName = userAuthData?.name || "Time Cyber Media";
             const currentUserId = userAuthData?.userId || userAuthData?._id || userAuthData?.id;
@@ -244,16 +306,37 @@ const NewsManager: FC<NewsManagerProps> = ({
                     ...formState,
                     author: authorName,
                     authorId: currentUserId || null,
-                    tags: tagsInput.split(",").map(t => t.trim()).filter(Boolean)
+                    tags: tagsInput.split(",").map(t => t.trim()).filter(Boolean),
+                    scheduledAt: formState.status === "scheduled" ? formState.scheduledAt : null,
                 },
             });
-            showNotification("Article updated", "success");
+            showNotification(
+                formState.status === "scheduled"
+                    ? `Article scheduled for ${new Date(formState.scheduledAt!).toLocaleString()}`
+                    : "Article updated",
+                "success"
+            );
             resetForm();
             refetch();
         } catch (err: any) {
             showNotification(err.message || "Update failed", "error");
         }
     }, [canUpdate, editingSlug, formState, updateNews, resetForm, refetch, showNotification, userAuthData, tagsInput]);
+
+    const handlePublishNow = useCallback(async (slug: string) => {
+        if (!confirm("Publish this scheduled article immediately?")) return;
+        try {
+            const res = await API.put(`/news/publish-now/${slug}`);
+            if (res.data?.success) {
+                showNotification("Article published immediately!", "success");
+                refetch();
+            } else {
+                showNotification(res.data?.msg || "Failed to publish", "error");
+            }
+        } catch (err: any) {
+            showNotification(err.response?.data?.msg || err.message || "Failed to publish", "error");
+        }
+    }, [refetch, showNotification]);
 
     const handleDelete = useCallback(
         async (slug: string) => {
@@ -455,9 +538,25 @@ const NewsManager: FC<NewsManagerProps> = ({
                                 >
                                     <option value="draft">Draft</option>
                                     <option value="published">Published</option>
+                                    <option value="scheduled">⏰ Scheduled</option>
                                     <option value="archived">Archived</option>
                                 </select>
                             </div>
+                            {formState.status === "scheduled" && (
+                                <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <label className="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider flex items-center gap-1.5">
+                                        <Clock size={14} /> Schedule Date & Time <span className="text-red-500">*</span>
+                                    </label>
+                                    <input
+                                        type="datetime-local"
+                                        className="w-full px-4 py-2.5 bg-purple-50/50 dark:bg-purple-950/20 border-2 border-purple-200 dark:border-purple-800 rounded-xl focus:ring-2 focus:ring-purple-500 outline-none transition-all text-gray-900 dark:text-white font-medium text-sm"
+                                        value={formState.scheduledAt ? new Date(new Date(formState.scheduledAt).getTime() - new Date(formState.scheduledAt).getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ""}
+                                        onChange={(e) => setFormState(prev => ({ ...prev, scheduledAt: e.target.value }))}
+                                        min={new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16)}
+                                    />
+                                    <p className="text-[10px] text-gray-400">Article will automatically go live and post to Facebook at this time.</p>
+                                </div>
+                            )}
                             <div className="space-y-2 col-span-1 md:col-span-2 lg:col-span-3 flex gap-4">
                                 <label className="flex items-center gap-2 cursor-pointer">
                                     <input 
@@ -497,15 +596,35 @@ const NewsManager: FC<NewsManagerProps> = ({
                                                 alt="Preview"
                                                 className="w-full h-full object-cover transition-transform group-hover:scale-105"
                                             />
-                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                            {/* Branding loader */}
+                                            {isBranding && (
+                                                <div className="absolute inset-0 bg-black/75 flex flex-col items-center justify-center text-white z-20 gap-2 p-2">
+                                                    <div className="w-8 h-8 border-3 border-white/30 border-t-amber-400 rounded-full animate-spin" />
+                                                    <span className="text-[11px] font-bold text-amber-300">Creating Branded Card...</span>
+                                                </div>
+                                            )}
+                                            {/* Action overlay */}
+                                            <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2 p-2 z-10">
                                                 <button
                                                     type="button"
-                                                    className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg shadow-lg"
+                                                    disabled={isBranding}
+                                                    className="w-full max-w-[170px] py-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-[11px] font-bold rounded-lg shadow-lg flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        handleApplyBranding();
+                                                    }}
+                                                >
+                                                    ✨ {isBranding ? "Branding..." : "Re-apply Brand"}
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    className="w-full max-w-[170px] py-1.5 bg-red-600/90 hover:bg-red-700 text-white text-[11px] font-bold rounded-lg shadow-lg"
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         setFormState((prev) => ({ ...prev, image: "" }));
                                                         setImagePreview(null);
                                                         setShowImage(false);
+                                                        rawImageRef.current = null;
                                                     }}
                                                 >
                                                     Remove Image
@@ -519,6 +638,24 @@ const NewsManager: FC<NewsManagerProps> = ({
                                         </div>
                                     )}
                                 </div>
+                                {(showImage || imagePreview || formState.image) && (
+                                    <div className="px-3 py-1.5 bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800 flex items-center justify-between text-[11px]">
+                                        <span className="text-gray-500 font-medium">
+                                            {imagePreview?.includes("timecyber_news/branded") ? "✅ Branded" : "Original"}
+                                        </span>
+                                        <button
+                                            type="button"
+                                            disabled={isBranding}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleApplyBranding();
+                                            }}
+                                            className="text-blue-600 dark:text-blue-400 font-bold hover:underline flex items-center gap-1"
+                                        >
+                                            ✨ {isBranding ? "Generating..." : "Apply Branding"}
+                                        </button>
+                                    </div>
+                                )}
                             </div>
 
                             <div className="md:col-span-2 lg:col-span-3 space-y-2">
@@ -643,6 +780,7 @@ const NewsManager: FC<NewsManagerProps> = ({
                                 >
                                     <option value="all">All</option>
                                     <option value="published">Published</option>
+                                    <option value="scheduled">⏰ Scheduled</option>
                                     <option value="draft">Draft</option>
                                 </select>
                                 <div className="w-px h-4 bg-gray-200 dark:bg-gray-700" />
@@ -712,8 +850,16 @@ const NewsManager: FC<NewsManagerProps> = ({
                                                 </div>
                                             )}
                                             {/* Status badge */}
-                                            <div className={`absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide ${item.status === 'published' ? 'bg-emerald-500 text-white' : item.status === 'archived' ? 'bg-gray-500 text-white' : 'bg-amber-400 text-white'}`}>
-                                                {item.status || 'draft'}
+                                            <div className={`absolute top-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wide ${
+                                                item.status === 'published'
+                                                    ? 'bg-emerald-500 text-white'
+                                                    : item.status === 'scheduled'
+                                                    ? 'bg-purple-600 text-white shadow-sm flex items-center gap-1'
+                                                    : item.status === 'archived'
+                                                    ? 'bg-gray-500 text-white'
+                                                    : 'bg-amber-400 text-white'
+                                            }`}>
+                                                {item.status === 'scheduled' ? '⏰ Scheduled' : (item.status || 'draft')}
                                             </div>
                                             {/* Active flags overlay */}
                                             <div className="absolute top-2 right-2 flex flex-col gap-1">
@@ -731,12 +877,17 @@ const NewsManager: FC<NewsManagerProps> = ({
                                                     <Tag size={11} />
                                                     {item.category || selectedCategory}
                                                 </span>
-                                                {item.publishedAt && (
+                                                {item.status === 'scheduled' && item.scheduledAt ? (
+                                                    <span className="flex items-center gap-1 text-purple-600 dark:text-purple-400 font-bold">
+                                                        <Clock size={11} />
+                                                        {new Date(item.scheduledAt).toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                                                    </span>
+                                                ) : item.publishedAt ? (
                                                     <span className="flex items-center gap-1">
                                                         <Calendar size={11} />
                                                         {new Date(item.publishedAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: '2-digit' })}
                                                     </span>
-                                                )}
+                                                ) : null}
                                             </div>
 
                                             {/* Title */}
@@ -746,6 +897,17 @@ const NewsManager: FC<NewsManagerProps> = ({
 
                                             {/* Action bar */}
                                             <div className="flex items-center gap-2 pt-3 border-t border-gray-100 dark:border-gray-700 mt-auto">
+                                                {/* Publish Now for scheduled news */}
+                                                {item.status === 'scheduled' && (
+                                                    <button
+                                                        onClick={() => handlePublishNow(item.slug)}
+                                                        className="flex items-center gap-1 px-2.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold transition-all active:scale-95 shadow-sm shadow-purple-500/20"
+                                                        title="Publish Immediately & Post to Facebook"
+                                                    >
+                                                        <Send size={11} />
+                                                        Publish
+                                                    </button>
+                                                )}
                                                 {/* Edit */}
                                                 <button
                                                     onClick={() => startEdit(item)}
