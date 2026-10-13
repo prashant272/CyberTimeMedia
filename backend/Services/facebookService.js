@@ -15,16 +15,34 @@ exports.postToPage = async (pageId, pageAccessToken, message, link, picture = nu
             return { success: false, msg: "Missing credentials" };
         }
 
+        // 1. If an image is provided, post to /{pageId}/photos endpoint.
+        // This creates a photo post with caption & link, avoiding the Meta restriction:
+        // "(#100) Only owners of the URL have the ability to specify the picture param"
+        if (picture && typeof picture === "string" && (picture.startsWith("http://") || picture.startsWith("https://"))) {
+            try {
+                const photoResponse = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/photos`, {
+                    url: picture,
+                    caption: `${message}\n${link}`,
+                    published: true,
+                    access_token: pageAccessToken
+                });
+
+                const postId = photoResponse.data.post_id || photoResponse.data.id;
+                console.log(`Successfully posted photo to Facebook Page ${pageId}:`, postId);
+                return { success: true, postId };
+            } catch (photoErr) {
+                console.warn("[Facebook] Photo endpoint failed, attempting fallback to feed:", photoErr.response?.data?.error?.message || photoErr.message);
+            }
+        }
+
+        // 2. Feed Post: DO NOT include 'picture' parameter here.
+        // Facebook Graph API v19 rejects 'picture' on /feed unless domain ownership is verified.
         const postData = {
             message,
             link,
             published: true,
             access_token: pageAccessToken
         };
-
-        if (picture) {
-            postData.picture = picture;
-        }
 
         const response = await axios.post(`https://graph.facebook.com/v19.0/${pageId}/feed`, postData);
 

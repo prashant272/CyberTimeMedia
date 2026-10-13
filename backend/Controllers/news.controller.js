@@ -39,7 +39,7 @@ async function triggerFacebookPost(newsItem) {
     }
 
     const articleUrl = `https://www.timecybermedia.com/Pages/${newsItem.category}/${newsItem.subCategory || newsItem.category}/${newsItem.slug}`;
-    const message = `ðŸ“° ${newsItem.title}\n\n${newsItem.summary || ""}\n\nRead more ðŸ‘‡`;
+    const message = `📰 ${newsItem.title}\n\n${newsItem.summary || ""}\n\nRead more 👇`;
 
     const result = await facebookService.postToPage(pageId, pageAccessToken, message, articleUrl, newsItem.image);
     if (result.success) {
