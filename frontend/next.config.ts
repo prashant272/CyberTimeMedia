@@ -1,8 +1,14 @@
 import type { NextConfig } from "next";
+import path from "path";
 
 const nextConfig: NextConfig = {
   // React Compiler
   reactCompiler: true,
+
+  // Fix Turbopack root detection (bun.lock at E:\ was causing wrong root inference)
+  turbopack: {
+    root: path.resolve(__dirname),
+  },
 
   // ⚠️ Static export me image optimization server nahi hota
   images: {

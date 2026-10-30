@@ -1,0 +1,7 @@
+{
+  "name": "timecyber",
+  "private": true,
+  "workspaces": [
+    "frontend"
+  ]
+}
