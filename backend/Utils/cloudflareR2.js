@@ -1,12 +1,19 @@
 const { S3Client, PutObjectCommand, DeleteObjectCommand } = require("@aws-sdk/client-s3");
 const crypto = require("crypto");
 
+// Strip surrounding quotes that some hosting platforms inject into env var values
+const stripQuotes = (val = "") => val.replace(/^["']|["']$/g, "").trim();
+
+const R2_ACCOUNT_ID = stripQuotes(process.env.CLOUDFLARE_R2_ACCOUNT_ID);
+const R2_ACCESS_KEY_ID = stripQuotes(process.env.CLOUDFLARE_R2_ACCESS_KEY_ID);
+const R2_SECRET_ACCESS_KEY = stripQuotes(process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY);
+
 const s3Client = new S3Client({
   region: "auto",
-  endpoint: `https://${process.env.CLOUDFLARE_R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+  endpoint: `https://${R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
   credentials: {
-    accessKeyId: process.env.CLOUDFLARE_R2_ACCESS_KEY_ID,
-    secretAccessKey: process.env.CLOUDFLARE_R2_SECRET_ACCESS_KEY,
+    accessKeyId: R2_ACCESS_KEY_ID,
+    secretAccessKey: R2_SECRET_ACCESS_KEY,
   },
 });
 
